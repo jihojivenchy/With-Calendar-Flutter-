@@ -6,7 +6,6 @@ import 'package:with_calendar/presentation/design_system/component/dialog/app_di
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/menu_event.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/menu_state.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/provider/menu_view_model.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/widgets/menu_item.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/utils/services/dialog/dialog_service.dart';

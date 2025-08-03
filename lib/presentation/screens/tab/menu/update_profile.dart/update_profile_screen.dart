@@ -14,7 +14,6 @@ import 'package:with_calendar/presentation/design_system/component/view/loading_
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_event.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_state.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_view_model.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class UpdateProfileScreen extends ConsumerStatefulWidget {
