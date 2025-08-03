@@ -1,0 +1,226 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'router.dart';
+
+// **************************************************************************
+// GoRouterGenerator
+// **************************************************************************
+
+List<RouteBase> get $appRoutes => [$splashRoute, $signInRoute, $tabRoute];
+
+RouteBase get $splashRoute => GoRouteData.$route(
+  path: '/splash',
+  name: 'splash',
+
+  factory: _$SplashRoute._fromState,
+);
+
+mixin _$SplashRoute on GoRouteData {
+  static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
+
+  @override
+  String get location => GoRouteData.$location('/splash');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $signInRoute => GoRouteData.$route(
+  path: '/sign-in',
+  name: 'sign in',
+
+  factory: _$SignInRoute._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: 'sign-up',
+      name: 'sign up',
+
+      factory: _$SignUpRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: 'find-password',
+      name: 'find password',
+
+      factory: _$FindPasswordRoute._fromState,
+    ),
+  ],
+);
+
+mixin _$SignInRoute on GoRouteData {
+  static SignInRoute _fromState(GoRouterState state) => const SignInRoute();
+
+  @override
+  String get location => GoRouteData.$location('/sign-in');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$SignUpRoute on GoRouteData {
+  static SignUpRoute _fromState(GoRouterState state) => SignUpRoute();
+
+  @override
+  String get location => GoRouteData.$location('/sign-in/sign-up');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$FindPasswordRoute on GoRouteData {
+  static FindPasswordRoute _fromState(GoRouterState state) =>
+      FindPasswordRoute();
+
+  @override
+  String get location => GoRouteData.$location('/sign-in/find-password');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $tabRoute => GoRouteData.$route(
+  path: '/',
+  name: 'tab',
+
+  factory: _$TabRoute._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: 'memo/update',
+      name: 'update memo',
+
+      factory: _$UpdateMemoRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: 'memo/create',
+      name: 'create memo',
+
+      factory: _$CreateMemoRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: 'profile/update',
+      name: 'update profile',
+
+      factory: _$UpdateProfileRoute._fromState,
+    ),
+  ],
+);
+
+mixin _$TabRoute on GoRouteData {
+  static TabRoute _fromState(GoRouterState state) => const TabRoute();
+
+  @override
+  String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$UpdateMemoRoute on GoRouteData {
+  static UpdateMemoRoute _fromState(GoRouterState state) => UpdateMemoRoute();
+
+  @override
+  String get location => GoRouteData.$location('/memo/update');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$CreateMemoRoute on GoRouteData {
+  static CreateMemoRoute _fromState(GoRouterState state) => CreateMemoRoute();
+
+  @override
+  String get location => GoRouteData.$location('/memo/create');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$UpdateProfileRoute on GoRouteData {
+  static UpdateProfileRoute _fromState(GoRouterState state) =>
+      UpdateProfileRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profile/update');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
