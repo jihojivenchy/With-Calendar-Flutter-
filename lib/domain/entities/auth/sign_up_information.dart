@@ -1,13 +1,13 @@
 class SignUpInformation {
   final String name;
-  final bool privacyPolicyAgreed;
+  final bool isPrivacyPolicyAgreed;
   final String email;
   final String password;
   final String passwordConfirm;
 
   const SignUpInformation({
     required this.name,
-    required this.privacyPolicyAgreed,
+    required this.isPrivacyPolicyAgreed,
     required this.email,
     required this.password,
     required this.passwordConfirm,
@@ -15,23 +15,23 @@ class SignUpInformation {
 
   SignUpInformation copyWith({
     String? name,
-    bool? privacyPolicyAgreed,
+    bool? isPrivacyPolicyAgreed,
     String? email,
     String? password,
     String? passwordConfirm,
   }) {
     return SignUpInformation(
       name: name ?? this.name,
-      privacyPolicyAgreed: privacyPolicyAgreed ?? this.privacyPolicyAgreed,
+      isPrivacyPolicyAgreed: isPrivacyPolicyAgreed ?? this.isPrivacyPolicyAgreed,
       email: email ?? this.email,
       password: password ?? this.password,
       passwordConfirm: passwordConfirm ?? this.passwordConfirm,
     );
   }
 
-  static SignUpInformation emptyData = SignUpInformation(
+  static SignUpInformation initialState = const SignUpInformation(
     name: '',
-    privacyPolicyAgreed: false,
+    isPrivacyPolicyAgreed: false,
     email: '',
     password: '',
     passwordConfirm: '',

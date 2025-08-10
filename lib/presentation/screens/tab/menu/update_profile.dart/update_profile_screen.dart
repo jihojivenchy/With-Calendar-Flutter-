@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
+import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/type/screen_state.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
@@ -273,7 +274,9 @@ class _UpdateProfileScreenState extends ConsumerState<UpdateProfileScreen>
         );
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: EdgeInsets.only(
+            bottom: AppSize.responsiveBottomInset,
+          ),
           child: AppButton(
             text: '완료',
             isEnabled: isValidate,

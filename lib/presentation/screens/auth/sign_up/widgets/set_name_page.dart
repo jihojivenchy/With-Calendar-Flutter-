@@ -7,16 +7,14 @@ class SetNamePage extends StatelessWidget {
   const SetNamePage({
     super.key,
     required this.focusNode,
-    required this.nameController,
-    required this.onSubmitted,
+    required this.onNameChanged,
     required this.isPrivacyPolicyAgreed,
     required this.onPrivacyPolicyAgreed,
     required this.onPrivacyArrowButtonTapped,
   });
 
   final FocusNode focusNode;
-  final TextEditingController nameController;
-  final Function(String) onSubmitted;
+  final Function(String) onNameChanged;
   final bool isPrivacyPolicyAgreed;
   final Function(bool) onPrivacyPolicyAgreed;
   final VoidCallback onPrivacyArrowButtonTapped;
@@ -33,8 +31,8 @@ class SetNamePage extends StatelessWidget {
           const SizedBox(height: 8),
           AppTextField(
             focusNode: focusNode,
-            controller: nameController,
             placeholderText: '닉네임을 입력하세요',
+            onTextChanged: onNameChanged,
           ),
           const SizedBox(height: 40),
           _buildPrivacyPolicyButton(),

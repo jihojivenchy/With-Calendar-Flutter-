@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'firebase_options.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 
@@ -44,6 +45,7 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     _initLoadingIndicator();
     debugInvertOversizedImages = true;
+    AppSize.init(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

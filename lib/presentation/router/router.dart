@@ -110,7 +110,7 @@ class SignInRoute extends GoRouteData with _$SignInRoute {
           child: child,
         );
       },
-      child: const SignInScreen(),
+      child: SignInScreen(),
     );
   }
 }

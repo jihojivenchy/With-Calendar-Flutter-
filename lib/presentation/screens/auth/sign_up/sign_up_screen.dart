@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/data/services/auth/auth_service.dart';
 import 'package:with_calendar/domain/entities/auth/sign_up_information.dart';
 import 'package:with_calendar/domain/entities/memo/memo_creation.dart';
+import 'package:with_calendar/presentation/common/base/base_screen.dart';
+import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
@@ -12,157 +14,109 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/provider/sign_up_view_model.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_event.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_state.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/widgets/set_email_page.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/widgets/set_name_page.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/widgets/set_password_page.dart';
-import 'package:with_calendar/utils/services/snack_bar/snack_bar_service.dart';
+import 'package:with_calendar/utils/extensions/validation_extension.dart';
+import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 
-class SignUpScreen extends ConsumerStatefulWidget {
-  const SignUpScreen({super.key});
+class SignUpScreen extends BaseScreen with SignUpEvent {
+  SignUpScreen({super.key});
 
-  @override
-  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
-}
-
-class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final PageController _pageController = PageController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmController =
-      TextEditingController();
-
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
   @override
-  void initState() {
-    super.initState();
-    _configureControllers();
+  void onInit(WidgetRef ref) {
+    super.onInit(ref);
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    // 페이지 이동 시 포커스 이동
+    _pageController.addListener(() => _moveTextFieldFocus(ref));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _nameFocusNode.requestFocus();
     });
   }
 
   @override
-  void dispose() {
+  void onDispose(WidgetRef ref) {
     _pageController.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _passwordConfirmController.dispose();
     _nameFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
-    super.dispose();
+    super.onDispose(ref);
   }
 
-  /// 컨트롤러 설정
-  void _configureControllers() {
-    final viewModel = ref.read(signUpViewModelProvider.notifier);
+  ///
+  /// 페이지 이동 시 포커스 이동
+  ///
+  void _moveTextFieldFocus(WidgetRef ref) {
+    final pageIndex = _pageController.page?.toInt() ?? 0;
+    updatePageIndex(ref, pageIndex);
 
-    // 페이지 이동 시 포커스 이동
-    _pageController.addListener(() {
-      final pageIndex = _pageController.page?.toInt() ?? 0;
-      viewModel.updatePageIndex(pageIndex);
-
-      switch (pageIndex) {
-        case 0:
-          _nameFocusNode.requestFocus();
-          break;
-        case 1:
-          _emailFocusNode.requestFocus();
-          break;
-        case 2:
-          _passwordFocusNode.requestFocus();
-          break;
-      }
-    });
-
-    _nameController.addListener(() {
-      viewModel.updateName(_nameController.text);
-    });
-
-    _emailController.addListener(() {
-      viewModel.updateEmail(_emailController.text);
-    });
-
-    _passwordController.addListener(() {
-      viewModel.updatePassword(_passwordController.text);
-    });
-
-    _passwordConfirmController.addListener(() {
-      viewModel.updatePasswordConfirm(_passwordConfirmController.text);
-    });
-  }
-
-  void _signUp() async {
-    final result = await ref.read(signUpViewModelProvider.notifier).signUp();
-    
-    if (mounted && result) {
-      const TabRoute().go(context);
+    switch (pageIndex) {
+      case 0:
+        _nameFocusNode.requestFocus();
+        break;
+      case 1:
+        _emailFocusNode.requestFocus();
+        break;
+      case 2:
+        _passwordFocusNode.requestFocus();
+        break;
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: DefaultAppBar(title: '회원가입'),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                pageSnapping: false,
-                controller: _pageController,
-                children: [
-                  _buildSetNamePage(),
-                  _buildSetEmailPage(),
-                  _buildSetPasswordPage(),
-                ],
-              ),
-            ),
-            _buildBottomButton(),
-          ],
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        Expanded(
+          child: PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            pageSnapping: false,
+            controller: _pageController,
+            children: [
+              _buildSetNamePage(ref),
+              _buildSetEmailPage(ref),
+              _buildSetPasswordPage(ref),
+            ],
+          ),
         ),
-      ),
+        _buildBottomButton(ref),
+      ],
     );
   }
 
   ///
   /// 닉네임 및 개인정보처리방침 작성 페이지
   ///
-  Widget _buildSetNamePage() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final viewState = ref.watch(signUpViewModelProvider);
+  Widget _buildSetNamePage(WidgetRef ref) {
+    final isPrivacyPolicyAgreed = ref.watch(
+      SignUpState.informationProvider.select(
+        (value) => value.isPrivacyPolicyAgreed,
+      ),
+    );
 
-        return SetNamePage(
-          focusNode: _nameFocusNode,
-          nameController: _nameController,
-          onSubmitted: (value) {
-            FocusScope.of(context).unfocus();
-            _pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
-          isPrivacyPolicyAgreed: viewState.isPrivacyPolicyAgreed,
-          onPrivacyPolicyAgreed: (value) {
-            // 개인정보처리방침 동의 업데이트
-            ref
-                .read(signUpViewModelProvider.notifier)
-                .updatePrivacyPolicyAgreed(value);
-          },
-          onPrivacyArrowButtonTapped: () {
-            // 개인정보처리방침 링크 이동
-            ref.read(signUpViewModelProvider.notifier).goToPrivacyPolicyLink();
-          },
-        );
+    print('isPrivacyPolicyAgreed: $isPrivacyPolicyAgreed');
+
+    return SetNamePage(
+      focusNode: _nameFocusNode,
+      onNameChanged: (value) {
+        updateName(ref, value);
+      },
+      isPrivacyPolicyAgreed: isPrivacyPolicyAgreed,
+      onPrivacyPolicyAgreed: (value) {
+        // 개인정보처리방침 동의 업데이트
+        updatePrivacyPolicyAgreed(ref, value);
+      },
+      onPrivacyArrowButtonTapped: () {
+        // 개인정보처리방침 링크 이동
+        goToPrivacyPolicyLink();
       },
     );
   }
@@ -170,60 +124,67 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   ///
   /// 이메일 작성 페이지
   ///
-  Widget _buildSetEmailPage() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final viewState = ref.watch(signUpViewModelProvider);
+  Widget _buildSetEmailPage(WidgetRef ref) {
+    print('emailbuild');
 
-        return SetEmailPage(
-          focusNode: _emailFocusNode,
-          emailController: _emailController,
-          onSubmitted: (email) {
-            _emailFocusNode.unfocus();
+    return SetEmailPage(
+      focusNode: _emailFocusNode,
+      onEmailChanged: (value) {
+        updateEmail(ref, value);
+      },
+      onSubmitted: (email) {
+        // 이메일 입력 여부 검사
+        if (!email.isValidEmail) {
+          SnackBarService.showSnackBar('이메일 형식이 올바르지 않습니다.');
+          return;
+        }
 
-            if (!viewState.isEmailValid) {
-              SnackBarService.showSnackBar('이메일 형식이 올바르지 않습니다.');
-              return;
-            }
-
-            // 다음 페이지 이동
-            _pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
+        // 다음 페이지 이동
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
         );
       },
     );
   }
 
   ///
-  /// 이메일 작성 페이지
+  /// 비밀번호 작성 페이지
   ///
-  Widget _buildSetPasswordPage() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final viewState = ref.watch(signUpViewModelProvider);
+  Widget _buildSetPasswordPage(WidgetRef ref) {
+    // 비밀번호
+    final password = ref.watch(
+      SignUpState.informationProvider.select((value) => value.password),
+    );
 
-        return SetPasswordPage(
-          focusNode: _passwordFocusNode,
-          passwordController: _passwordController,
-          passwordConfirmController: _passwordConfirmController,
-          isPasswordVisible: viewState.isPasswordVisible,
-          isPasswordConfirmVisible: viewState.isPasswordConfirmVisible,
-          onPasswordVisible: (value) {
-            // 비밀번호 보여주기 토글
-            ref
-                .read(signUpViewModelProvider.notifier)
-                .togglePasswordVisibility();
-          },
-          onPasswordConfirmVisible: (value) {
-            // 비밀번호 확인 보여주기 토글
-            ref
-                .read(signUpViewModelProvider.notifier)
-                .togglePasswordConfirmVisibility();
-          },
-        );
+    // 비밀번호 보여주기 여부
+    final isPasswordVisible = ref.watch(SignUpState.isPasswordVisibleProvider);
+
+    // 비밀번호 확인 보여주기 여부
+    final isPasswordConfirmVisible = ref.watch(
+      SignUpState.isPasswordConfirmVisibleProvider,
+    );
+
+    print('passwordbuild');
+
+    return SetPasswordPage(
+      focusNode: _passwordFocusNode,
+      password: password,
+      onPasswordChanged: (value) {
+        updatePassword(ref, value);
+      },
+      onPasswordConfirmChanged: (value) {
+        updatePasswordConfirm(ref, value);
+      },
+      isPasswordVisible: isPasswordVisible,
+      isPasswordConfirmVisible: isPasswordConfirmVisible,
+      onPasswordVisible: (value) {
+        // 비밀번호 보여주기 토글
+        updatePasswordVisibility(ref, value);
+      },
+      onPasswordConfirmVisible: (value) {
+        // 비밀번호 확인 보여주기 토글
+        updatePasswordConfirmVisibility(ref, value);
       },
     );
   }
@@ -231,35 +192,31 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   ///
   /// 하단 버튼
   ///
-  Widget _buildBottomButton() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final viewState = ref.watch(signUpViewModelProvider);
+  Widget _buildBottomButton(WidgetRef ref) {
+    // 페이지 인덱스
+    final pageIndex = ref.watch(SignUpState.pageIndexProvider);
 
-        // 첫 페이지 유효성 검사 (이름 + 개인정보처리방침 동의)
-        final isFirstPageValid =
-            viewState.name.isNotEmpty && viewState.isPrivacyPolicyAgreed;
+    // 첫 페이지 유효성 검사 (이름 + 개인정보처리방침 동의)
+    final isFirstPageValid = ref.watch(SignUpState.isFirstPageValidProvider);
 
-        // 두 번째 페이지 유효성 검사 (이메일)
-        final isSecondPageValid = viewState.isEmailValid;
+    // 두 번째 페이지 유효성 검사 (이메일)
+    final isSecondPageValid = ref.watch(SignUpState.isSecondPageValidProvider);
 
-        // 세 번째 페이지 유효성 검사 (비밀번호)
-        final isThirdPageValid = viewState.isPasswordValid;
+    // 세 번째 페이지 유효성 검사 (비밀번호)
+    final isThirdPageValid = ref.watch(SignUpState.isThirdPageValidProvider);
 
-        return Padding(
-          padding: const EdgeInsets.only(
-            top: 30,
-            bottom: 16,
-            left: 16,
-            right: 16,
-          ),
-          child: switch (viewState.pageIndex) {
-            0 => _buildFirstPageButton(isEnabled: isFirstPageValid),
-            1 => _buildSecondPageButton(isEnabled: isSecondPageValid),
-            2 => _buildThirdPageButton(isEnabled: isThirdPageValid),
-            _ => const SizedBox.shrink(),
-          },
-        );
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 30,
+        bottom: AppSize.responsiveBottomInset,
+        left: 16,
+        right: 16,
+      ),
+      child: switch (pageIndex) {
+        0 => _buildFirstPageButton(isEnabled: isFirstPageValid),
+        1 => _buildSecondPageButton(isEnabled: isSecondPageValid),
+        2 => _buildThirdPageButton(ref: ref, isEnabled: isThirdPageValid),
+        _ => const SizedBox.shrink(),
       },
     );
   }
@@ -272,8 +229,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       text: '다음',
       isEnabled: isEnabled,
       onTapped: () {
-        FocusScope.of(context).unfocus();
-
+        // 다음 페이지 이동
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -321,7 +277,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   ///
   /// 세 번째 페이지 버튼 (비밀번호)
   ///
-  Widget _buildThirdPageButton({required bool isEnabled}) {
+  Widget _buildThirdPageButton({
+    required WidgetRef ref,
+    required bool isEnabled,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -342,12 +301,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           child: AppButton(
             text: '회원가입',
             isEnabled: isEnabled,
-            onTapped: _signUp,
+            onTapped: () {
+              signUp(ref);
+            },
           ),
         ),
       ],
     );
   }
 
-
+  /// 앱 바 구성
+  @override
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    return DefaultAppBar(title: '회원가입');
+  }
 }

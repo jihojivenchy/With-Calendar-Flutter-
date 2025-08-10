@@ -11,5 +11,6 @@ class SignInInformation {
     );
   }
 
-  static SignInInformation get emptyData => SignInInformation(email: '', password: '');
+  static SignInInformation get initialData =>
+      SignInInformation(email: '', password: '');
 }

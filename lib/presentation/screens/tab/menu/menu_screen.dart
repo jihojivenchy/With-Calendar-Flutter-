@@ -8,7 +8,7 @@ import 'package:with_calendar/presentation/screens/tab/menu/menu_event.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/menu_state.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/widgets/menu_item.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
-import 'package:with_calendar/utils/services/dialog/dialog_service.dart';
+import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
   const MenuScreen({super.key});

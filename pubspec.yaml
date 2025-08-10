@@ -37,6 +37,8 @@ dependencies:
 
   # 상태관리
   flutter_riverpod: ^2.6.1
+  flutter_hooks: ^0.21.2
+  hooks_riverpod: ^2.6.1
 
   # 저장소
   flutter_secure_storage: ^9.2.4
@@ -54,6 +56,7 @@ dependencies:
   bounce_tapper: ^1.1.4             
   flutter_animate: ^4.5.2
   flutter_easyloading: ^3.0.5
+  
 
   # Auth
   intl: ^0.20.2

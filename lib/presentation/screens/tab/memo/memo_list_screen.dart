@@ -10,8 +10,8 @@ import 'package:with_calendar/presentation/design_system/component/view/error_vi
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/memo_list_view_model.dart';
-import 'package:with_calendar/utils/services/dialog/dialog_service.dart';
-import 'package:with_calendar/utils/services/snack_bar/snack_bar_service.dart';
+import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
+import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import '../../../../domain/entities/memo/memo.dart';
 import 'widgets/memo_item.dart';
 

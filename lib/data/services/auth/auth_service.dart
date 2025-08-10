@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:with_calendar/data/network/error/error_type.dart';
+import 'package:with_calendar/domain/entities/auth/sign_in_information.dart';
 import 'package:with_calendar/utils/constants/firestore_constants.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 import 'package:with_calendar/utils/services/random/random_generator.dart';
@@ -13,9 +14,13 @@ class AuthService {
   ///
   /// 로그인
   ///
-  Future<void> signIn({required String email, required String password}) async {
+  Future<void> signIn(SignInInformation information) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      await _auth.signInWithEmailAndPassword(
+        email: information.email,
+        password: information.password,
+      );
+      
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':

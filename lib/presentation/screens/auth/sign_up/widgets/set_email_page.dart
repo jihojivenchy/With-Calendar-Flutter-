@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/utils/extensions/validation_extension.dart';
 
 class SetEmailPage extends StatefulWidget {
   const SetEmailPage({
     super.key,
     required this.focusNode,
-    required this.emailController,
     required this.onSubmitted,
+    required this.onEmailChanged,
   });
 
   final FocusNode focusNode;
-  final TextEditingController emailController;
   final Function(String) onSubmitted;
+  final Function(String) onEmailChanged;
 
   @override
   State<SetEmailPage> createState() => _SetEmailPageState();
@@ -36,22 +37,12 @@ class _SetEmailPageState extends State<SetEmailPage> {
             const SizedBox(height: 8),
             AppTextField(
               focusNode: widget.focusNode,
-              controller: widget.emailController,
+              onTextChanged: widget.onEmailChanged,
               placeholderText: '이메일을 입력하세요',
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (email) {
-                if (email == null || email.isEmpty) {
-                  return '이메일을 입력해주세요.';
-                }
-                if (!RegExp(
-                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(email)) {
-                  return '유효한 이메일 형식이 아닙니다.';
-                }
-                return null;
-              },
+              validator: (email) => email?.validateEmail(),
               onSubmitted: (email) => widget.onSubmitted(email),
             ),
           ],

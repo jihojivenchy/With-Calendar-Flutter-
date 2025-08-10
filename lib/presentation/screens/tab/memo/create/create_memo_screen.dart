@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/memo/memo_creation.dart';
+import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
@@ -133,7 +134,10 @@ class _CreateMemoScreenState extends ConsumerState<CreateMemoScreen> {
         );
 
         return Padding(
-          padding: const EdgeInsets.only(top: 30, bottom: 16),
+          padding: EdgeInsets.only(
+            top: 30,
+            bottom: AppSize.responsiveBottomInset,
+          ),
           child: AppButton(
             isEnabled: isValidate,
             text: '완료',
