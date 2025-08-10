@@ -122,7 +122,7 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
           Expanded(child: const LoadingView(title: '메모 목록을 불러오는 중입니다.')),
       error: (error, _) {
         log('메모 조회 실패: ${error.toString()}');
-        return Expanded(child: ErrorView(title: '불러오는 중 오류가 발생했습니다.'));
+        return Expanded(child: ErrorView(title: '조회 중 오류가 발생했습니다.'));
       },
     );
   }

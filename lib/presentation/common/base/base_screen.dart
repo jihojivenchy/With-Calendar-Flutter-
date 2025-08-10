@@ -46,7 +46,7 @@ abstract class BaseScreen extends HookConsumerWidget {
         onWillPop(ref);
       },
       child: ColoredBox(
-        color: unSafeAreaColor ?? Colors.transparent,
+        color: unSafeAreaColor ?? backgroundColor ?? Colors.transparent,
         child: wrapWithSafeArea
             ? SafeArea(
                 top: setTopSafeArea,

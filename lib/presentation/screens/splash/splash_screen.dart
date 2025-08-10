@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
-      
+
       if (_authService.isSignIn()) {
         const TabRoute().go(context);
       } else {
@@ -38,7 +38,9 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Image.asset(
             ImagePaths.logo,
             width: 300.cacheSize(context).toDouble(),
-            height: 200.cacheSize(context).toDouble(),
+            height: 300.cacheSize(context).toDouble(),
+            cacheWidth: 300.cacheSize(context),
+            cacheHeight: 300.cacheSize(context),
           ),
         ),
       ),

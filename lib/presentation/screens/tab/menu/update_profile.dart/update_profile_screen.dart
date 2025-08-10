@@ -95,7 +95,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
       ScreenState.empty => const SizedBox.shrink(),
       ScreenState.success => _buildContentView(ref),
       ScreenState.error => ErrorView(
-        title: '불러오는 중 오류가 발생했습니다.',
+        title: '조회 중 오류가 발생했습니다.',
         onRetryBtnTapped: () {
           // 프로필 다시 조회
           fetchProfile(ref);
@@ -113,7 +113,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
 
     if (profile == null) {
       return ErrorView(
-        title: '불러오는 중 오류가 발생했습니다.',
+        title: '조회 중 오류가 발생했습니다.',
         onRetryBtnTapped: () {
           // 프로필 조회
           fetchProfile(ref);
@@ -121,63 +121,61 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
       );
     }
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // 프로필 정보 입력 영역
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    // 이메일
-                    _buildReadOnlyField(title: '이메일', value: profile.email),
-                    const SizedBox(height: 24),
-
-                    // 이름
-                    AppText(
-                      text: '이름',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      textColor: Colors.black,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          // 프로필 정보 입력 영역
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  // 이메일
+                  _buildReadOnlyField(title: '이메일', value: profile.email),
+                  const SizedBox(height: 24),
+    
+                  // 이름
+                  AppText(
+                    text: '이름',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    textColor: Colors.black,
+                  ),
+                  const SizedBox(height: 10),
+                  AppTextField(
+                    initialValue: profile.name,
+                    placeholderText: '이름을 입력하세요',
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
                     ),
-                    const SizedBox(height: 10),
-                    AppTextField(
-                      initialValue: profile.name,
-                      placeholderText: '이름을 입력하세요',
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                      borderRadius: 16,
-                      borderColor: Colors.transparent,
-                      backgroundColor: Colors.white,
-                      onTextChanged: (name) => updateName(ref, name),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 유저 코드
-                    _buildUserCodeField(ref, profile.code),
-                    const SizedBox(height: 24),
-
-                    // 생성 날짜
-                    _buildReadOnlyField(
-                      title: '생성 날짜',
-                      value: profile.createdAt.toAnotherDateFormat(),
-                    ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                    borderRadius: 16,
+                    borderColor: Colors.transparent,
+                    backgroundColor: Colors.white,
+                    onTextChanged: (name) => updateName(ref, name),
+                  ),
+                  const SizedBox(height: 24),
+    
+                  // 유저 코드
+                  _buildUserCodeField(ref, profile.code),
+                  const SizedBox(height: 24),
+    
+                  // 생성 날짜
+                  _buildReadOnlyField(
+                    title: '생성 날짜',
+                    value: profile.createdAt.toAnotherDateFormat(),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
             ),
-
-            // 수정 완료 버튼
-            _buildUpdateButton(),
-          ],
-        ),
+          ),
+    
+          // 수정 완료 버튼
+          _buildUpdateButton(),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/screens/tab/memo/create/widgets/color_picker_button.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen_state.dart';
+import 'package:with_calendar/utils/extensions/string_summarization.dart';
 import '../../../../../domain/entities/memo/memo.dart';
 import '../../../../design_system/component/app_bar/app_bar.dart';
 import '../../../../design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
@@ -23,7 +24,9 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
   @override
   void onInit(WidgetRef ref) {
     super.onInit(ref);
-    updateMemo(ref, memo);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      updateMemo(ref, memo);
+    });
   }
 
   @override
@@ -34,6 +37,7 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
         children: [
           const SizedBox(height: 15),
           _buildMemoTextField(ref),
+          const SizedBox(height: 16),
           _buildCompletionButton(ref),
         ],
       ),
@@ -51,13 +55,12 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    print('앱바 다시 렌더링');
+
     return DefaultAppBar(
-      title: '',
+      title: memo.content.summaryTitle,
       backgroundColor: const Color(0xFFF2F2F7),
-      actions: [
-        _buildColorPickerButton(ref),
-        const SizedBox(width: 16),
-      ],
+      actions: [_buildColorPickerButton(ref), const SizedBox(width: 16)],
     );
   }
 
@@ -65,20 +68,26 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
   /// 핀 색상 선택 버튼
   ///
   Widget _buildColorPickerButton(WidgetRef ref) {
-    final memo = ref.watch(UpdateMemoScreenState.memoProvider);
+    final isPinned = ref.watch(
+      UpdateMemoScreenState.memoProvider.select((value) => value.isPinned),
+    );
+
+    final pinColor = ref.watch(
+      UpdateMemoScreenState.memoProvider.select((value) => value.pinColor),
+    );
 
     return ColorPickerButton(
-      isPinned: memo.isPinned,
+      isPinned: isPinned,
       onTapped: () {
-        final isPinned = !memo.isPinned;
-        updatePinState(ref, isPinned: isPinned);
+        final newPinState = !isPinned;
+        updatePinState(ref, isPinned: newPinState);
 
         // 핀 Color Picker 표시
-        if (isPinned) {
-          _showColorPickerBottomSheet(ref, memo.pinColor);
+        if (newPinState) {
+          _showColorPickerBottomSheet(ref, pinColor);
         }
       },
-      pinColor: memo.pinColor,
+      pinColor: pinColor,
     );
   }
 
@@ -86,8 +95,6 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
   /// 메모 수정 텍스트 필드
   ///
   Widget _buildMemoTextField(WidgetRef ref) {
-    final memo = ref.watch(UpdateMemoScreenState.memoProvider);
-
     return Expanded(
       child: AppTextField(
         initialValue: memo.content,
@@ -120,7 +127,7 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
     }
 
     return Padding(
-      padding: EdgeInsets.only(top: 30, bottom: AppSize.responsiveBottomInset),
+      padding: EdgeInsets.only(top: 10, bottom: AppSize.responsiveBottomInset),
       child: AppButton(
         isEnabled: isValidate,
         text: '수정하기',

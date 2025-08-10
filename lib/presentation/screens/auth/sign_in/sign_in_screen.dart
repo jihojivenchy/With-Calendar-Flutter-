@@ -152,6 +152,9 @@ class SignInScreen extends BaseScreen with SignInScreenEvent {
         ),
       ),
       validator: (value) => value?.validatePassword(),
+      onTextChanged: (value) {
+        updatePassword(ref, value);
+      },
     );
   }
 
