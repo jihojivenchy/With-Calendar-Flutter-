@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/domain/entities/auth/sign_up_information.dart';
 
 /// 회원가입 화면의 상태
-abstract class SignUpState {
+abstract class SignUpScreenState {
   // ==================== 회원가입 정보 ==========================================
   /// 회원가입 정보
   static final informationProvider =

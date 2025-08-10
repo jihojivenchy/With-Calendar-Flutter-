@@ -5,9 +5,9 @@ import 'package:with_calendar/data/services/auth/auth_service.dart';
 import 'package:with_calendar/domain/entities/auth/sign_in_information.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/router/router.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_state.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_state.dart';
 
-mixin class SignInEvent {
+mixin class SignInScreenEvent {
   final AuthService _authService = AuthService();
 
   ///
@@ -33,7 +33,7 @@ mixin class SignInEvent {
   ///
   void togglePasswordVisibility(WidgetRef ref) {
     final isPasswordVisibleProvider = ref.read(
-      SignInState.isPasswordVisibleProvider.notifier,
+      SignInScreenState.isPasswordVisibleProvider.notifier,
     );
     isPasswordVisibleProvider.state = !isPasswordVisibleProvider.state;
   }
@@ -58,8 +58,9 @@ mixin class SignInEvent {
 
   //--------------------------------Helper 메서드--------------------------------
   SignInInformation _getInformation(WidgetRef ref) =>
-      ref.read(SignInState.informationProvider.notifier).state;
+      ref.read(SignInScreenState.informationProvider.notifier).state;
 
   void _setInformation(WidgetRef ref, SignInInformation information) =>
-      ref.read(SignInState.informationProvider.notifier).state = information;
+      ref.read(SignInScreenState.informationProvider.notifier).state =
+          information;
 }

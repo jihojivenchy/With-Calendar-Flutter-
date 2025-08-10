@@ -3,7 +3,7 @@ import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/presentation/common/type/screen_state.dart';
 
 /// 프로필 수정 화면의 상태
-abstract class UpdateProfileState {
+abstract class UpdateProfileScreenState {
   /// 화면 상태
   static final screenStateProvider = StateProvider.autoDispose<ScreenState>((
     ref,

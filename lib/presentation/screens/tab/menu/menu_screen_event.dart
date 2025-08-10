@@ -11,7 +11,7 @@ import 'package:with_calendar/utils/services/random/random_generator.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 
 /// 메뉴 화면의 이벤트 (뷰 모델 역할을 수행합니다(비즈니스 로직))
-mixin class MenuEvent {
+mixin class MenuScreenEvent {
   final AuthService _authService = AuthService();
 
   ///

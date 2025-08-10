@@ -11,13 +11,13 @@ import 'package:with_calendar/presentation/design_system/component/text/app_text
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/router/router.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_event.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_state.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_event.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_state.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
 
-class SignInScreen extends BaseScreen with SignInEvent {
+class SignInScreen extends BaseScreen with SignInScreenEvent {
   SignInScreen({super.key});
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -124,8 +124,10 @@ class SignInScreen extends BaseScreen with SignInEvent {
 
   /// 비밀번호 텍스트 필드 빌드
   Widget _buildPasswordTextField(WidgetRef ref) {
-    final isPasswordVisible = ref.watch(SignInState.isPasswordVisibleProvider);
-    final isValid = ref.watch(SignInState.isValidProvider);
+    final isPasswordVisible = ref.watch(
+      SignInScreenState.isPasswordVisibleProvider,
+    );
+    final isValid = ref.watch(SignInScreenState.isValidProvider);
 
     return AppTextField(
       placeholderText: '6자 이상',
@@ -155,7 +157,7 @@ class SignInScreen extends BaseScreen with SignInEvent {
 
   /// 로그인 버튼
   Widget _buildSignInButton(WidgetRef ref) {
-    final isValid = ref.watch(SignInState.isValidProvider);
+    final isValid = ref.watch(SignInScreenState.isValidProvider);
 
     return AppButton(
       text: '로그인',

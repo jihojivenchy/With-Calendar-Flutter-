@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/domain/entities/auth/sign_in_information.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
 
-mixin class SignInState {
+mixin class SignInScreenState {
   /// 로그인 정보
   static final informationProvider =
       StateProvider.autoDispose<SignInInformation>((ref) {

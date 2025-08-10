@@ -10,7 +10,7 @@ import 'package:with_calendar/utils/services/random/random_generator.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 
 /// 프로필 수정 화면의 이벤트 (뷰 모델 역할을 수행합니다(비즈니스 로직))
-mixin class UpdateProfileEvent {
+mixin class UpdateProfileScreenEvent {
   final MenuService _menuService = MenuService();
 
   /// 프로필 조회
@@ -67,11 +67,13 @@ mixin class UpdateProfileEvent {
 
   //--------------------------------Helper 메서드--------------------------------
   Profile? _getProfile(WidgetRef ref) =>
-      ref.read(UpdateProfileState.profileProvider.notifier).state;
+      ref.read(UpdateProfileScreenState.profileProvider.notifier).state;
 
   void _setProfile(WidgetRef ref, Profile? profile) =>
-      ref.read(UpdateProfileState.profileProvider.notifier).state = profile;
+      ref.read(UpdateProfileScreenState.profileProvider.notifier).state =
+          profile;
 
   void _setScreenState(WidgetRef ref, ScreenState state) =>
-      ref.read(UpdateProfileState.screenStateProvider.notifier).state = state;
+      ref.read(UpdateProfileScreenState.screenStateProvider.notifier).state =
+          state;
 }

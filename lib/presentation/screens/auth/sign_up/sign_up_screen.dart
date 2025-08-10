@@ -13,16 +13,15 @@ import 'package:with_calendar/presentation/design_system/component/text/app_text
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/router/router.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_up/provider/sign_up_view_model.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_event.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_state.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_event.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_state.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/widgets/set_email_page.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/widgets/set_name_page.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/widgets/set_password_page.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 
-class SignUpScreen extends BaseScreen with SignUpEvent {
+class SignUpScreen extends BaseScreen with SignUpScreenEvent {
   SignUpScreen({super.key});
 
   final PageController _pageController = PageController();
@@ -92,12 +91,18 @@ class SignUpScreen extends BaseScreen with SignUpEvent {
     );
   }
 
+  /// 앱 바 구성
+  @override
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    return DefaultAppBar(title: '회원가입');
+  }
+
   ///
   /// 닉네임 및 개인정보처리방침 작성 페이지
   ///
   Widget _buildSetNamePage(WidgetRef ref) {
     final isPrivacyPolicyAgreed = ref.watch(
-      SignUpState.informationProvider.select(
+      SignUpScreenState.informationProvider.select(
         (value) => value.isPrivacyPolicyAgreed,
       ),
     );
@@ -154,15 +159,17 @@ class SignUpScreen extends BaseScreen with SignUpEvent {
   Widget _buildSetPasswordPage(WidgetRef ref) {
     // 비밀번호
     final password = ref.watch(
-      SignUpState.informationProvider.select((value) => value.password),
+      SignUpScreenState.informationProvider.select((value) => value.password),
     );
 
     // 비밀번호 보여주기 여부
-    final isPasswordVisible = ref.watch(SignUpState.isPasswordVisibleProvider);
+    final isPasswordVisible = ref.watch(
+      SignUpScreenState.isPasswordVisibleProvider,
+    );
 
     // 비밀번호 확인 보여주기 여부
     final isPasswordConfirmVisible = ref.watch(
-      SignUpState.isPasswordConfirmVisibleProvider,
+      SignUpScreenState.isPasswordConfirmVisibleProvider,
     );
 
     print('passwordbuild');
@@ -194,16 +201,22 @@ class SignUpScreen extends BaseScreen with SignUpEvent {
   ///
   Widget _buildBottomButton(WidgetRef ref) {
     // 페이지 인덱스
-    final pageIndex = ref.watch(SignUpState.pageIndexProvider);
+    final pageIndex = ref.watch(SignUpScreenState.pageIndexProvider);
 
     // 첫 페이지 유효성 검사 (이름 + 개인정보처리방침 동의)
-    final isFirstPageValid = ref.watch(SignUpState.isFirstPageValidProvider);
+    final isFirstPageValid = ref.watch(
+      SignUpScreenState.isFirstPageValidProvider,
+    );
 
     // 두 번째 페이지 유효성 검사 (이메일)
-    final isSecondPageValid = ref.watch(SignUpState.isSecondPageValidProvider);
+    final isSecondPageValid = ref.watch(
+      SignUpScreenState.isSecondPageValidProvider,
+    );
 
     // 세 번째 페이지 유효성 검사 (비밀번호)
-    final isThirdPageValid = ref.watch(SignUpState.isThirdPageValidProvider);
+    final isThirdPageValid = ref.watch(
+      SignUpScreenState.isThirdPageValidProvider,
+    );
 
     return Padding(
       padding: EdgeInsets.only(
@@ -308,11 +321,5 @@ class SignUpScreen extends BaseScreen with SignUpEvent {
         ),
       ],
     );
-  }
-
-  /// 앱 바 구성
-  @override
-  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return DefaultAppBar(title: '회원가입');
   }
 }

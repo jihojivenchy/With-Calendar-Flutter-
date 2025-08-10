@@ -4,18 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/data/services/auth/auth_service.dart';
 import 'package:with_calendar/domain/entities/auth/sign_up_information.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_state.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_state.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 
 /// 회원가입 화면의 이벤트 (뷰 모델 역할을 수행합니다(비즈니스 로직))
-mixin class SignUpEvent {
+mixin class SignUpScreenEvent {
   final AuthService _authService = AuthService();
 
   ///
   /// 페이지 인덱스 업데이트
   ///
   void updatePageIndex(WidgetRef ref, int pageIndex) {
-    ref.read(SignUpState.pageIndexProvider.notifier).state = pageIndex;
+    ref.read(SignUpScreenState.pageIndexProvider.notifier).state = pageIndex;
   }
 
   ///
@@ -68,7 +68,7 @@ mixin class SignUpEvent {
   /// 비밀번호 보여주기 토글
   ///
   void updatePasswordVisibility(WidgetRef ref, bool isPasswordVisible) {
-    ref.read(SignUpState.isPasswordVisibleProvider.notifier).state =
+    ref.read(SignUpScreenState.isPasswordVisibleProvider.notifier).state =
         isPasswordVisible;
   }
 
@@ -79,7 +79,9 @@ mixin class SignUpEvent {
     WidgetRef ref,
     bool isPasswordConfirmVisible,
   ) {
-    ref.read(SignUpState.isPasswordConfirmVisibleProvider.notifier).state =
+    ref
+            .read(SignUpScreenState.isPasswordConfirmVisibleProvider.notifier)
+            .state =
         isPasswordConfirmVisible;
   }
 
@@ -119,8 +121,9 @@ mixin class SignUpEvent {
 
   //--------------------------------Helper 메서드--------------------------------
   SignUpInformation _getInformation(WidgetRef ref) =>
-      ref.read(SignUpState.informationProvider.notifier).state;
+      ref.read(SignUpScreenState.informationProvider.notifier).state;
 
   void _setInformation(WidgetRef ref, SignUpInformation information) =>
-      ref.read(SignUpState.informationProvider.notifier).state = information;
+      ref.read(SignUpScreenState.informationProvider.notifier).state =
+          information;
 }

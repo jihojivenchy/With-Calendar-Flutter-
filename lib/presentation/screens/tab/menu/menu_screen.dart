@@ -6,13 +6,13 @@ import 'package:with_calendar/domain/entities/menu/menu_item.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/router/router.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/menu_event.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/menu_state.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/menu_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/menu_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/widgets/menu_item.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 
-class MenuScreen extends BaseScreen with MenuEvent {
+class MenuScreen extends BaseScreen with MenuScreenEvent {
   MenuScreen({super.key});
 
   @override
@@ -42,7 +42,7 @@ class MenuScreen extends BaseScreen with MenuEvent {
   /// 메뉴 리스트 빌드
   ///
   Widget _buildMenuList(WidgetRef ref) {
-    final menuList = ref.watch(MenuState.menuListProvider);
+    final menuList = ref.watch(MenuScreenState.menuListProvider);
 
     return Expanded(
       child: ListView.builder(
