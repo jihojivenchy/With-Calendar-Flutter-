@@ -1,307 +1,156 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:with_calendar/presentation/common/base/base_screen.dart';
+import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
+import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
+import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/create/widgets/color_picker_button.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen_state.dart';
 import '../../../../../domain/entities/memo/memo.dart';
 import '../../../../design_system/component/app_bar/app_bar.dart';
 import '../../../../design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
 import '../../../../design_system/component/text/app_text.dart';
 import '../../../../design_system/foundation/app_color.dart';
 
-class UpdateMemoScreen extends StatefulWidget {
-  const UpdateMemoScreen({super.key, required this.memo});
+class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
+  UpdateMemoScreen({super.key, required this.memo});
 
   final Memo memo;
 
   @override
-  State<UpdateMemoScreen> createState() => _UpdateMemoScreenState();
-}
-
-class _UpdateMemoScreenState extends State<UpdateMemoScreen> {
-  late TextEditingController titleController;
-  late TextEditingController contentController;
-  late bool isPinned;
-  late Color pinColor;
-
-  bool isTitleEditing = false;
-  bool isContentEditing = false;
-
-  final FocusNode titleFocusNode = FocusNode();
-  final FocusNode contentFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    contentController = TextEditingController(text: widget.memo.content);
-    isPinned = widget.memo.isPinned;
-    pinColor = widget.memo.pinColor;
-
-    // 포커스 리스너 설정
-    titleFocusNode.addListener(() {
-      if (!titleFocusNode.hasFocus) {
-        setState(() {
-          isTitleEditing = false;
-        });
-      }
-    });
-
-    contentFocusNode.addListener(() {
-      if (!contentFocusNode.hasFocus) {
-        setState(() {
-          isContentEditing = false;
-        });
-      }
-    });
+  void onInit(WidgetRef ref) {
+    super.onInit(ref);
+    updateMemo(ref, memo);
   }
 
   @override
-  void dispose() {
-    titleController.dispose();
-    contentController.dispose();
-    titleFocusNode.dispose();
-    contentFocusNode.dispose();
-    super.dispose();
-  }
-
-  void showColorPicker() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return ColorPickerBottomSheet(
-          selectedColor: pinColor,
-          onColorSelected: (Color color) {
-            setState(() {
-              pinColor = color;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: DefaultAppBar(title: '메모 수정'),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 제목 섹션
-              _buildTitleSection(),
-              const SizedBox(height: 24),
-
-              // 내용 섹션
-              _buildContentSection(),
-              const SizedBox(height: 24),
-
-              // 핀 설정 섹션
-              _buildPinSection(),
-              const SizedBox(height: 16),
-
-              // 작성 날짜
-              AppText(
-                text: '작성일: ${widget.memo.createdAt}',
-                fontSize: 12,
-                textColor: AppColors.color727577,
-                fontWeight: FontWeight.w400,
-              ),
-            ],
-          ),
-        ),
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          const SizedBox(height: 15),
+          _buildMemoTextField(ref),
+          _buildCompletionButton(ref),
+        ],
       ),
     );
   }
 
-  Widget _buildTitleSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AppText(text: '제목', fontSize: 16, fontWeight: FontWeight.w600),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isTitleEditing = true;
-            });
-            titleFocusNode.requestFocus();
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isTitleEditing ? Colors.white : Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isTitleEditing
-                    ? AppColors.primary
-                    : Colors.grey.shade200,
-                width: isTitleEditing ? 2 : 1,
-              ),
-            ),
-            child: isTitleEditing
-                ? TextField(
-                    controller: titleController,
-                    focusNode: titleFocusNode,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '제목을 입력하세요',
-                    ),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                : AppText(
-                    text: titleController.text.isEmpty
-                        ? '제목을 입력하세요'
-                        : titleController.text,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    textColor: titleController.text.isEmpty
-                        ? Colors.grey
-                        : Colors.black,
-                  ),
-          ),
-        ),
+  ///
+  /// 배경색
+  ///
+  @override
+  Color? get backgroundColor => const Color(0xFFF2F2F7);
+
+  ///
+  /// 앱바
+  ///
+  @override
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    return DefaultAppBar(
+      title: '',
+      backgroundColor: const Color(0xFFF2F2F7),
+      actions: [
+        _buildColorPickerButton(ref),
+        const SizedBox(width: 16),
       ],
     );
   }
 
-  Widget _buildContentSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AppText(text: '내용', fontSize: 16, fontWeight: FontWeight.w600),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isContentEditing = true;
-            });
-            contentFocusNode.requestFocus();
-          },
-          child: Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(minHeight: 200),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isContentEditing ? Colors.white : Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isContentEditing
-                    ? AppColors.primary
-                    : Colors.grey.shade200,
-                width: isContentEditing ? 2 : 1,
-              ),
-            ),
-            child: isContentEditing
-                ? TextField(
-                    controller: contentController,
-                    focusNode: contentFocusNode,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '내용을 입력하세요',
-                    ),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  )
-                : AppText(
-                    text: contentController.text.isEmpty
-                        ? '내용을 입력하세요'
-                        : contentController.text,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    textColor: contentController.text.isEmpty
-                        ? Colors.grey
-                        : Colors.black,
-                  ),
-          ),
-        ),
-      ],
+  ///
+  /// 핀 색상 선택 버튼
+  ///
+  Widget _buildColorPickerButton(WidgetRef ref) {
+    final memo = ref.watch(UpdateMemoScreenState.memoProvider);
+
+    return ColorPickerButton(
+      isPinned: memo.isPinned,
+      onTapped: () {
+        final isPinned = !memo.isPinned;
+        updatePinState(ref, isPinned: isPinned);
+
+        // 핀 Color Picker 표시
+        if (isPinned) {
+          _showColorPickerBottomSheet(ref, memo.pinColor);
+        }
+      },
+      pinColor: memo.pinColor,
     );
   }
 
-  Widget _buildPinSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AppText(text: '중요 설정', fontSize: 16, fontWeight: FontWeight.w600),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() {
-                  isPinned = !isPinned;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: isPinned
-                      ? pinColor.withOpacity(0.1)
-                      : Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: isPinned ? pinColor : Colors.grey.shade300,
-                    width: 2,
-                  ),
-                ),
-                child: Icon(
-                  isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-                  color: isPinned ? pinColor : Colors.grey.shade600,
-                  size: 24,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: AppText(
-                text: isPinned ? '중요한 메모로 설정됨' : '중요한 메모로 설정',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                textColor: isPinned ? pinColor : Colors.grey.shade600,
-              ),
-            ),
-            if (isPinned) ...[
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: showColorPicker,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: pinColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey.shade300, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.palette,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
+  ///
+  /// 메모 수정 텍스트 필드
+  ///
+  Widget _buildMemoTextField(WidgetRef ref) {
+    final memo = ref.watch(UpdateMemoScreenState.memoProvider);
+
+    return Expanded(
+      child: AppTextField(
+        initialValue: memo.content,
+        placeholderText: '내용을 입력하세요',
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        backgroundColor: Colors.white,
+        borderColor: Colors.transparent,
+        onTextChanged: (content) {
+          updateContent(ref, content);
+        },
+        onFocusChanged: (isFocused) {
+          if (isFocused) {
+            updateStarted(ref);
+          }
+        },
+      ),
+    );
+  }
+
+  ///
+  /// 메모 수정 완료 버튼
+  ///
+  Widget _buildCompletionButton(WidgetRef ref) {
+    final isStarted = ref.watch(UpdateMemoScreenState.isStartedProvider);
+    final isValidate = ref.watch(UpdateMemoScreenState.isValidProvider);
+
+    if (!isStarted) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(top: 30, bottom: AppSize.responsiveBottomInset),
+      child: AppButton(
+        isEnabled: isValidate,
+        text: '수정하기',
+        onTapped: () => update(ref),
+      ),
+    );
+  }
+
+  // ================================바텀 시트====================================
+  ///
+  /// 컬러 피커 바텀시트
+  ///
+  void _showColorPickerBottomSheet(WidgetRef ref, Color pinColor) {
+    FocusScope.of(ref.context).unfocus();
+
+    showModalBottomSheet(
+      context: ref.context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return ColorPickerBottomSheet(
+          selectedColor: pinColor,
+          onColorSelected: (color) {
+            ref.context.pop();
+            updatePinState(ref, pinColor: color);
+          },
+        );
+      },
     );
   }
 }

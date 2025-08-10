@@ -6,8 +6,8 @@ import 'package:with_calendar/presentation/common/type/screen_state.dart';
 abstract class UpdateProfileScreenState {
   /// 화면 상태
   static final screenStateProvider = StateProvider.autoDispose<ScreenState>((
-    ref,
-  ) {
+      ref,
+      ) {
     return ScreenState.loading;
   });
 

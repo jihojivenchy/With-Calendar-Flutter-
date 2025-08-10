@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:with_calendar/data/services/menu/menu_service.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/presentation/common/type/screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_state.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_screen_state.dart';
 import 'package:with_calendar/utils/services/random/random_generator.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 

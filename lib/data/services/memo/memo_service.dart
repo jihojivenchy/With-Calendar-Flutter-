@@ -62,4 +62,28 @@ class MemoService {
           'createdAt': createdAt,
         });
   }
+
+  ///
+  /// 메모 수정
+  ///
+  Future<void> update(Memo memo) async {
+    final userUID = _auth.currentUser?.uid;
+    if (userUID == null) {
+      throw FirebaseAuthErrorType('로그인 상태가 아닙니다.');
+    }
+
+    final updatedAt = DateTime.now().toStringFormat('yyyy-MM-dd HH:mm:ss');
+
+    await _firestore
+        .collection(FirestoreConstants.memoCollection)
+        .doc(userUID)
+        .collection(FirestoreConstants.memoCollection)
+        .doc(memo.id)
+        .update({
+          'content': memo.content,
+          'isPinned': memo.isPinned,
+          'pinColor': memo.pinColor.toARGB32(), // 32비트 색상 값으로 변환
+          'createdAt': updatedAt,
+        });
+  }
 }

@@ -20,11 +20,17 @@ class SetEmailPage extends StatefulWidget {
   State<SetEmailPage> createState() => _SetEmailPageState();
 }
 
-class _SetEmailPageState extends State<SetEmailPage> {
+class _SetEmailPageState extends State<SetEmailPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    
     return Form(
       key: _formKey,
       child: Padding(

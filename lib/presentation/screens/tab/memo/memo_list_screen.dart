@@ -1,98 +1,99 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/router/router.dart';
-import 'package:with_calendar/presentation/screens/tab/memo/memo_list_view_model.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/memo_list_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/memo_list_screen_state.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
-import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import '../../../../domain/entities/memo/memo.dart';
 import 'widgets/memo_item.dart';
 
-class MemoListScreen extends ConsumerStatefulWidget {
-  const MemoListScreen({super.key});
+class MemoListScreen extends BaseScreen with MemoListScreenEvent {
+  MemoListScreen({super.key});
 
   @override
-  ConsumerState<MemoListScreen> createState() => _MemoListScreenState();
-}
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    useAutomaticKeepAlive();
 
-class _MemoListScreenState extends ConsumerState<MemoListScreen>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F7),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  AppText(
-                    text: '메모',
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.search,
-                            size: 24,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () {
-                          CreateMemoRoute().push(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.add,
-                            size: 24,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              _buildMemoList(),
-            ],
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 상단 섹션 (앱 바)
+          _buildTopSection(ref),
+          // 메모 리스트
+          _buildMemoList(ref),
+        ],
       ),
+    );
+  }
+
+  @override
+  Color? get backgroundColor => const Color(0xFFF2F2F7);
+
+  ///
+  /// 상단 섹션
+  ///
+  Widget _buildTopSection(WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 15),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            AppText(text: '메모', fontSize: 28, fontWeight: FontWeight.w800),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(
+                      Icons.search,
+                      size: 24,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    CreateMemoRoute().push(ref.context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(
+                      Icons.add,
+                      size: 24,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   ///
   /// 메모 리스트
   ///
-  Widget _buildMemoList() {
-    final memoListAsync = ref.watch(memoListStateProvider);
+  Widget _buildMemoList(WidgetRef ref) {
+    final memoListAsync = ref.watch(MemoListScreenState.memoListProvider);
 
     return memoListAsync.when(
       data: (memoList) {
@@ -110,7 +111,7 @@ class _MemoListScreenState extends ConsumerState<MemoListScreen>
                 onTapped: () {
                   context.push(UpdateMemoRoute().location, extra: memo);
                 },
-                onLongPressed: () => _showDeleteDialog(index),
+                onLongPressed: () => _showDeleteDialog(ref, index),
               );
             },
             separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -130,7 +131,7 @@ class _MemoListScreenState extends ConsumerState<MemoListScreen>
   ///
   /// 메모 삭제 다이얼로그
   ///
-  void _showDeleteDialog(int index) {
+  void _showDeleteDialog(WidgetRef ref, int index) {
     DialogService.show(
       dialog: AppDialog.doubleBtn(
         title: '메모 삭제',
@@ -139,12 +140,12 @@ class _MemoListScreenState extends ConsumerState<MemoListScreen>
         rightBtnContent: '삭제',
         rightBtnColor: const Color(0xFFEF4444),
         onRightBtnClicked: () {
-          context.pop();
+          ref.context.pop();
           // setState(() {
           //   _memoList.removeAt(index);
           // });
         },
-        onLeftBtnClicked: () => context.pop(),
+        onLeftBtnClicked: () => ref.context.pop(),
       ),
     );
   }

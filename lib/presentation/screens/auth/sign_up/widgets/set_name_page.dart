@@ -3,7 +3,7 @@ import 'package:with_calendar/presentation/design_system/component/text/app_text
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 
-class SetNamePage extends StatelessWidget {
+class SetNamePage extends StatefulWidget {
   const SetNamePage({
     super.key,
     required this.focusNode,
@@ -20,7 +20,18 @@ class SetNamePage extends StatelessWidget {
   final VoidCallback onPrivacyArrowButtonTapped;
 
   @override
+  State<SetNamePage> createState() => _SetNamePageState();
+}
+
+class _SetNamePageState extends State<SetNamePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -30,9 +41,9 @@ class SetNamePage extends StatelessWidget {
           const AppText(text: '닉네임', fontSize: 18),
           const SizedBox(height: 8),
           AppTextField(
-            focusNode: focusNode,
+            focusNode: widget.focusNode,
             placeholderText: '닉네임을 입력하세요',
-            onTextChanged: onNameChanged,
+            onTextChanged: widget.onNameChanged,
           ),
           const SizedBox(height: 40),
           _buildPrivacyPolicyButton(),
@@ -53,7 +64,7 @@ class SetNamePage extends StatelessWidget {
         children: [
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => onPrivacyPolicyAgreed(!isPrivacyPolicyAgreed),
+            onTap: () => widget.onPrivacyPolicyAgreed(!widget.isPrivacyPolicyAgreed),
             child: Row(
               children: [
                 Container(
@@ -62,16 +73,16 @@ class SetNamePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isPrivacyPolicyAgreed
+                      color: widget.isPrivacyPolicyAgreed
                           ? AppColors.primary
                           : AppColors.colord2d5d7,
                       width: 1,
                     ),
-                    color: isPrivacyPolicyAgreed
+                    color: widget.isPrivacyPolicyAgreed
                         ? AppColors.primary
                         : Colors.transparent,
                   ),
-                  child: isPrivacyPolicyAgreed
+                  child: widget.isPrivacyPolicyAgreed
                       ? const Icon(Icons.check, color: Colors.white, size: 16)
                       : null,
                 ),
@@ -85,7 +96,7 @@ class SetNamePage extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: onPrivacyArrowButtonTapped,
+            onTap: widget.onPrivacyArrowButtonTapped,
             child: Container(
               padding: const EdgeInsets.all(4),
               child: const Icon(

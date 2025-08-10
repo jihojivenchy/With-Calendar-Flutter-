@@ -30,11 +30,17 @@ class SetPasswordPage extends StatefulWidget {
   State<SetPasswordPage> createState() => _SetPasswordPageState();
 }
 
-class _SetPasswordPageState extends State<SetPasswordPage> {
+class _SetPasswordPageState extends State<SetPasswordPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
