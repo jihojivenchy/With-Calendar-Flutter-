@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/menu/menu_item.dart';
+import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/menu_event.dart';
@@ -10,74 +12,62 @@ import 'package:with_calendar/presentation/screens/tab/menu/widgets/menu_item.da
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 
-class MenuScreen extends ConsumerStatefulWidget {
-  const MenuScreen({super.key});
+class MenuScreen extends BaseScreen with MenuEvent {
+  MenuScreen({super.key});
 
   @override
-  ConsumerState<MenuScreen> createState() => _MenuScreenState();
-}
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    useAutomaticKeepAlive();
 
-class _MenuScreenState extends ConsumerState<MenuScreen>
-    with AutomaticKeepAliveClientMixin, MenuEvent {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F7),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 15),
-              AppText(text: '메뉴', fontSize: 28, fontWeight: FontWeight.w800),
-              _buildMenuList(),
-            ],
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 15),
+          AppText(text: '메뉴', fontSize: 28, fontWeight: FontWeight.w800),
+          _buildMenuList(ref),
+        ],
       ),
     );
   }
 
   ///
+  /// 배경색
+  ///
+  @override
+  Color? get backgroundColor => const Color(0xFFF2F2F7);
+
+  ///
   /// 메뉴 리스트 빌드
   ///
-  Widget _buildMenuList() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final menuList = ref.watch(MenuState.menuListProvider);
+  Widget _buildMenuList(WidgetRef ref) {
+    final menuList = ref.watch(MenuState.menuListProvider);
 
-        return Expanded(
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(top: 16, bottom: 30),
-            itemCount: menuList.length,
-            itemBuilder: (context, index) {
-              final menu = menuList[index];
+    return Expanded(
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.only(top: 16, bottom: 30),
+        itemCount: menuList.length,
+        itemBuilder: (context, index) {
+          final menu = menuList[index];
 
-              return MenuItem(
-                menu: menu,
-                onTapped: () => _handleMenuTapped(menu),
-              );
-            },
-          ),
-        );
-      },
+          return MenuItem(
+            menu: menu,
+            onTapped: () => _handleMenuTapped(ref, menu),
+          );
+        },
+      ),
     );
   }
 
   ///
   /// 메뉴 탭 처리
   ///
-  void _handleMenuTapped(Menu menu) {
+  void _handleMenuTapped(WidgetRef ref, Menu menu) {
     switch (menu.type) {
       case MenuType.profile:
-        UpdateProfileRoute().push(context);
+        UpdateProfileRoute().push(ref.context);
         break;
       case MenuType.notification:
         print('notification');
@@ -92,10 +82,10 @@ class _MenuScreenState extends ConsumerState<MenuScreen>
         goToPrivacyPolicyLink();
         break;
       case MenuType.signOut:
-        _showSignOutDialog();
+        _showSignOutDialog(ref);
         break;
       case MenuType.signIn:
-        const SignInRoute().push(context);
+        const SignInRoute().push(ref.context);
         break;
     }
   }
@@ -104,7 +94,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen>
   ///
   /// 로그아웃 다이얼로그
   ///
-  void _showSignOutDialog() {
+  void _showSignOutDialog(WidgetRef ref) {
     DialogService.show(
       dialog: AppDialog.doubleBtn(
         title: '로그아웃',
@@ -113,10 +103,10 @@ class _MenuScreenState extends ConsumerState<MenuScreen>
         rightBtnContent: '로그아웃',
         rightBtnColor: const Color(0xFFEF4444),
         onRightBtnClicked: () {
-          context.pop();
+          ref.context.pop();
           signOut();
         },
-        onLeftBtnClicked: () => context.pop(),
+        onLeftBtnClicked: () => ref.context.pop(),
       ),
     );
   }
