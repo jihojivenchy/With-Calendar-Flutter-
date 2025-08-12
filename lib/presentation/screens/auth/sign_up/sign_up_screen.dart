@@ -107,8 +107,6 @@ class SignUpScreen extends BaseScreen with SignUpScreenEvent {
       ),
     );
 
-    print('이름 페이지 재빌드');
-
     return SetNamePage(
       focusNode: _nameFocusNode,
       onNameChanged: (value) {
@@ -130,8 +128,6 @@ class SignUpScreen extends BaseScreen with SignUpScreenEvent {
   /// 이메일 작성 페이지
   ///
   Widget _buildSetEmailPage(WidgetRef ref) {
-    print('이메일 페이지 재빌드');
-
     return SetEmailPage(
       focusNode: _emailFocusNode,
       onEmailChanged: (value) {
@@ -171,8 +167,6 @@ class SignUpScreen extends BaseScreen with SignUpScreenEvent {
     final isPasswordConfirmVisible = ref.watch(
       SignUpScreenState.isPasswordConfirmVisibleProvider,
     );
-
-    print('비밀번호 페이지 재빌드');
 
     return SetPasswordPage(
       focusNode: _passwordFocusNode,

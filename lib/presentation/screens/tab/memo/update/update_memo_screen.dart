@@ -55,8 +55,6 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    print('앱바 다시 렌더링');
-
     return DefaultAppBar(
       title: memo.content.summaryTitle,
       backgroundColor: const Color(0xFFF2F2F7),
@@ -68,10 +66,12 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
   /// 핀 색상 선택 버튼
   ///
   Widget _buildColorPickerButton(WidgetRef ref) {
+    // 고정 여부
     final isPinned = ref.watch(
       UpdateMemoScreenState.memoProvider.select((value) => value.isPinned),
     );
 
+    // 핀 색상
     final pinColor = ref.watch(
       UpdateMemoScreenState.memoProvider.select((value) => value.pinColor),
     );
@@ -79,6 +79,10 @@ class UpdateMemoScreen extends BaseScreen with UpdateMemoScreenEvent {
     return ColorPickerButton(
       isPinned: isPinned,
       onTapped: () {
+        // 수정 시작으로 인한 버튼 활성화
+        updateStarted(ref);
+
+        // 고정 상태 변경
         final newPinState = !isPinned;
         updatePinState(ref, isPinned: newPinState);
 

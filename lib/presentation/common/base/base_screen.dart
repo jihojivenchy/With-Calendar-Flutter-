@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 
 /// 앱 화면의 기본 템플릿 클래스
 abstract class BaseScreen extends HookConsumerWidget {
@@ -60,7 +59,8 @@ abstract class BaseScreen extends HookConsumerWidget {
 
   Widget _buildScaffold(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      extendBody: extendBodyBehindAppBar,
+      extendBody: extendBody,
+      extendBodyBehindAppBar: extendBodyBehindAppBar,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       appBar: buildAppBar(context, ref),
       body: buildBody(context, ref),
@@ -99,6 +99,10 @@ abstract class BaseScreen extends HookConsumerWidget {
   /// 플로팅 액션 버튼의 위치를 설정
   @protected
   FloatingActionButtonLocation? get floatingActionButtonLocation => null;
+
+  /// Scaffold의 확장 여부를 설정
+  @protected
+  bool get extendBody => false;
 
   /// 앱 바 아래의 콘텐츠가 앱 바 뒤로 표시되는지 여부를 설정
   @protected

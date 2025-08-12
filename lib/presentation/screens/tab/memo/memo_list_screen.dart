@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
+import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
@@ -21,70 +22,57 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
   MemoListScreen({super.key});
 
   @override
-  Widget buildBody(BuildContext context, WidgetRef ref) {
-    useAutomaticKeepAlive();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 상단 섹션 (앱 바)
-          _buildTopSection(ref),
-          // 메모 리스트
-          _buildMemoList(ref),
-        ],
-      ),
-    );
+  void onInit(WidgetRef ref) {
+    super.onInit(ref);
+    subscribeMemoList(ref); // 메모 리스트 구독
   }
 
+  @override
+  void onDispose(WidgetRef ref) {
+    super.onDispose(ref);
+    disposeSubscription(ref); // 메모 리스트 구독 해제
+  }
+
+  @override
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    useAutomaticKeepAlive();
+    return _buildMemoList(ref);
+  }
+
+  ///
+  /// 배경색 설정
+  ///
   @override
   Color? get backgroundColor => const Color(0xFFF2F2F7);
 
   ///
-  /// 상단 섹션
+  /// 앱 바 구성
   ///
-  Widget _buildTopSection(WidgetRef ref) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 15),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            AppText(text: '메모', fontSize: 28, fontWeight: FontWeight.w800),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Icon(
-                      Icons.search,
-                      size: 24,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () {
-                    CreateMemoRoute().push(ref.context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: const Icon(
-                      Icons.add,
-                      size: 24,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+  @override
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    return DefaultAppBar(
+      title: '메모',
+      fontSize: 28,
+      fontWeight: FontWeight.w800,
+      actions: [
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            child: const Icon(Icons.search, size: 24, color: Colors.black54),
+          ),
         ),
+        const SizedBox(width: 20),
+        GestureDetector(
+          onTap: () {
+            CreateMemoRoute().push(ref.context);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            child: const Icon(Icons.add, size: 24, color: Colors.black54),
+          ),
+        ),
+        const SizedBox(width: 16),
       ],
     );
   }
@@ -102,7 +90,12 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
         }
         return Expanded(
           child: ListView.separated(
-            padding: const EdgeInsets.only(top: 16, bottom: 30),
+            padding: const EdgeInsets.only(
+              top: 16,
+              left: 16,
+              right: 16,
+              bottom: 30,
+            ),
             itemCount: memoList.length,
             itemBuilder: (BuildContext context, int index) {
               final Memo memo = memoList[index];
@@ -122,7 +115,12 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
           Expanded(child: const LoadingView(title: '메모 목록을 불러오는 중입니다.')),
       error: (error, _) {
         log('메모 조회 실패: ${error.toString()}');
-        return Expanded(child: ErrorView(title: '조회 중 오류가 발생했습니다.'));
+        return Expanded(
+          child: ErrorView(
+            title: '조회 중 오류가 발생했습니다.',
+            onRetryBtnTapped: () => retry(ref), // 재시도
+          ),
+        );
       },
     );
   }

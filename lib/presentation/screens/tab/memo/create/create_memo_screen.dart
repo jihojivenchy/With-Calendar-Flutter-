@@ -53,20 +53,29 @@ class CreateMemoScreen extends BaseScreen with CreateMemoScreenEvent {
   /// 핀 색상 선택 버튼
   ///
   Widget _buildColorPickerButton(WidgetRef ref) {
-    final memo = ref.watch(CreateMemoScreenState.memoProvider);
+     // 고정 여부
+    final isPinned = ref.watch(
+      CreateMemoScreenState.memoProvider.select((value) => value.isPinned),
+    );
+
+    // 핀 색상
+    final pinColor = ref.watch(
+      CreateMemoScreenState.memoProvider.select((value) => value.pinColor),
+    );
 
     return ColorPickerButton(
-      isPinned: memo.isPinned,
+      isPinned: isPinned,
       onTapped: () {
-        final isPinned = !memo.isPinned;
-        updatePinState(ref, isPinned: isPinned);
+        // 고정 상태 변경
+        final newPinState = !isPinned;
+        updatePinState(ref, isPinned: newPinState);
 
         // 핀 Color Picker 표시
-        if (isPinned) {
-          _showColorPickerBottomSheet(ref, memo.pinColor);
+        if (newPinState) {
+          _showColorPickerBottomSheet(ref, pinColor);
         }
       },
-      pinColor: memo.pinColor,
+      pinColor: pinColor,
     );
   }
 

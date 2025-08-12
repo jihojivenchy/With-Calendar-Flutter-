@@ -7,6 +7,7 @@ import 'package:with_calendar/utils/constants/image_paths.dart';
 class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final double fontSize;
+  final FontWeight fontWeight;
   final List<Widget>? actions;
   final VoidCallback? onBackPressed;
   final bool isShowBackButton;
@@ -18,6 +19,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.title,
     this.fontSize = 16,
+    this.fontWeight = FontWeight.w700,
     this.actions,
     this.onBackPressed,
     this.isShowBackButton = true,
@@ -34,7 +36,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: backgroundColor,
       backgroundColor: backgroundColor,
       titleSpacing: -10,
-      title: AppText(text: title, fontSize: fontSize),
+      title: AppText(text: title, fontSize: fontSize, fontWeight: fontWeight),
       leading: isShowBackButton
           ? IconButton(
               icon: Image.asset(ImagePaths.arrowLeft, width: 20, height: 20),
