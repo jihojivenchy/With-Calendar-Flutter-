@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/memo/memo.dart';
-import 'package:with_calendar/presentation/screens/auth/sign_in/find_password/find_password_screen.dart';
+import 'package:with_calendar/presentation/screens/auth/sign_in/find_password/find_pw_screen.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen.dart';
 import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 
@@ -24,10 +25,10 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             AppText(
               text: title,
+              textAlign: TextAlign.center,
               fontSize: 17,
               fontWeight: FontWeight.w600,
               textColor: const Color(0xFF898989),
-              textAlign: TextAlign.center,
             ),
             if (onRetryBtnTapped != null) ...[
               const SizedBox(height: 24),
@@ -41,7 +42,10 @@ class ErrorView extends StatelessWidget {
 
   Widget _buildRetryButton() {
     return GestureDetector(
-      onTap: onRetryBtnTapped,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onRetryBtnTapped?.call();
+      },
       child: Container(
         width: 140,
         height: 44,

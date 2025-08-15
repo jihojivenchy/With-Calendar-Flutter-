@@ -20,6 +20,7 @@ class EmptyView extends StatelessWidget {
           const SizedBox(height: 16),
           AppText(
             text: title,
+            textAlign: TextAlign.center,
             fontSize: 16,
             fontWeight: FontWeight.w500,
             textColor: const Color(0xFF898989),

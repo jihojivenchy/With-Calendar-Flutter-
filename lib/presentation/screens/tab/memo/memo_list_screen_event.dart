@@ -53,6 +53,14 @@ mixin class MemoListScreenEvent {
     subscribeMemoList(ref);
   }
 
+  ///
+  /// 메모 삭제
+  ///
+  Future<void> deleteMemo(WidgetRef ref, String memoID) async {
+    await _memoService.deleteMemo(memoID);
+    retry(ref);
+  }
+
   //--------------------------------Helper 메서드--------------------------------
   StreamSubscription<List<Memo>>? _getSubscription(WidgetRef ref) =>
       ref.read(MemoListScreenState.subscriptionProvider.notifier).state;

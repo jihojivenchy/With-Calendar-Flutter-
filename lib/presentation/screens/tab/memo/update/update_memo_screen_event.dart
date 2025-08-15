@@ -48,7 +48,7 @@ mixin class UpdateMemoScreenEvent {
   Future<void> update(WidgetRef ref) async {
     try {
       // 메모 수정
-      await _memoService.update(_getMemo(ref));
+      await _memoService.updateMemo(_getMemo(ref));
 
       // 메모 수정 완료 후 화면 이동
       if (ref.context.mounted) {

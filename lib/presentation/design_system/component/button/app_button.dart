@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 
@@ -46,7 +47,12 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: isEnabled ? onTapped : null,
+      onTap: () {
+        if (isEnabled) {
+          HapticFeedback.lightImpact();
+          onTapped();
+        }
+      },
       child: Container(
         width: width,
         height: height,
