@@ -1,0 +1,75 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/utils/extensions/date_extension.dart';
+
+///
+/// 일정 알림 선택 뷰
+///
+class ScheduleNotificationView extends StatelessWidget {
+  const ScheduleNotificationView({
+    super.key,
+    required this.scheduleType,
+    required this.allDayType,
+    required this.timeType,
+    required this.onTapped,
+    required this.lineColor,
+  });
+
+  final ScheduleType scheduleType;
+  final AllDayNotificationType allDayType;
+  final TimeNotificationType timeType;
+  final VoidCallback onTapped;
+
+  final Color lineColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTapped,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            bottom: BorderSide(color: lineColor, width: 0.5),
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Row(
+          children: [
+            Icon(Icons.alarm_add, color: lineColor, size: 20),
+            const SizedBox(width: 15),
+            AppText(
+              text: '알림',
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              textColor: lineColor,
+            ),
+            const Spacer(),
+
+            // 하루 종일 모드인 경우
+            if (scheduleType == ScheduleType.allDay) ...[
+              AppText(
+                text: allDayType.displayText,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                textColor: lineColor,
+              ),
+            ] else ...[
+              // 시간 모드인 경우
+              AppText(
+                text: timeType.displayText,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                textColor: lineColor,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

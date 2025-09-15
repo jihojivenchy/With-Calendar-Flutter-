@@ -19,9 +19,9 @@ class MemoService with BaseFirestoreMixin {
   ///
   Stream<List<Memo>> fetchMemoList() {
     return firestore
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(getUserUID)
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .orderBy('isPinned', descending: true)
         .orderBy('createdAt', descending: true)
         .snapshots()
@@ -38,9 +38,9 @@ class MemoService with BaseFirestoreMixin {
     final createdAt = DateTime.now().toStringFormat('yyyy-MM-dd HH:mm:ss');
 
     await firestore
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(getUserUID)
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(memoID)
         .set({
           'id': memoID,
@@ -58,9 +58,9 @@ class MemoService with BaseFirestoreMixin {
     final updatedAt = DateTime.now().toStringFormat('yyyy-MM-dd HH:mm:ss');
 
     await firestore
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(getUserUID)
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(memo.id)
         .update({
           'content': memo.content,
@@ -75,9 +75,9 @@ class MemoService with BaseFirestoreMixin {
   ///
   Future<void> deleteMemo(String memoID) async {
     await firestore
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(getUserUID)
-        .collection(FirestoreConstants.memoCollection)
+        .collection(FirestoreCollection.memo)
         .doc(memoID)
         .delete();
   }

@@ -1,14 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
+import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/type/screen_state.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
+import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
@@ -21,6 +24,9 @@ import 'package:with_calendar/utils/extensions/date_extension.dart';
 class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
   UpdateProfileScreen({super.key});
 
+  ///
+  /// 초기화
+  ///
   @override
   void onInit(WidgetRef ref) {
     super.onInit(ref);
@@ -31,27 +37,6 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
     });
   }
 
-  @override
-  Widget buildBody(BuildContext context, WidgetRef ref) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      switchInCurve: Curves.easeInOut,
-      switchOutCurve: Curves.easeInOut,
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.1),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        );
-      },
-      child: _buildScreen(ref),
-    );
-  }
 
   ///
   /// 배경색
@@ -70,7 +55,10 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
       actions: [
         // 회원 탈퇴
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            HapticFeedback.heavyImpact();
+            _showWithdrawDialog(ref);
+          },
           child: const AppText(
             text: '탈퇴',
             fontSize: 14,
@@ -85,42 +73,43 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
   }
 
   ///
-  /// 화면 상태에 따른 처리
+  /// 본문
   ///
-  Widget _buildScreen(WidgetRef ref) {
-    final screenState = ref.watch(UpdateProfileScreenState.screenStateProvider);
+  @override
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(UpdateProfileScreenState.profileProvider);
 
-    return switch (screenState) {
-      ScreenState.loading => const LoadingView(title: '프로필 정보를 불러오는 중입니다.'),
-      ScreenState.empty => const SizedBox.shrink(),
-      ScreenState.success => _buildContentView(ref),
-      ScreenState.error => ErrorView(
-        title: '조회 중 오류가 발생했습니다.',
-        onRetryBtnTapped: () {
-          // 프로필 다시 조회
-          fetchProfile(ref);
-        },
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.1),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: profileState.onState(
+        fetched: (profile) => _buildProfileView(ref, profile),
+        failed: (error) => ErrorView(
+          title: '조회 중 오류가 발생했습니다.',
+          onRetryBtnTapped: () => fetchProfile(ref),
+        ),
+        loading: () => const LoadingView(title: '프로필 정보를 불러오는 중입니다.'),
       ),
-    };
+    );
   }
 
   ///
-  /// 컨텐츠 뷰
+  /// 프로필 뷰
   ///
-  Widget _buildContentView(WidgetRef ref) {
-    final profile = ref.watch(UpdateProfileScreenState.profileProvider);
-    log('profile 데이터 갱신 완료: ${profile?.name}');
-
-    if (profile == null) {
-      return ErrorView(
-        title: '조회 중 오류가 발생했습니다.',
-        onRetryBtnTapped: () {
-          // 프로필 조회
-          fetchProfile(ref);
-        },
-      );
-    }
-
+  Widget _buildProfileView(WidgetRef ref, Profile profile) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -135,7 +124,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
                   // 이메일
                   _buildReadOnlyField(title: '이메일', value: profile.email),
                   const SizedBox(height: 24),
-    
+
                   // 이름
                   AppText(
                     text: '이름',
@@ -157,11 +146,11 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
                     onTextChanged: (name) => updateName(ref, name),
                   ),
                   const SizedBox(height: 24),
-    
+
                   // 유저 코드
                   _buildUserCodeField(ref, profile.code),
                   const SizedBox(height: 24),
-    
+
                   // 생성 날짜
                   _buildReadOnlyField(
                     title: '생성 날짜',
@@ -172,7 +161,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
               ),
             ),
           ),
-    
+
           // 수정 완료 버튼
           _buildUpdateButton(),
         ],
@@ -278,6 +267,27 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
           ),
         );
       },
+    );
+  }
+
+  // ------------------------------- Dialog ------------------------------------
+  ///
+  /// 회원탈퇴 다이얼로그
+  ///
+  void _showWithdrawDialog(WidgetRef ref) {
+    DialogService.show(
+      dialog: AppDialog.doubleBtn(
+        title: '회원탈퇴',
+        subTitle: '정말 회원탈퇴 하시겠습니까?',
+        leftBtnContent: '취소',
+        rightBtnContent: '회원탈퇴',
+        rightBtnColor: const Color(0xFFEF4444),
+        onRightBtnClicked: () {
+          ref.context.pop();
+          withdraw(ref);
+        },
+        onLeftBtnClicked: () => ref.context.pop(),
+      ),
     );
   }
 }

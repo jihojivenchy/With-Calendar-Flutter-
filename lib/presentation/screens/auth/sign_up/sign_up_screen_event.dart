@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/data/services/auth/auth_service.dart';
 import 'package:with_calendar/domain/entities/auth/sign_up_information.dart';
+import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_state.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 
@@ -101,6 +103,8 @@ mixin class SignUpScreenEvent {
   /// 회원가입
   ///
   Future<void> signUp(WidgetRef ref) async {
+    EasyLoading.show();
+
     try {
       final information = _getInformation(ref);
 
@@ -111,11 +115,13 @@ mixin class SignUpScreenEvent {
       );
       if (ref.context.mounted) {
         SnackBarService.showSnackBar('회원가입이 완료되었습니다.');
-        ref.context.pop();
+        const TabRoute().go(ref.context);
       }
     } catch (e) {
       log('회원가입 실패: $e');
       SnackBarService.showSnackBar(e.toString());
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 

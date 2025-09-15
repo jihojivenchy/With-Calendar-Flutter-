@@ -7,36 +7,24 @@ import 'package:with_calendar/domain/entities/calendar/day.dart';
 ///
 class CalendarService {
   /// 캘린더 시작 날짜
-  final DateTime _startDate;
+  final DateTime _startDate = DateTime(2000, 1, 1);
+  DateTime get startDate => _startDate;
 
   /// 캘린더 종료 날짜
-  final DateTime _endDate;
-  DateTime get startDate => _startDate;
-  DateTime get endDate => _endDate;
+  final DateTime _endDate = DateTime(2050, 12, 31);
 
   /// 캘린더 시작 요일
-  final StartingDayOfWeek _startingDayOfWeek;
+  final StartingDayOfWeek _startingDayOfWeek = StartingDayOfWeek.sunday;
 
   /// startDate부터 endDate까지의 전체 월 수
   int get totalMonthCount {
-    final startYear = startDate.year;
-    final startMonth = startDate.month;
-    final endYear = endDate.year;
-    final endMonth = endDate.month;
+    final startYear = _startDate.year;
+    final startMonth = _startDate.month;
+    final endYear = _endDate.year;
+    final endMonth = _endDate.month;
 
     return (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
   }
-
-  ///
-  /// 초기화 시 캘린더 시작 날짜와 종료 날짜를 설정
-  ///
-  CalendarService({
-    required DateTime startDate,
-    required DateTime endDate,
-    StartingDayOfWeek startingDayOfWeek = StartingDayOfWeek.sunday,
-  }) : _startDate = startDate,
-       _endDate = endDate,
-       _startingDayOfWeek = startingDayOfWeek;
 
   ///
   /// StartingDayOfWeek 기준으로 요일 순서를 반환하는 메서드

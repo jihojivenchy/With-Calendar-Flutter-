@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/memo/memo.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/find_password/find_pw_screen.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen.dart';
@@ -7,6 +8,8 @@ import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen.d
 import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_screen.dart';
@@ -32,31 +35,25 @@ part 'router.g.dart';
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 GoRouter appRouter() => GoRouter(
-      debugLogDiagnostics: true,
-      navigatorKey: rootNavigatorKey,
-      initialLocation: SplashRoute.path, // 스플래시부터 시작
-      routes: $appRoutes, // 모든 최상위 라우트들을 수집
-    );
-
-
+  debugLogDiagnostics: true,
+  navigatorKey: rootNavigatorKey,
+  initialLocation: SplashRoute.path, // 스플래시부터 시작
+  routes: $appRoutes, // 모든 최상위 라우트들을 수집
+);
 
 ///
 /// @TypedGoRoute
 /// Gorouter의 타입 세이프 라우팅 기능을 위한 어노테이션
 /// 컴파일 타임에 타입 안정성을 보장하는 라우팅 기능을 제공함
-/// 
-/// 
-/// 
-/// 
-
+///
+///
+///
+///
 
 ///
 /// splash
 ///
-@TypedGoRoute<SplashRoute>(
-  path: SplashRoute.path,
-  name: SplashRoute.name,
-)
+@TypedGoRoute<SplashRoute>(path: SplashRoute.path, name: SplashRoute.name)
 class SplashRoute extends GoRouteData with _$SplashRoute {
   const SplashRoute();
 
@@ -84,10 +81,7 @@ class SplashRoute extends GoRouteData with _$SplashRoute {
   path: SignInRoute.path,
   name: SignInRoute.name,
   routes: [
-    TypedGoRoute<SignUpRoute>(
-      path: SignUpRoute.path,
-      name: SignUpRoute.name,
-    ),
+    TypedGoRoute<SignUpRoute>(path: SignUpRoute.path, name: SignUpRoute.name),
     TypedGoRoute<FindPasswordRoute>(
       path: FindPasswordRoute.path,
       name: FindPasswordRoute.name,
@@ -117,7 +111,7 @@ class SignInRoute extends GoRouteData with _$SignInRoute {
 
 ///
 /// 회원가입 라우트
-/// 
+///
 class SignUpRoute extends GoRouteData with _$SignUpRoute {
   static const String path = 'sign-up';
   static const String name = 'sign up';
@@ -130,7 +124,7 @@ class SignUpRoute extends GoRouteData with _$SignUpRoute {
 
 ///
 /// 비밀번호 찾기 라우트
-/// 
+///
 class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
   static const String path = 'find-password';
   static const String name = 'find password';
@@ -148,6 +142,15 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
   path: TabRoute.path,
   name: TabRoute.name,
   routes: [
+    // ------------------------------ 달력 라우트 ------------------------------
+    TypedGoRoute<CreateScheduleRoute>(
+      path: CreateScheduleRoute.path,
+      name: CreateScheduleRoute.name,
+    ),
+    TypedGoRoute<ShareCalendarListRoute>(
+      path: ShareCalendarListRoute.path,
+      name: ShareCalendarListRoute.name,
+    ),
 
     // ------------------------------ 메모 라우트 ------------------------------
     TypedGoRoute<UpdateMemoRoute>(
@@ -158,7 +161,6 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: CreateMemoRoute.path,
       name: CreateMemoRoute.name,
     ),
-
 
     // ------------------------------ 메뉴 라우트 ------------------------------
     TypedGoRoute<UpdateProfileRoute>(
@@ -215,20 +217,33 @@ class UpdateMemoRoute extends GoRouteData with _$UpdateMemoRoute {
   }
 }
 
+//------------------------달력 라우트----------------------------------------------
+///
+/// 달력 생성 라우트
+///
+class CreateScheduleRoute extends GoRouteData with _$CreateScheduleRoute {
+  static const String path = 'calendar/create-schedule';
+  static const String name = 'create schedule';
 
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    final Day selectedDay = state.extra as Day;
+    return CreateScheduleScreen(selectedDay: selectedDay);
+  }
+}
 
+///
+/// 공유 캘린더 목록 라우트
+///
+class ShareCalendarListRoute extends GoRouteData with _$ShareCalendarListRoute {
+  static const String path = 'calendar/share-calendar-list';
+  static const String name = 'share calendar list';
 
-
-
-
-
-
-
-
-
-
-
-
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return ShareCalendarListScreen();
+  }
+}
 
 //------------------------메뉴 라우트--------------------------------
 ///

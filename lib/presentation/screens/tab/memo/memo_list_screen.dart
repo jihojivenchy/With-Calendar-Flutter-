@@ -21,6 +21,9 @@ import 'widgets/memo_item.dart';
 class MemoListScreen extends BaseScreen with MemoListScreenEvent {
   MemoListScreen({super.key});
 
+  ///
+  /// Init
+  ///
   @override
   void onInit(WidgetRef ref) {
     super.onInit(ref);
@@ -29,16 +32,13 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
     });
   }
 
+  ///
+  /// Dispose
+  ///
   @override
   void onDispose(WidgetRef ref) {
     super.onDispose(ref);
     disposeSubscription(ref); // 메모 리스트 구독 해제
-  }
-
-  @override
-  Widget buildBody(BuildContext context, WidgetRef ref) {
-    useAutomaticKeepAlive();
-    return _buildMemoList(ref);
   }
 
   ///
@@ -79,6 +79,15 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
         const SizedBox(width: 16),
       ],
     );
+  }
+
+  ///
+  /// 본문
+  ///
+  @override
+  Widget buildBody(BuildContext context, WidgetRef ref) {
+    useAutomaticKeepAlive();
+    return _buildMemoList(ref);
   }
 
   ///

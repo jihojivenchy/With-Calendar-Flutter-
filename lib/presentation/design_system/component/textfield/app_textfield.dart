@@ -12,6 +12,7 @@ class AppTextField extends StatelessWidget {
   final double borderWidth;
   final double borderRadius;
   final Color borderColor;
+  final Color focusedBorderColor;
   final int? maxLines;
   final int? maxLength;
   final bool isEnabled;
@@ -19,6 +20,7 @@ class AppTextField extends StatelessWidget {
   final bool autoFocus; // 시작할 때, 포커싱을 할 지 여부
   final Function(String)? onTextChanged;
   final FocusNode? focusNode;
+  final Color cursorColor;
   final TextAlignVertical? textAlignVertical;
   final TextInputAction? textInputAction;
   final Function(String)? onSubmitted;
@@ -43,6 +45,8 @@ class AppTextField extends StatelessWidget {
     this.borderWidth = 1,
     this.borderRadius = 6,
     this.borderColor = AppColors.colord2d5d7,
+    this.focusedBorderColor = AppColors.primary,
+    this.cursorColor = AppColors.primary,
     this.maxLines = 1,
     this.maxLength,
     this.keyboardType,
@@ -95,32 +99,35 @@ class AppTextField extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(
-              color: borderColor,
-              width: borderWidth,
-            ),
+            borderSide: BorderSide(color: borderColor, width: borderWidth),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(
-              color: borderColor,
-              width: borderWidth,
-            ),
+            borderSide: BorderSide(color: borderColor, width: borderWidth),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: AppColors.primary, width: borderWidth),
+            borderSide: BorderSide(
+              color: focusedBorderColor,
+              width: borderWidth,
+            ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: AppColors.sundayRed, width: borderWidth),
+            borderSide: BorderSide(
+              color: AppColors.sundayRed,
+              width: borderWidth,
+            ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: AppColors.sundayRed, width: borderWidth),
+            borderSide: BorderSide(
+              color: AppColors.sundayRed,
+              width: borderWidth,
+            ),
           ),
         ),
-        cursorColor: AppColors.primary,
+        cursorColor: cursorColor,
         cursorHeight: 15,
         style: const TextStyle(
           color: Colors.black,

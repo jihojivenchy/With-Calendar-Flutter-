@@ -15,6 +15,15 @@ import 'package:with_calendar/presentation/common/services/dialog/dialog_service
 class MenuScreen extends BaseScreen with MenuScreenEvent {
   MenuScreen({super.key});
 
+  ///
+  /// 배경색
+  ///
+  @override
+  Color? get backgroundColor => const Color(0xFFF2F2F7);
+
+  ///
+  /// 본문
+  ///
   @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
@@ -31,12 +40,6 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
       ),
     );
   }
-
-  ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => const Color(0xFFF2F2F7);
 
   ///
   /// 메뉴 리스트 빌드

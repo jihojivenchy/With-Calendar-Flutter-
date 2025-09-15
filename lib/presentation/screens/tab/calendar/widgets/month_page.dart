@@ -7,11 +7,13 @@ import 'package:with_calendar/presentation/screens/tab/calendar/widgets/day_item
 class MonthPageView extends StatelessWidget {
   final List<Day> dayList;
   final List<String> weekList;
+  final Function(Day) onLongPressed;
 
   const MonthPageView({
     super.key,
     required this.dayList,
     required this.weekList,
+    required this.onLongPressed,
   });
 
   @override
@@ -49,7 +51,10 @@ class MonthPageView extends StatelessWidget {
             ),
 
             /// Day 목록
-            ..._buildCalendarDays(rowCount: rowCount, baseRowHeight: baseRowHeight,),
+            ..._buildCalendarDays(
+              rowCount: rowCount,
+              baseRowHeight: baseRowHeight,
+            ),
           ],
         );
       },
@@ -63,8 +68,6 @@ class MonthPageView extends StatelessWidget {
     required int rowCount,
     required double baseRowHeight,
   }) {
-    final rowCount = dayList.length ~/ 7;
-
     return List.generate(
       rowCount,
       (index) => TableRow(
@@ -77,26 +80,13 @@ class MonthPageView extends StatelessWidget {
           }
 
           final day = dayList[dayIndex];
-          return DayItem(day: day, baseRowHeight: baseRowHeight,);
+          return DayItem(
+            day: day,
+            baseRowHeight: baseRowHeight,
+            onLongPressed: (day) => onLongPressed(day),
+          );
         }),
       ),
     );
   }
 }
-
- // Day 목록
-          // Expanded(
-          //   child: GridView.builder(
-          //     shrinkWrap: true,
-          //     physics: const NeverScrollableScrollPhysics(),
-          //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          //       crossAxisCount: 7,
-          //       childAspectRatio: 0.5,
-          //     ),
-          //     itemBuilder: (context, index) {
-          //       final day = dayList[index];
-          //       return DayItem(day: day);
-          //     },
-          //     itemCount: dayList.length,
-          //   ),
-          // ),

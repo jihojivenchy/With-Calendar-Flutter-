@@ -124,6 +124,18 @@ RouteBase get $tabRoute => GoRouteData.$route(
   factory: _$TabRoute._fromState,
   routes: [
     GoRouteData.$route(
+      path: 'calendar/create-schedule',
+      name: 'create schedule',
+
+      factory: _$CreateScheduleRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: 'calendar/share-calendar-list',
+      name: 'share calendar list',
+
+      factory: _$ShareCalendarListRoute._fromState,
+    ),
+    GoRouteData.$route(
       path: 'memo/update',
       name: 'update memo',
 
@@ -149,6 +161,48 @@ mixin _$TabRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$CreateScheduleRoute on GoRouteData {
+  static CreateScheduleRoute _fromState(GoRouterState state) =>
+      CreateScheduleRoute();
+
+  @override
+  String get location => GoRouteData.$location('/calendar/create-schedule');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$ShareCalendarListRoute on GoRouteData {
+  static ShareCalendarListRoute _fromState(GoRouterState state) =>
+      ShareCalendarListRoute();
+
+  @override
+  String get location => GoRouteData.$location('/calendar/share-calendar-list');
 
   @override
   void go(BuildContext context) => context.go(location);

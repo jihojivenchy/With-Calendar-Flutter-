@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/data/services/auth/auth_service.dart';
 import 'package:with_calendar/domain/entities/auth/sign_in_information.dart';
@@ -42,6 +43,8 @@ mixin class SignInScreenEvent {
   /// 로그인
   ///
   Future<void> signIn(WidgetRef ref) async {
+    EasyLoading.show();
+
     try {
       // 로그인 요청
       await _authService.signIn(_getInformation(ref));
@@ -53,6 +56,8 @@ mixin class SignInScreenEvent {
     } catch (e) {
       log('로그인 실패: $e');
       SnackBarService.showSnackBar(e.toString());
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 

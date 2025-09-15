@@ -17,4 +17,23 @@ class AppColors {
   static const Color colorf4f7f9 = Color(0xFFF4F7F9);
   static const Color colora1a4a6 = Color(0xFFA1A4A6);
   static const Color colord2d5d7 = Color(0xFFD2D5D7);
+
+  static const Color transparent = Color(0x00000000);
+
+
+  static Color statusError = Color(0xFFE4604F);
+
+  static Color calendarOrange = Color(0xFFF57119);
+  static Color calendarBlue = Color(0xFF3182F6);
+
+
+  // Grayscale
+  static Color white = Color(0xFFFFFFFF);
+  static Color gray100 = Color(0xFFF4F5F8);
+  static Color gray200 = Color(0xFFDFE3ED);
+  static Color gray400 = Color(0xFF9FA8B6);
+  static Color gray500 = Color(0xFF565E6B);
+  static Color gray600 = Color(0xFF565E6B);
+  static Color gray700 = Color(0xFF565E6B);
+  static Color gray800 = Color(0xFF282C35);
 }

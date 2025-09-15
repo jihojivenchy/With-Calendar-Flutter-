@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:with_calendar/presentation/router/router.dart';
 
 /// 앱 화면의 기본 템플릿 클래스
 abstract class BaseScreen extends HookConsumerWidget {
@@ -34,6 +36,15 @@ abstract class BaseScreen extends HookConsumerWidget {
       }
     });
 
+    // Status Bar 스타일 설정
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+    );
+
     ///
     /// Swipe Back 제스처 이벤트를 관리
     /// [preventSwipeBack]의 속성 값은 통해
@@ -44,30 +55,23 @@ abstract class BaseScreen extends HookConsumerWidget {
         if (didPop) return;
         onWillPop(ref);
       },
-      child: ColoredBox(
-        color: unSafeAreaColor ?? backgroundColor ?? Colors.transparent,
-        child: wrapWithSafeArea
+      child: Scaffold(
+        extendBody: extendBody,
+        extendBodyBehindAppBar: extendBodyBehindAppBar,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        appBar: buildAppBar(context, ref),
+        body: wrapWithSafeArea
             ? SafeArea(
                 top: setTopSafeArea,
                 bottom: setBottomSafeArea,
-                child: _buildScaffold(context, ref),
+                child: buildBody(context, ref),
               )
-            : _buildScaffold(context, ref),
+            : buildBody(context, ref),
+        backgroundColor: backgroundColor,
+        bottomNavigationBar: buildBottomNavigationBar(context, ref),
+        floatingActionButtonLocation: floatingActionButtonLocation,
+        floatingActionButton: buildFloatingButton(ref),
       ),
-    );
-  }
-
-  Widget _buildScaffold(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      extendBody: extendBody,
-      extendBodyBehindAppBar: extendBodyBehindAppBar,
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      appBar: buildAppBar(context, ref),
-      body: buildBody(context, ref),
-      backgroundColor: backgroundColor,
-      bottomNavigationBar: buildBottomNavigationBar(context, ref),
-      floatingActionButtonLocation: floatingActionButtonLocation,
-      floatingActionButton: buildFloatingButton(ref),
     );
   }
 
@@ -87,10 +91,6 @@ abstract class BaseScreen extends HookConsumerWidget {
   /// 플로팅 버튼 구성
   @protected
   Widget? buildFloatingButton(WidgetRef ref) => null;
-
-  /// SafeArea 밖의 배경색 설정
-  @protected
-  Color? get unSafeAreaColor => null;
 
   /// 키보드가 화면 하단에 올라왔을 때 페이지의 크기를 조정하는 여부를 설정
   @protected
@@ -120,11 +120,11 @@ abstract class BaseScreen extends HookConsumerWidget {
   @protected
   bool get wrapWithSafeArea => true;
 
-  /// 뷰의 안전 영역 아래에 SafeArea를 적용할지 여부를 설정
+  /// 뷰의 아래에 SafeArea를 적용할지 여부를 설정
   @protected
   bool get setBottomSafeArea => true;
 
-  /// 뷰의 안전 영역 위에 SafeArea를 적용할지 여부를 설정
+  /// 뷰의 위에 SafeArea를 적용할지 여부를 설정
   @protected
   bool get setTopSafeArea => true;
 

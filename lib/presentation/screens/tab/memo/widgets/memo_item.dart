@@ -1,3 +1,4 @@
+import 'package:bounce_tapper/bounce_tapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
@@ -19,7 +20,7 @@ class MemoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return BounceTapper(
       onTap: onTapped,
       onLongPress: () {
         HapticFeedback.lightImpact();

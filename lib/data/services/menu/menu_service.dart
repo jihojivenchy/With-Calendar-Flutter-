@@ -14,7 +14,7 @@ class MenuService with BaseFirestoreMixin {
   ///
   Future<Profile> fetchProfile() async {
     final data = await fetchDocumentData(
-      FirestoreConstants.usersCollection,
+      FirestoreCollection.users,
       documentID: getUserUID,
     );
 
@@ -26,7 +26,7 @@ class MenuService with BaseFirestoreMixin {
   ///
   Future<void> updateProfile(Profile profile) async {
     await update(
-      FirestoreConstants.usersCollection,
+      FirestoreCollection.users,
       documentID: profile.id,
       data: profile.toJson(),
     );
