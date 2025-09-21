@@ -78,10 +78,7 @@ class App extends ConsumerWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('ko', 'KR'),
-          Locale('en', 'US'),
-        ],
+        supportedLocales: const [Locale('ko', 'KR'), Locale('en', 'US')],
         builder: (context, child) => EasyLoading.init()(context, child),
       ),
     );

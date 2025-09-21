@@ -50,7 +50,7 @@ class AppDialog extends Dialog {
     leftBtnText: leftBtnContent,
     rightBtnText: rightBtnContent,
     leftBtnColor: leftBtnColor ?? AppColors.colorf4f7f9,
-    rightBtnColor: rightBtnColor ?? AppColors.color7c3aed,
+    rightBtnColor: rightBtnColor ?? AppColors.primary,
   );
 
   final bool isDoubleButton;

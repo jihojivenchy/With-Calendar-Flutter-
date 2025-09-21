@@ -9,6 +9,8 @@ import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/search_user_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen.dart';
@@ -151,6 +153,16 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: ShareCalendarListRoute.path,
       name: ShareCalendarListRoute.name,
     ),
+    TypedGoRoute<CreateShareCalendarRoute>(
+      path: CreateShareCalendarRoute.path,
+      name: CreateShareCalendarRoute.name,
+      routes: [
+        TypedGoRoute<SearchUserRoute>(
+          path: SearchUserRoute.path,
+          name: SearchUserRoute.name,
+        ),
+      ],
+    ),
 
     // ------------------------------ 메모 라우트 ------------------------------
     TypedGoRoute<UpdateMemoRoute>(
@@ -242,6 +254,33 @@ class ShareCalendarListRoute extends GoRouteData with _$ShareCalendarListRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return ShareCalendarListScreen();
+  }
+}
+
+///
+/// 공유 캘린더 생성 라우트
+///
+class CreateShareCalendarRoute extends GoRouteData
+    with _$CreateShareCalendarRoute {
+  static const String path = 'calendar/create-share-calendar';
+  static const String name = 'create share calendar';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return CreateShareCalendarScreen();
+  }
+}
+
+///
+/// 공유 캘린더 유저 검색 라우트
+///
+class SearchUserRoute extends GoRouteData with _$SearchUserRoute {
+  static const String path = 'calendar/search-user';
+  static const String name = 'search user';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SearchUserScreen();
   }
 }
 

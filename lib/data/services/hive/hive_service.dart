@@ -5,8 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 /// 각 데이터 파일 경로
 enum HiveBoxPath {
-  currentCalendar(key: "CURRENT_CALENDAR"), // 현재 선택된 캘린더 데이터
-  calendarList(key: "CALENDAR_LIST"); // 캘린더 리스트 데이터
+  currentCalendar(key: "CURRENT_CALENDAR"); // 현재 선택된 캘린더 데이터
 
   final String key;
   const HiveBoxPath({required this.key});
@@ -46,11 +45,7 @@ class HiveService {
   /// Returns:
   ///   키에 해당하는 값 또는 defaultValue
   ///
-  T? get<T>(
-    HiveBoxPath path, {
-    String? key,
-    T? defaultValue,
-  }) {
+  T? get<T>(HiveBoxPath path, {String? key, T? defaultValue}) {
     final box = Hive.box(path.key);
     final result = box.get(key ?? path.key, defaultValue: defaultValue);
     log('로컬 DB에서 데이터 조회 - 키: ${key ?? path.key}, 값: $result');
@@ -103,10 +98,7 @@ class HiveService {
   /// [path] 삭제할 데이터의 파일 경로
   /// [key] 삭제할 데이터의 키 (없을 경우 path의 key를 사용)
   ///
-  Future<void> delete(
-    HiveBoxPath path, {
-    String? key,
-  }) async {
+  Future<void> delete(HiveBoxPath path, {String? key}) async {
     final box = Hive.box(path.key);
     await box.delete(key ?? path.key);
     log('로컬 DB에서 데이터 삭제 - 키: ${key ?? path.key}');

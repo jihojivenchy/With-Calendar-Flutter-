@@ -13,6 +13,7 @@ class CalendarHeader extends StatelessWidget {
     required this.calendar,
     required this.calendarList,
     required this.focusedMonth,
+    required this.onWillShow,
     required this.onCalendarTapped,
     required this.onHeaderTap,
     required this.onTodayButtonTapped,
@@ -27,6 +28,9 @@ class CalendarHeader extends StatelessWidget {
 
   /// 포커스 날짜
   final DateTime focusedMonth;
+
+  /// 캘린더 리스트 조회 (드롭다운 메뉴 표시 전)
+  final Future<void> Function() onWillShow;
 
   /// 캘린더 선택
   final Function(CalendarInformation calendar) onCalendarTapped;
@@ -82,6 +86,7 @@ class CalendarHeader extends StatelessWidget {
             CalendarListDropdown(
               currentCalendarID: calendar.id,
               calendarList: calendarList,
+              onWillShow: onWillShow,
               onCalendarTapped: onCalendarTapped,
             ),
             const SizedBox(width: 30),

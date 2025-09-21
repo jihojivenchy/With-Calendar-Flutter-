@@ -55,9 +55,6 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     // 달력 뷰 구성
     return FocusDetector(
       onFocusGained: () {
-        // 캘린더 리스트 조회
-        fetchCalendarList(ref);
-
         // 현재 선택된 달력 정보 조회
         fetchCurrentCalendar(ref);
       },
@@ -108,6 +105,11 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
           // 캘린더 메뉴 버튼 클릭 (공유 캘린더 이동)
           onMenuButtonTapped: () {
             ShareCalendarListRoute().push(ref.context);
+          },
+
+          // 캘린더 리스트 조회 (드롭다운 메뉴 표시 전)
+          onWillShow: () async {
+            await fetchCalendarList(ref);
           },
 
           // 선택 캘린더 변경

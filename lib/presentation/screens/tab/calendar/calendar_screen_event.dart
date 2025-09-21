@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/data/services/calendar/calendar_service.dart';
+import 'package:with_calendar/data/services/calendar/share_calendar_service.dart';
 import 'package:with_calendar/data/services/hive/hive_service.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
@@ -10,6 +11,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_
 
 mixin class CalendarScreenEvent {
   final CalendarService _calendarService = CalendarService();
+  final ShareCalendarService _shareCalendarService = ShareCalendarService();
 
   ///
   /// 달력 날짜 계산
@@ -50,12 +52,14 @@ mixin class CalendarScreenEvent {
   ///
   /// 캘린더 리스트 조회
   ///
-  void fetchCalendarList(WidgetRef ref) {
-    final result = HiveService.instance.getList(HiveBoxPath.calendarList);
-    final calendarList = (result ?? [])
-        .map((e) => CalendarInformation.fromHiveJson(e))
-        .toList();
-    ref.read(CalendarScreenState.calendarList.notifier).state = calendarList;
+  Future<void> fetchCalendarList(WidgetRef ref) async {
+    try {
+      final calendarList = await _shareCalendarService.fetchCalendarList();
+      ref.read(CalendarScreenState.calendarList.notifier).state = calendarList;
+    } catch (e) {
+      log('캘린더 리스트 조회 실패: $e');
+      SnackBarService.showSnackBar('캘린더 목록 조회에 실패했습니다. ${e.toString()}');
+    }
   }
 
   ///

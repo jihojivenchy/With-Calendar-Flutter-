@@ -1,4 +1,6 @@
-/// 캘린더 정보
+
+
+/// 캘린더 정보 (해당 유저의 캘린더 리스트)
 class CalendarInformation {
   final String id;
   final String name;

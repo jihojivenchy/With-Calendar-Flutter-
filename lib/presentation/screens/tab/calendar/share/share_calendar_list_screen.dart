@@ -12,12 +12,12 @@ import 'package:with_calendar/presentation/design_system/component/view/empty_vi
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/calendar_item.dart';
 
-class ShareCalendarListScreen extends BaseScreen
-    with ShareCalendarListEvent, ShareCalendarListState {
+class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
   ShareCalendarListScreen({super.key});
 
   ///
@@ -42,9 +42,18 @@ class ShareCalendarListScreen extends BaseScreen
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return const DefaultAppBar(
+    return DefaultAppBar(
       title: '달력 목록',
       backgroundColor: Color(0xFFF2F2F7),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.add, size: 26),
+          onPressed: () {
+            CreateShareCalendarRoute().push(context);
+          },
+        ),
+        const SizedBox(width: 16),
+      ],
     );
   }
 
@@ -53,8 +62,6 @@ class ShareCalendarListScreen extends BaseScreen
   ///
   @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
-    useAutomaticKeepAlive();
-
     return FocusDetector(
       onFocusGained: () {
         fetchCalendarList(ref);
@@ -180,7 +187,7 @@ class ShareCalendarListScreen extends BaseScreen
   ) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      sliver: SliverList.builder(
+      sliver: SliverList.separated(
         itemCount: calendarList.length,
         itemBuilder: (context, index) {
           final calendar = calendarList[index];
@@ -193,6 +200,9 @@ class ShareCalendarListScreen extends BaseScreen
               updateSelectedCalendar(ref, calendar: calendar);
             },
           );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(height: 12);
         },
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
@@ -7,12 +8,18 @@ import 'package:with_calendar/presentation/design_system/foundation/app_color.da
 class CalendarListDropdown extends StatefulWidget {
   final String currentCalendarID;
   final List<CalendarInformation> calendarList;
+
+  /// 캘린더 리스트 조회 (드롭다운 메뉴 표시 전)
+  final Future<void> Function() onWillShow;
+
+  /// 캘린더 선택
   final Function(CalendarInformation calendar) onCalendarTapped;
 
   const CalendarListDropdown({
     super.key,
     required this.currentCalendarID,
     required this.calendarList,
+    required this.onWillShow,
     required this.onCalendarTapped,
   });
 
@@ -83,7 +90,7 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
             itemCount: widget.calendarList.length,
             separatorBuilder: (context, index) => const Divider(
               height: 1,
-              thickness: 1,
+              thickness: 0.5,
               color: Color(0xFFD2D5D7),
             ),
             itemBuilder: (context, index) {
@@ -101,7 +108,9 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
                     vertical: 12,
                     horizontal: 15,
                   ),
-                  color: Colors.white,
+                  color: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.05)
+                      : Colors.white,
                   child: Row(
                     children: [
                       Expanded(
@@ -144,8 +153,11 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
       link: _layerLink,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () {
+        onTap: () async {
           if (_entry == null) {
+            HapticFeedback.lightImpact();
+            // 캘린더 리스트 조회 후 드롭다운 메뉴 표시
+            await widget.onWillShow();
             _show();
           } else {
             _hide();
