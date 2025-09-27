@@ -2,13 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:klc/klc.dart';
 import 'package:with_calendar/data/services/calendar/calendar_service.dart';
 import 'package:with_calendar/data/services/calendar/share_calendar_service.dart';
 import 'package:with_calendar/data/services/hive/hive_service.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
+import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
+import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 mixin class CalendarScreenEvent {
   final CalendarService _calendarService = CalendarService();
@@ -71,6 +74,41 @@ mixin class CalendarScreenEvent {
     final monthDiff = targetDate.month - startMonth;
 
     return yearDiff * 12 + monthDiff;
+  }
+
+  ///
+  /// 음력 날짜 조회
+  ///
+  void fetchLunarDate(WidgetRef ref, Day day) {
+    final isConverted = setSolarDate(
+      day.date.year,
+      day.date.month,
+      day.date.day,
+    );
+
+    if (!isConverted) {
+      log('음력 변환 실패: 지원하지 않는 양력 날짜 (${day.date.toIso8601String()})');
+      SnackBarService.showSnackBar('음력 변환에 실패했습니다. 지원하지 않는 날짜입니다.');
+      return;
+    }
+
+    final isoString = getLunarIsoFormat();
+    final lunarIsoDate = isoString.split(' ').first;
+    final isLeapMonth = isoString.contains('Intercalation');
+
+    try {
+      final lunarDate = DateTime.parse(lunarIsoDate);
+      final lunarText = lunarDate.toStringFormat('MM.dd');
+
+      ref.read(CalendarScreenState.lunarDate.notifier).state = LunarDate(
+        solarDate: day.date,
+        date: lunarDate,
+        dateString: isLeapMonth ? '윤 $lunarText' : lunarText,
+      );
+    } catch (e) {
+      log('음력 날짜 파싱 실패: $isoString, error: $e');
+      SnackBarService.showSnackBar('음력 변환에 실패했습니다. 다시 시도해주세요.');
+    }
   }
 
   ///

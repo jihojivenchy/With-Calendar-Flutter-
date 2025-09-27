@@ -182,6 +182,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     required Map<DateTime, List<Day>> calendarMap,
     required List<String> weekList,
   }) {
+    final lunarDate = ref.watch(CalendarScreenState.lunarDate);
     return Expanded(
       child: PageView.builder(
         controller: pageController,
@@ -194,6 +195,11 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
           return MonthPageView(
             dayList: dayList,
             weekList: weekList,
+            lunarDate: lunarDate,
+            // 날짜 클릭 => 선택된 날짜 업데이트
+            onTapped: (day) {
+              fetchLunarDate(ref, day);
+            },
             // 날짜 클릭 => 일정 생성 화면 이동
             onLongPressed: (day) {
               ref.context.push(CreateScheduleRoute().location, extra: day);

@@ -95,15 +95,10 @@ class CalendarService {
         state = DayCellState.today;
       }
 
-      // 임의
-      final isCoin = day.day % 5 == 0;
-
       return Day(
         date: day,
-        isSelected: false,
         isOutside: isOutside,
         state: state,
-        isCoin: isCoin,
       );
     });
   }

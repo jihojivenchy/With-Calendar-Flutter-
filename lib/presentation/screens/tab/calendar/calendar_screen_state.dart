@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
+import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
 
 mixin class CalendarScreenState {
   /// 날짜 맵
@@ -19,6 +20,11 @@ mixin class CalendarScreenState {
   static final focusedDate = StateProvider<DateTime>((ref) {
     final now = DateTime.now();
     return DateTime(now.year, now.month);
+  });
+
+  /// 음력 날짜
+  static final lunarDate = StateProvider<LunarDate?>((ref) {
+    return null;
   });
 
   /// 현재 선택된 달력 정보

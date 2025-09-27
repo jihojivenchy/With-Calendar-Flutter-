@@ -11,17 +11,13 @@ enum StartingDayOfWeek {
 
 class Day {
   final DateTime date;
-  final bool isSelected;
   final bool isOutside;
   final DayCellState state;
-  final bool isCoin;
 
   const Day({
     required this.date,
-    required this.isSelected,
     required this.isOutside,
-    required this.state,
-    required this.isCoin,
+    required this.state
   });
 
   @override
