@@ -10,8 +10,9 @@ import 'package:with_calendar/domain/entities/data_state/data_state.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/search_user_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen_state.dart';
 
 mixin class SearchUserScreenEvent {
   final ShareCalendarService _service = ShareCalendarService();
@@ -50,7 +51,7 @@ mixin class SearchUserScreenEvent {
   ///
   /// 유저 초대
   ///
-  void inviteUser(WidgetRef ref, CalendarParticipant user) {
+  void inviteUserForCreate(WidgetRef ref, CalendarParticipant user) {
     // 달력 생성 정보 가져오기
     final creation = ref
         .read(CreateShareCalendarState.creationProvider.notifier)
@@ -73,6 +74,45 @@ mixin class SearchUserScreenEvent {
     // 달력 생성 정보 업데이트
     ref.read(CreateShareCalendarState.creationProvider.notifier).state =
         Fetched(creation.copyWith(participantList: currentList));
+  }
+
+  ///
+  /// 유저 초대
+  ///
+  void inviteUserForUpdate(WidgetRef ref, CalendarParticipant user) {
+    // 달력 정보 가져오기
+    final calendar = ref
+        .read(UpdateShareCalendarState.shareCalendarProvider.notifier)
+        .state
+        .value;
+
+    List<CalendarParticipant> currentList = calendar.participantList;
+    List<CalendarParticipant> deletedList = calendar.deletedParticipantList;
+
+    // 이미 초대된 유저인 경우 초대 실패
+    if (currentList.contains(user)) {
+      SnackBarService.showSnackBar('이미 초대된 유저입니다.');
+      return;
+    }
+
+    // 삭제된 유저 리스트에 있을 경우 제거해줌
+    if (deletedList.contains(user)) {
+      deletedList.remove(user);
+    }
+
+    // 유저 초대
+    currentList.add(user);
+    SnackBarService.showSnackBar('${user.userName}님을 초대했습니다.');
+
+    // 달력 정보 업데이트
+    ref
+        .read(UpdateShareCalendarState.shareCalendarProvider.notifier)
+        .state = Fetched(
+      calendar.copyWith(
+        participantList: currentList,
+        deletedParticipantList: deletedList,
+      ),
+    );
   }
 
   // -------------------------------- Helper -----------------------------------

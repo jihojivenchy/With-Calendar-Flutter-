@@ -19,18 +19,19 @@ class ShareCalendarCreation {
     );
   }
 
-  Map<String, dynamic> toJson(String id, String createdAt) {
+  Map<String, dynamic> toJson({
+    required String ownerID,
+    required String calendarID,
+    required String createdAt,
+  }) {
     return {
-      'id': id,
+      'id': calendarID,
+      'ownerID': ownerID,
       'title': title,
-      'participantList': participantList.map((participant) => participant.toJson()).toList(),
+      'participantList': participantList
+          .map((participant) => participant.toJson())
+          .toList(),
+      'createdAt': createdAt,
     };
   }
-
-  // 'id': calendarID,
-  //     'title': creation.title,
-  //     'participantList': creation.participantList
-  //         .map((participant) => participant.toJson())
-  //         .toList(),
-  //     'createdAt': createdAt,
 }

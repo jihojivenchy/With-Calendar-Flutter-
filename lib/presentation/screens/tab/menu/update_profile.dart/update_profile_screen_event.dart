@@ -55,7 +55,7 @@ mixin class UpdateProfileScreenEvent {
   Future<void> updateProfile(WidgetRef ref) async {
     try {
       final profile = _getProfile(ref);
-      await _menuService.updateProfile(profile!);
+      await _menuService.updateProfile(profile);
 
       if (ref.context.mounted) {
         SnackBarService.showSnackBar('프로필 수정 완료');

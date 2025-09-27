@@ -10,16 +10,19 @@ class CalendarItem extends StatelessWidget {
     required this.information,
     required this.isSelected,
     required this.onTapped,
+    required this.onLongPressed,
   });
 
   final CalendarInformation information;
   final bool isSelected;
   final VoidCallback onTapped;
+  final VoidCallback onLongPressed;
 
   @override
   Widget build(BuildContext context) {
     return BounceTapper(
       onTap: onTapped,
+      onLongPress: onLongPressed,
       highlightColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

@@ -14,16 +14,34 @@ import 'package:with_calendar/presentation/design_system/component/text/app_text
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/search_user_screen_event.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/search_user_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/widgets/guide_view.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/widgets/searched_user_item.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/create/search/widgets/user_search_bar.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/search/widgets/guide_view.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/search/widgets/searched_user_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/search/widgets/user_search_bar.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
+
+enum SearchMode {
+  create('CREATE'),
+  update('UPDATE'),
+  none('NONE');
+
+  final String value;
+  const SearchMode(this.value);
+
+  static SearchMode fromValue(String value) {
+    return SearchMode.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => SearchMode.none,
+    );
+  }
+}
 
 /// 유저 검색 바텀 시트
 class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
-  SearchUserScreen({super.key});
+  SearchUserScreen({super.key, required this.mode});
+
+  final SearchMode mode;
 
   ///
   /// 배경색
@@ -99,7 +117,16 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
         rightBtnContent: '초대',
         onRightBtnClicked: () {
           ref.context.pop();
-          inviteUser(ref, user);
+          switch (mode) {
+            case SearchMode.create:
+              inviteUserForCreate(ref, user);
+              break;
+            case SearchMode.update:
+              inviteUserForUpdate(ref, user);
+              break;
+            case SearchMode.none:
+              break;
+          }
         },
         onLeftBtnClicked: () => ref.context.pop(),
       ),

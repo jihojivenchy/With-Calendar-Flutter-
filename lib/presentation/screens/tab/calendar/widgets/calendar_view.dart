@@ -17,7 +17,6 @@ class CalendarView extends StatefulWidget {
     required this.onMenuButtonTapped,
     required this.calendarList,
     required this.onCalendarTapped,
-    required this.onWillShow,
   });
 
   /// 캘린더 정보
@@ -40,9 +39,6 @@ class CalendarView extends StatefulWidget {
 
   /// 캘린더 리스트
   final List<CalendarInformation> calendarList;
-
-  /// 캘린더 리스트 조회 (드롭다운 메뉴 표시 전)
-  final Future<void> Function() onWillShow;
 
   /// 캘린더 선택
   final Function(CalendarInformation calendar) onCalendarTapped;
@@ -112,7 +108,6 @@ class _CalendarViewState extends State<CalendarView> {
                 onMenuButtonTapped: widget.onMenuButtonTapped,
                 calendarList: widget.calendarList,
                 onCalendarTapped: widget.onCalendarTapped,
-                onWillShow: widget.onWillShow,
               ),
             );
           },
@@ -143,6 +138,12 @@ class _CalendarViewState extends State<CalendarView> {
       ],
     );
   }
+
+  ///
+  /// 캘린더 헤더
+  /// 
+
+
 
   ///
   /// 날짜 이동 bottom sheet

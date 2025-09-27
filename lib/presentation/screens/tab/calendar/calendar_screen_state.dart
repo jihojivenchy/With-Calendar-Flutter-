@@ -15,6 +15,12 @@ mixin class CalendarScreenState {
     return [];
   });
 
+  /// 포커스 날짜
+  static final focusedDate = StateProvider<DateTime>((ref) {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month);
+  });
+
   /// 현재 선택된 달력 정보
   static final currentCalendar = StateProvider<CalendarInformation>((ref) {
     return CalendarInformation(

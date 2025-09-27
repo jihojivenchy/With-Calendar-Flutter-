@@ -77,9 +77,9 @@ mixin class CreateShareCalendarEvent {
     }
 
     try {
-      await _service.create(creation);
+      await _service.createCalendar(creation);
       if (ref.context.mounted) {
-        _showCreateSuccessDialog(ref, '${creation.title} 달력이 생성되었습니다.');
+        _showCreateSuccessDialog(ref, '${creation.title} 달력 생성 완료');
       }
     } catch (e) {
       log('공유달력 생성 실패: ${e.toString()}');

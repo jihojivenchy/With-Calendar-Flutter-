@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 
@@ -174,6 +175,7 @@ class _DatePickerBottomSheetState extends State<MonthPickerBottomSheet> {
           AppButton(
             text: '확인',
             onTapped: () {
+              context.pop();
               widget.onChangeDate(
                 DateTime(
                   int.parse(_selectedYear),

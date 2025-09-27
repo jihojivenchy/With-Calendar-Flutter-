@@ -7,6 +7,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/share/calendar_participant.dart';
+import 'package:with_calendar/domain/entities/calendar/share/share_calendar.dart';
 import 'package:with_calendar/domain/entities/calendar/share/share_calendar_creation.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
@@ -27,11 +28,15 @@ import 'package:with_calendar/presentation/screens/tab/calendar/share/create/wid
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/calendar_item.dart';
 
-class CreateShareCalendarScreen extends BaseScreen
-    with CreateShareCalendarEvent {
-  CreateShareCalendarScreen({super.key});
+class UpdateShareCalendarScreen extends BaseScreen
+    with UpdateShareCalendarEvent {
+  UpdateShareCalendarScreen({super.key, required this.calendarID});
+
+  final String calendarID;
 
   ///
   /// Init
@@ -40,7 +45,7 @@ class CreateShareCalendarScreen extends BaseScreen
   void onInit(WidgetRef ref) {
     super.onInit(ref);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchMyProfile(ref);
+      fetchShareCalendar(ref, calendarID);
     });
   }
 
@@ -55,9 +60,51 @@ class CreateShareCalendarScreen extends BaseScreen
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return const DefaultAppBar(
-      title: '달력 생성',
+    // 조회 상태
+    final calendarState = ref.watch(
+      UpdateShareCalendarState.shareCalendarProvider,
+    );
+
+    // 조회되지 않았을 경우, 기본 앱바 반환
+    if (!calendarState.state.isFetched) {
+      return DefaultAppBar(title: '달력 수정', backgroundColor: Color(0xFFF2F2F7));
+    }
+
+    final isOwner = calendarState.value.isOwner;
+
+    // 조회되었을 경우, 앱바 반환
+    return DefaultAppBar(
+      title: '달력 수정',
       backgroundColor: Color(0xFFF2F2F7),
+      actions: [
+        if (isOwner) ...[
+          // 삭제
+          IconButton(
+            icon: const Icon(
+              Icons.delete,
+              size: 22,
+              color: AppColors.sundayRed,
+            ),
+            onPressed: () {
+              _showDeleteDialog(ref);
+            },
+          ),
+        ] else ...[
+          // 나가기
+          IconButton(
+            icon: const Icon(
+              Icons.exit_to_app,
+              size: 22,
+              color: AppColors.sundayRed,
+            ),
+            onPressed: () {
+              _showExitDialog(ref);
+            },
+          ),
+        ],
+
+        const SizedBox(width: 16),
+      ],
     );
   }
 
@@ -66,8 +113,10 @@ class CreateShareCalendarScreen extends BaseScreen
   ///
   @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
-    // 참여 중인 멤버 리스트 조회 상태
-    final creationState = ref.watch(CreateShareCalendarState.creationProvider);
+    // 조회 상태
+    final calendarState = ref.watch(
+      UpdateShareCalendarState.shareCalendarProvider,
+    );
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
@@ -85,15 +134,15 @@ class CreateShareCalendarScreen extends BaseScreen
           ),
         );
       },
-      child: creationState.onState(
-        fetched: (creation) {
+      child: calendarState.onState(
+        fetched: (calendar) {
           return Column(
             children: [
               // 콘텐츠
-              Expanded(child: _buildContentView(ref, creation: creation)),
+              Expanded(child: _buildContentView(ref, calendar: calendar)),
               const SizedBox(height: 20),
 
-              // 생성 버튼
+              // 수정 버튼
               Padding(
                 padding: EdgeInsets.only(
                   left: 16,
@@ -101,9 +150,9 @@ class CreateShareCalendarScreen extends BaseScreen
                   bottom: AppSize.responsiveBottomInset,
                 ),
                 child: AppButton(
-                  text: '생성하기',
+                  text: '수정하기',
                   onTapped: () {
-                    create(ref);
+                    update(ref);
                   },
                 ),
               ),
@@ -111,10 +160,10 @@ class CreateShareCalendarScreen extends BaseScreen
           );
         },
         failed: (error) {
-          return ErrorView(title: '정보 조회 중 오류가 발생했습니다.');
+          return ErrorView(title: '공유 달력 조회 중 오류가 발생했습니다.');
         },
         loading: () {
-          return const LoadingView(title: '필요한 정보를 불러오는 중입니다.');
+          return const LoadingView(title: '공유 달력을 불러오는 중입니다.');
         },
       ),
     );
@@ -123,14 +172,11 @@ class CreateShareCalendarScreen extends BaseScreen
   ///
   /// ContentView
   ///
-  Widget _buildContentView(
-    WidgetRef ref, {
-    required ShareCalendarCreation creation,
-  }) {
+  Widget _buildContentView(WidgetRef ref, {required ShareCalendar calendar}) {
     return CustomScrollView(
       slivers: [
         /// 달력 제목 설정
-        _buildCalendarTitle(ref),
+        _buildCalendarTitle(ref, calendar.title),
 
         /// 참여 중인 멤버
         SliverToBoxAdapter(
@@ -144,7 +190,7 @@ class CreateShareCalendarScreen extends BaseScreen
             ),
           ),
         ),
-        _buildParticipantList(ref, creation.participantList),
+        _buildParticipantList(ref, calendar.participantList),
 
         /// 초대 버튼
         _buildInviteFooterButton(ref),
@@ -155,7 +201,7 @@ class CreateShareCalendarScreen extends BaseScreen
   ///
   /// 달력 제목 설정
   ///
-  Widget _buildCalendarTitle(WidgetRef ref) {
+  Widget _buildCalendarTitle(WidgetRef ref, String title) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -170,6 +216,7 @@ class CreateShareCalendarScreen extends BaseScreen
             ),
             const SizedBox(height: 10),
             AppTextField(
+              initialValue: title,
               placeholderText: '제목을 입력하세요.',
               onTextChanged: (text) {
                 updateTitle(ref, text);
@@ -217,7 +264,7 @@ class CreateShareCalendarScreen extends BaseScreen
         behavior: HitTestBehavior.opaque,
         onTap: () {
           HapticFeedback.lightImpact();
-          SearchUserRoute(mode: SearchMode.create.value).push(ref.context);
+          SearchUserRoute(mode: SearchMode.update.value).push(ref.context);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -240,6 +287,47 @@ class CreateShareCalendarScreen extends BaseScreen
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // ------------------------------- Dialog ------------------------------------
+  ///
+  /// 캘린더 삭제 다이얼로그
+  ///
+  void _showDeleteDialog(WidgetRef ref) {
+    DialogService.show(
+      dialog: AppDialog.doubleBtn(
+        title: '달력 삭제',
+        subTitle: '정말 이 달력을 삭제할까요?',
+        leftBtnContent: '취소',
+        rightBtnContent: '삭제',
+        rightBtnColor: const Color(0xFFEF4444),
+        onRightBtnClicked: () {
+          ref.context.pop();
+          delete(ref);
+        },
+        onLeftBtnClicked: () => ref.context.pop(),
+      ),
+    );
+  }
+
+  ///
+  /// 캘린더 나가기 다이얼로그
+  ///
+  void _showExitDialog(WidgetRef ref) {
+    DialogService.show(
+      dialog: AppDialog.doubleBtn(
+        title: '달력 나가기',
+        subTitle: '정말 이 달력을 나가시겠습니까?',
+        leftBtnContent: '취소',
+        rightBtnContent: '나가기',
+        rightBtnColor: const Color(0xFFEF4444),
+        onRightBtnClicked: () {
+          ref.context.pop();
+          exit(ref);
+        },
+        onLeftBtnClicked: () => ref.context.pop(),
       ),
     );
   }

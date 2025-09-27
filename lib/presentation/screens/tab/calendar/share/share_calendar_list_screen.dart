@@ -4,13 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
-import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
+import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_event.dart';
@@ -26,9 +27,6 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
   @override
   void onInit(WidgetRef ref) {
     super.onInit(ref);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchCurrentCalendar(ref);
-    });
   }
 
   ///
@@ -64,6 +62,7 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
   Widget buildBody(BuildContext context, WidgetRef ref) {
     return FocusDetector(
       onFocusGained: () {
+        fetchCurrentCalendar(ref);
         fetchCalendarList(ref);
       },
       child: _buildCalendarList(ref),
@@ -167,10 +166,11 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
           return CalendarItem(
             information: calendar,
             isSelected: calendar.id == currentCalendarID,
-            onTapped: () async {
+            onTapped: () {
               HapticFeedback.selectionClick();
               updateSelectedCalendar(ref, calendar: calendar);
             },
+            onLongPressed: () {},
           );
         },
       ),
@@ -185,6 +185,10 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
     List<CalendarInformation> calendarList,
     String currentCalendarID,
   ) {
+    if (calendarList.isEmpty) {
+      return _buildEmptyPlaceholder(ref);
+    }
+
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList.separated(
@@ -195,15 +199,73 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
           return CalendarItem(
             information: calendar,
             isSelected: calendar.id == currentCalendarID,
-            onTapped: () async {
+            onTapped: () {
               HapticFeedback.selectionClick();
               updateSelectedCalendar(ref, calendar: calendar);
+            },
+            onLongPressed: () {
+              HapticFeedback.selectionClick();
+              UpdateShareCalendarRoute(calendarID: calendar.id).push(context);
             },
           );
         },
         separatorBuilder: (context, index) {
           return const SizedBox(height: 12);
         },
+      ),
+    );
+  }
+
+  ///
+  /// 공유 달력 리스트 비어있을 때
+  ///
+  Widget _buildEmptyPlaceholder(WidgetRef ref) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppText(
+              text: '생성된 공유 달력이 없어요.',
+              textAlign: TextAlign.center,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              textColor: AppColors.gray800,
+            ),
+            const SizedBox(height: 12),
+            AppText(
+              text: '새로운 공유 달력을 만들어 일정 관리를 시작해보세요.',
+              textAlign: TextAlign.center,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              textColor: AppColors.gray500,
+            ),
+            const SizedBox(height: 24),
+            GestureDetector(
+              onTap: () {
+                CreateShareCalendarRoute().push(ref.context);
+              },
+              child: Container(
+                width: 140,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: AppText(
+                    text: '공유 달력 만들기',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    textColor: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

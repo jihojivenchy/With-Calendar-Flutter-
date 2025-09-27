@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/data/services/calendar/calendar_service.dart';
 import 'package:with_calendar/data/services/calendar/share_calendar_service.dart';
@@ -31,6 +32,45 @@ mixin class CalendarScreenEvent {
   ///
   DateTime getStartDate(WidgetRef ref) {
     return _calendarService.startDate;
+  }
+
+  ///
+  /// 페이지 변경 처리
+  ///
+  void updatePage(WidgetRef ref, int index) {
+    final targetDate = calculateDateFromIndex(index);
+    updateFocusedDate(ref, targetDate);
+  }
+
+  ///
+  /// 포커싱 날짜 변경
+  ///
+  void updateFocusedDate(WidgetRef ref, DateTime date) {
+    ref.read(CalendarScreenState.focusedDate.notifier).state = date;
+  }
+
+  ///
+  /// 인덱스를 기반으로 날짜 계산
+  ///
+  DateTime calculateDateFromIndex(int index) {
+    // DateTime 타입은 월 오버플로우를 자동으로 처리해줌
+    return DateTime(
+      _calendarService.startDate.year,
+      _calendarService.startDate.month + index,
+    );
+  }
+
+  ///
+  /// 날짜를 기반으로 페이지 인덱스 계산
+  ///
+  int calculatePageIndexFromDate(DateTime targetDate) {
+    final startYear = _calendarService.startDate.year;
+    final startMonth = _calendarService.startDate.month;
+
+    final yearDiff = targetDate.year - startYear;
+    final monthDiff = targetDate.month - startMonth;
+
+    return yearDiff * 12 + monthDiff;
   }
 
   ///

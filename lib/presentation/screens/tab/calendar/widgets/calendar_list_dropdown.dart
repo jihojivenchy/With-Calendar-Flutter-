@@ -9,9 +9,6 @@ class CalendarListDropdown extends StatefulWidget {
   final String currentCalendarID;
   final List<CalendarInformation> calendarList;
 
-  /// 캘린더 리스트 조회 (드롭다운 메뉴 표시 전)
-  final Future<void> Function() onWillShow;
-
   /// 캘린더 선택
   final Function(CalendarInformation calendar) onCalendarTapped;
 
@@ -19,7 +16,6 @@ class CalendarListDropdown extends StatefulWidget {
     super.key,
     required this.currentCalendarID,
     required this.calendarList,
-    required this.onWillShow,
     required this.onCalendarTapped,
   });
 
@@ -153,11 +149,9 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
       link: _layerLink,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () async {
+        onTap: () {
+          HapticFeedback.lightImpact();
           if (_entry == null) {
-            HapticFeedback.lightImpact();
-            // 캘린더 리스트 조회 후 드롭다운 메뉴 표시
-            await widget.onWillShow();
             _show();
           } else {
             _hide();

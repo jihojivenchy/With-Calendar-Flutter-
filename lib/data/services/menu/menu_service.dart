@@ -28,7 +28,7 @@ class MenuService with BaseFirestoreMixin {
     await update(
       FirestoreCollection.users,
       documentID: profile.id,
-      data: profile.toJson(),
+      data: {'name': profile.name, 'userCode': profile.code},
     );
   }
 }

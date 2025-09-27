@@ -7,6 +7,7 @@ import 'package:with_calendar/data/services/firestore/base_firestore_mixin.dart'
 import 'package:with_calendar/data/services/hive/hive_service.dart';
 import 'package:with_calendar/domain/entities/auth/sign_in_information.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
+import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/utils/constants/firestore_constants.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
@@ -42,7 +43,6 @@ class AuthService with BaseFirestoreMixin {
         HiveBoxPath.currentCalendar,
         value: defaultCalendar.toJson(),
       );
-
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
@@ -106,43 +106,54 @@ class AuthService with BaseFirestoreMixin {
         throw FirebaseAuthError('회원가입에 실패했습니다.');
       }
 
-      final userUID = user.uid;
-      final userCode = RandomGenerator.generateUserCode();
-      final createdAt = DateTime.now().toStringFormat('yyyy-MM-dd HH:mm:ss');
-      final defaultCalendar = CalendarInformation(
-        id: userUID,
-        name: 'With Calendar',
-        type: CalendarType.private,
-        createdAt: createdAt,
+      // 배치 생성
+      final batch = firestore.batch();
+
+      // 유저 정보
+      final profile = Profile(
+        id: user.uid,
+        name: name,
+        email: email,
+        code: RandomGenerator.generateUserCode(),
+        createdAt: DateTime.now().toStringFormat('yyyy-MM-dd HH:mm:ss'),
       );
 
-      await Future.wait([
-        // 유저 정보 저장
-        set(
-          FirestoreCollection.users,
-          documentID: userUID,
-          data: {
-            'id': userUID,
-            'name': name,
-            'email': email,
-            'userCode': userCode,
-            'createdAt': createdAt,
-            'calendarList': [defaultCalendar.toJson()],
-          },
-        ),
-        // 캘린더 생성
-        set(
-          FirestoreCollection.calendar,
-          documentID: userUID,
-          data: defaultCalendar.toJson(),
-        ),
+      // 1. 유저 정보 저장
+      final userRef = firestore
+          .collection(FirestoreCollection.users)
+          .doc(profile.id);
+      batch.set(userRef, profile.toJson());
 
-        // 현재 선택된 캘린더로 설정
-        HiveService.instance.create(
-          HiveBoxPath.currentCalendar,
-          value: defaultCalendar.toJson(),
-        ),
-      ]);
+      // 캘린더 정보
+      final defaultCalendar = CalendarInformation(
+        id: profile.id,
+        name: 'With Calendar',
+        type: CalendarType.private,
+        createdAt: profile.createdAt,
+      );
+
+      // 2. 캘린더 리스트 정보 저장
+      final calendarListRef = firestore
+          .collection(FirestoreCollection.users)
+          .doc(profile.id)
+          .collection(FirestoreCollection.calendarList)
+          .doc(profile.id);
+      batch.set(calendarListRef, defaultCalendar.toJson());
+
+      // 3. 캘린더 생성
+      final calendarRef = firestore
+          .collection(FirestoreCollection.calendar)
+          .doc(profile.id);
+      batch.set(calendarRef, defaultCalendar.toJson());
+
+      // 4. 현재 선택된 캘린더로 설정
+      HiveService.instance.create(
+        HiveBoxPath.currentCalendar,
+        value: defaultCalendar.toJson(),
+      );
+
+      // 배치 실행
+      await batch.commit();
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':

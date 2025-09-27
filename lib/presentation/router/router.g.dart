@@ -134,15 +134,21 @@ RouteBase get $tabRoute => GoRouteData.$route(
       name: 'share calendar list',
 
       factory: _$ShareCalendarListRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'calendar/create-share-calendar',
-      name: 'create share calendar',
-
-      factory: _$CreateShareCalendarRoute._fromState,
       routes: [
         GoRouteData.$route(
-          path: 'calendar/search-user',
+          path: 'calendar/create-share-calendar',
+          name: 'create share calendar',
+
+          factory: _$CreateShareCalendarRoute._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'calendar/update-share-calendar/:calendarID',
+          name: 'update share calendar',
+
+          factory: _$UpdateShareCalendarRoute._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'calendar/search-user/:mode',
           name: 'search user',
 
           factory: _$SearchUserRoute._fromState,
@@ -237,8 +243,34 @@ mixin _$CreateShareCalendarRoute on GoRouteData {
       CreateShareCalendarRoute();
 
   @override
-  String get location =>
-      GoRouteData.$location('/calendar/create-share-calendar');
+  String get location => GoRouteData.$location(
+    '/calendar/share-calendar-list/calendar/create-share-calendar',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$UpdateShareCalendarRoute on GoRouteData {
+  static UpdateShareCalendarRoute _fromState(GoRouterState state) =>
+      UpdateShareCalendarRoute(calendarID: state.pathParameters['calendarID']!);
+
+  UpdateShareCalendarRoute get _self => this as UpdateShareCalendarRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/calendar/share-calendar-list/calendar/update-share-calendar/${Uri.encodeComponent(_self.calendarID)}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -255,11 +287,14 @@ mixin _$CreateShareCalendarRoute on GoRouteData {
 }
 
 mixin _$SearchUserRoute on GoRouteData {
-  static SearchUserRoute _fromState(GoRouterState state) => SearchUserRoute();
+  static SearchUserRoute _fromState(GoRouterState state) =>
+      SearchUserRoute(mode: state.pathParameters['mode']!);
+
+  SearchUserRoute get _self => this as SearchUserRoute;
 
   @override
   String get location => GoRouteData.$location(
-    '/calendar/create-share-calendar/calendar/search-user',
+    '/calendar/share-calendar-list/calendar/search-user/${Uri.encodeComponent(_self.mode)}',
   );
 
   @override
