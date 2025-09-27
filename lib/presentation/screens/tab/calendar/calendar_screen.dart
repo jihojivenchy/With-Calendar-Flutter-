@@ -29,9 +29,9 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   void onInit(WidgetRef ref) {
     super.onInit(ref);
 
-    // 달력 날짜 계산
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      calculateCalendarDay(ref);
+      calculateCalendarDay(ref);  // 달력 날짜 계산
+      subscribeScheduleList(ref);  // 일정 리스트 구독
     });
   }
 
@@ -41,6 +41,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   @override
   void onDispose(WidgetRef ref) {
     super.onDispose(ref);
+    disposeSubscription(ref);  // 일정 리스트 구독 해제
   }
 
   ///
@@ -183,6 +184,8 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     required List<String> weekList,
   }) {
     final lunarDate = ref.watch(CalendarScreenState.lunarDate);
+    final scheduleMap = ref.watch(CalendarScreenState.scheduleListProvider);
+
     return Expanded(
       child: PageView.builder(
         controller: pageController,
@@ -196,12 +199,14 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             dayList: dayList,
             weekList: weekList,
             lunarDate: lunarDate,
+            scheduleMap: scheduleMap,
             // 날짜 클릭 => 선택된 날짜 업데이트
             onTapped: (day) {
               fetchLunarDate(ref, day);
             },
             // 날짜 클릭 => 일정 생성 화면 이동
             onLongPressed: (day) {
+              log('날짜 클릭 => 일정 생성 화면 이동: $day');
               ref.context.push(CreateScheduleRoute().location, extra: day);
             },
           );

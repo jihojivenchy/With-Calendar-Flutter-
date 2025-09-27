@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 
@@ -12,6 +13,7 @@ class DayItem extends StatelessWidget {
     super.key,
     required this.day,
     required this.lunarDate,
+    required this.scheduleList,
     required this.baseRowHeight,
     required this.onTapped,
     required this.onLongPressed,
@@ -19,6 +21,7 @@ class DayItem extends StatelessWidget {
 
   final Day day;
   final LunarDate? lunarDate;
+  final List<Schedule> scheduleList;
 
   final Function(Day) onTapped;
   final Function(Day) onLongPressed;
@@ -50,7 +53,21 @@ class DayItem extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [_buildDayText(isSelected)],
+            children: [
+              // 날짜 텍스트
+              SizedBox(height: 20, child: _buildDayText(isSelected)),
+              const SizedBox(height: 4),
+
+              // 일정 리스트
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: scheduleList.length,
+                itemBuilder: (context, index) {
+                  return _buildScheduleItem(scheduleList[index]);
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -109,6 +126,9 @@ class DayItem extends StatelessWidget {
     }
   }
 
+  ///
+  /// 날짜 텍스트 테두리 색상
+  ///
   Color _buildDayContainerColor() {
     /// 오늘 날짜인 경우
     if (day.state == DayCellState.today) {
@@ -119,6 +139,9 @@ class DayItem extends StatelessWidget {
     }
   }
 
+  ///
+  /// 날짜 텍스트 색상
+  ///
   Color _getTextColor() {
     switch (day.state) {
       case DayCellState.basic:
@@ -132,5 +155,28 @@ class DayItem extends StatelessWidget {
       case DayCellState.today:
         return Colors.white;
     }
+  }
+
+  ///
+  /// 일정 아이템
+  ///
+  Widget _buildScheduleItem(Schedule schedule) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 2, right: 2, bottom: 3),
+      child: Container(
+        decoration: BoxDecoration(
+          color: schedule.color.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(2),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: AppText(
+          text: schedule.title,
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          textColor: schedule.color,
+          maxLines: 1,
+        ),
+      ),
+    );
   }
 }

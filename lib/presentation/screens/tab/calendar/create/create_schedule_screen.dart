@@ -33,6 +33,15 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
 
   final Day selectedDay;
 
+  @override
+  void onInit(WidgetRef ref) {
+    super.onInit(ref);
+    // 일정 초기화
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialize(ref, selectedDay);
+    });
+  }
+
   ///
   /// 앱 바 구성
   ///
@@ -228,6 +237,11 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
   ///
   @override
   Widget? buildBottomNavigationBar(BuildContext context, WidgetRef ref) {
+    // 선택된 색상
+    final selectedColor = ref.watch(
+      CreateScheduleState.scheduleProvider.select((value) => value.color),
+    );
+
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(
@@ -236,7 +250,11 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
           right: 16,
           bottom: AppSize.responsiveBottomInset,
         ),
-        child: AppButton(text: '완료', onTapped: () => create(ref)),
+        child: AppButton(
+          text: '완료',
+          backgroundColor: selectedColor,
+          onTapped: () => create(ref),
+        ),
       ),
     );
   }

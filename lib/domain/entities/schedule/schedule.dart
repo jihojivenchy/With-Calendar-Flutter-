@@ -10,6 +10,7 @@ class Schedule {
   final String notificationTime;
   final String memo;
   final Color color;
+  final ScheduleDuration duration;
 
   const Schedule({
     required this.id,
@@ -20,9 +21,14 @@ class Schedule {
     required this.notificationTime,
     required this.memo,
     required this.color,
+    required this.duration,
   });
 
   static Schedule fromJson(Map<String, dynamic> json) {
+    final duration = (json['isLong'] as bool) == true
+        ? ScheduleDuration.long
+        : ScheduleDuration.short;
+
     return Schedule(
       id: json['id'],
       title: json['title'],
@@ -32,6 +38,13 @@ class Schedule {
       notificationTime: json['notificationTime'],
       memo: json['memo'],
       color: Color(json['color'] as int),
+      duration: duration,
     );
   }
 }
+
+enum ScheduleDuration { long, short }
+
+
+/// 타입 별칭
+typedef ScheduleMap = Map<DateTime, List<Schedule>>;

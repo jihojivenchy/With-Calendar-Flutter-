@@ -90,6 +90,7 @@ class ScheduleDatePickerView extends StatelessWidget {
         mode: pickerMode,
         initialDateTime: selectedDate,
         minimumDate: startDate,
+        maximumDate: DateTime(2050, 12, 31),
         onDateTimeChanged: (dateTime) {
           onChangeDate(dateTime);
         },

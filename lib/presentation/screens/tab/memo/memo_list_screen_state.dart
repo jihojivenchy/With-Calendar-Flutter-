@@ -6,13 +6,14 @@ import 'package:with_calendar/domain/entities/memo/memo.dart';
 
 mixin class MemoListScreenState {
   /// 메모 리스트
-  static final memoListProvider = StateProvider<AsyncValue<List<Memo>>>((ref) {
-    return const AsyncValue.loading();
-  });
+  static final memoListProvider =
+      StateProvider.autoDispose<AsyncValue<List<Memo>>>((ref) {
+        return const AsyncValue.loading();
+      });
 
   /// 메모 리스트 구독 상태
   static final subscriptionProvider =
-      StateProvider<StreamSubscription<List<Memo>>?>((ref) {
+      StateProvider.autoDispose<StreamSubscription<List<Memo>>?>((ref) {
         return null;
       });
 }

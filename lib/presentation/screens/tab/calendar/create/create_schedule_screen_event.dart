@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/data/services/schedule/schedule_service.dart';
+import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
@@ -16,6 +17,24 @@ import 'package:with_calendar/presentation/screens/tab/calendar/create/create_sc
 ///
 mixin class CreateScheduleEvent {
   final ScheduleService _scheduleService = ScheduleService();
+
+  ///
+  /// 일정 초기화 (선택된 날짜로)
+  ///
+  void initialize(WidgetRef ref, Day selectedDay) {
+    final schedule = _getSchedule(ref);
+
+    final date = DateTime(
+      selectedDay.date.year,
+      selectedDay.date.month,
+      selectedDay.date.day,
+    );
+
+    _setSchedule(
+      ref,
+      schedule.copyWith(startDate: date, endDate: date),
+    );
+  }
 
   ///
   /// 일정 제목 수정

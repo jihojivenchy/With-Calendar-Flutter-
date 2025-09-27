@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -6,16 +7,21 @@ import 'package:klc/klc.dart';
 import 'package:with_calendar/data/services/calendar/calendar_service.dart';
 import 'package:with_calendar/data/services/calendar/share_calendar_service.dart';
 import 'package:with_calendar/data/services/hive/hive_service.dart';
+import 'package:with_calendar/data/services/schedule/schedule_service.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
+part 'calendar_screen_schedule_event.dart';
+
 mixin class CalendarScreenEvent {
   final CalendarService _calendarService = CalendarService();
   final ShareCalendarService _shareCalendarService = ShareCalendarService();
+  final ScheduleService _scheduleService = ScheduleService();
 
   ///
   /// 달력 날짜 계산

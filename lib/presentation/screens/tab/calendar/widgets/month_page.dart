@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/grid/dynamic_height_grid_view.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/day_item.dart';
@@ -11,6 +12,7 @@ class MonthPageView extends StatelessWidget {
     super.key,
     required this.dayList,
     required this.weekList,
+    required this.scheduleMap,
     this.lunarDate,
     required this.onTapped,
     required this.onLongPressed,
@@ -19,6 +21,7 @@ class MonthPageView extends StatelessWidget {
   final List<Day> dayList;
   final List<String> weekList;
   final LunarDate? lunarDate;
+  final ScheduleMap scheduleMap;
 
   final Function(Day) onTapped;
   final Function(Day) onLongPressed;
@@ -73,9 +76,12 @@ class MonthPageView extends StatelessWidget {
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               builder: (context, index) {
+                final day = dayList[index];
+
                 return DayItem(
-                  day: dayList[index],
+                  day: day,
                   lunarDate: lunarDate,
+                  scheduleList: _getScheduleList(day.date),
                   baseRowHeight: baseRowHeight,
                   onTapped: onTapped,
                   onLongPressed: onLongPressed,
@@ -89,5 +95,12 @@ class MonthPageView extends StatelessWidget {
         );
       },
     );
+  }
+
+  ///
+  /// 해당 날짜의 일정 리스트 반환
+  /// 
+  List<Schedule> _getScheduleList(DateTime date) {
+    return scheduleMap[date] ?? [];
   }
 }

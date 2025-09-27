@@ -68,6 +68,23 @@ class ScheduleCreation {
 
     return endDateOnly.difference(startDateOnly).inDays.abs() > 0;
   }
+
+  ///
+  /// startDate와 endDate의 차이
+  ///
+  int get durationPriority {
+    // 단기 일정일 경우 0
+    if (!isLongSchedule) return 0;
+
+    // 장기 일정일 경우 startDate와 endDate의 차이
+    final startDateOnly = DateTime(
+      startDate.year,
+      startDate.month,
+      startDate.day,
+    );
+    final endDateOnly = DateTime(endDate.year, endDate.month, endDate.day);
+    return endDateOnly.difference(startDateOnly).inDays.abs();
+  }
 }
 
 enum ScheduleType {
@@ -86,6 +103,7 @@ enum ScheduleType {
     );
   }
 }
+
 // 제목
 // 타입 (하루종일 or 시간)
 // 시작 날짜
