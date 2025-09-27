@@ -2,8 +2,11 @@ import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:with_calendar/data/services/schedule/schedule_service.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
+import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
+import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_state.dart';
@@ -13,7 +16,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/create/create_sc
 ///
 mixin class CreateScheduleEvent {
   final ScheduleService _scheduleService = ScheduleService();
-  
+
   ///
   /// 일정 제목 수정
   ///
@@ -53,7 +56,7 @@ mixin class CreateScheduleEvent {
   ///
   void updateType(WidgetRef ref, ScheduleType type) {
     final schedule = _getSchedule(ref);
-    _setSchedule(ref, schedule.copyWith(type: type));
+    _setSchedule(ref, schedule.copyWith(type: type, notificationTime: ''));
   }
 
   ///
@@ -64,7 +67,12 @@ mixin class CreateScheduleEvent {
     AllDayNotificationType type,
   ) {
     final schedule = _getSchedule(ref);
-    _setSchedule(ref, schedule.copyWith(allDayNotificationType: type));
+    _setSchedule(
+      ref,
+      schedule.copyWith(
+        notificationTime: type.calculateNotificationTime(schedule.startDate),
+      ),
+    );
   }
 
   ///
@@ -72,7 +80,20 @@ mixin class CreateScheduleEvent {
   ///
   void updateTimeNotificationType(WidgetRef ref, TimeNotificationType type) {
     final schedule = _getSchedule(ref);
-    _setSchedule(ref, schedule.copyWith(timeNotificationType: type));
+    _setSchedule(
+      ref,
+      schedule.copyWith(
+        notificationTime: type.calculateNotificationTime(schedule.startDate),
+      ),
+    );
+  }
+
+  ///
+  /// 일정 알림 시간 수정
+  ///
+  void updateNotificationTime(WidgetRef ref, String notificationTime) {
+    final schedule = _getSchedule(ref);
+    _setSchedule(ref, schedule.copyWith(notificationTime: notificationTime));
   }
 
   ///
@@ -104,7 +125,13 @@ mixin class CreateScheduleEvent {
 
     try {
       // 일정 생성
-      
+      await _scheduleService.create(schedule);
+
+      // 일정 생성 완료 후 화면 이동
+      if (ref.context.mounted) {
+        SnackBarService.showSnackBar('새로운 일정이 생성되었습니다.');
+        ref.context.pop();
+      }
     } catch (e) {
       log('일정 생성 실패: ${e.toString()}');
       SnackBarService.showSnackBar('일정 생성에 실패했습니다. ${e.toString()}');

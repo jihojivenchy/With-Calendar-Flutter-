@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
@@ -24,7 +25,7 @@ class ScheduleDatePickerView extends StatelessWidget {
   final String title;
   final ScheduleType scheduleType;
   final DateTime selectedDate;
-  final DateTime? startDate;  // 시작일을 기반으로 더 이전으로 못가게 하기 위해 종료일 전달
+  final DateTime? startDate; // 시작일을 기반으로 더 이전으로 못가게 하기 위해 종료일 전달
   final Color lineColor;
   final void Function(DateTime dateTime) onChangeDate;
 
@@ -78,12 +79,15 @@ class ScheduleDatePickerView extends StatelessWidget {
   /// 날짜 선택 버튼
   ///
   Widget _buildDatePicker() {
+    final pickerMode = scheduleType == ScheduleType.allDay
+        ? CupertinoDatePickerMode.date
+        : CupertinoDatePickerMode.dateAndTime;
+
     return SizedBox(
       height: 160,
       child: CupertinoDatePicker(
-        mode: scheduleType == ScheduleType.allDay
-            ? CupertinoDatePickerMode.date
-            : CupertinoDatePickerMode.dateAndTime,
+        key: ValueKey(pickerMode),
+        mode: pickerMode,
         initialDateTime: selectedDate,
         minimumDate: startDate,
         onDateTimeChanged: (dateTime) {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
+import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
@@ -31,15 +34,8 @@ class NotificationPickerBottomSheet extends StatefulWidget {
 
 class _NotificationPickerBottomSheetState
     extends State<NotificationPickerBottomSheet> {
-  late AllDayNotificationType _selectedAllDayType;
-  late TimeNotificationType _selectedTimeType;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedAllDayType = widget.schedule.allDayNotificationType;
-    _selectedTimeType = widget.schedule.timeNotificationType;
-  }
+  AllDayNotificationType _selectedAllDayType = AllDayNotificationType.none;
+  TimeNotificationType _selectedTimeType = TimeNotificationType.none;
 
   @override
   Widget build(BuildContext context) {

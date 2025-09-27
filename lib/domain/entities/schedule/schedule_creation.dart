@@ -7,8 +7,7 @@ class ScheduleCreation {
   final ScheduleType type;
   final DateTime startDate;
   final DateTime endDate;
-  final AllDayNotificationType allDayNotificationType;
-  final TimeNotificationType timeNotificationType;
+  final String notificationTime;
   final String memo;
   final Color color;
 
@@ -17,8 +16,7 @@ class ScheduleCreation {
     required this.type,
     required this.startDate,
     required this.endDate,
-    required this.allDayNotificationType,
-    required this.timeNotificationType,
+    required this.notificationTime,
     required this.memo,
     required this.color,
   });
@@ -28,8 +26,7 @@ class ScheduleCreation {
     ScheduleType? type,
     DateTime? startDate,
     DateTime? endDate,
-    AllDayNotificationType? allDayNotificationType,
-    TimeNotificationType? timeNotificationType,
+    String? notificationTime,
     String? memo,
     Color? color,
   }) {
@@ -38,8 +35,7 @@ class ScheduleCreation {
       type: type ?? this.type,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      allDayNotificationType: allDayNotificationType ?? this.allDayNotificationType,
-      timeNotificationType: timeNotificationType ?? this.timeNotificationType,
+      notificationTime: notificationTime ?? this.notificationTime,
       memo: memo ?? this.memo,
       color: color ?? this.color,
     );
@@ -50,49 +46,46 @@ class ScheduleCreation {
     type: ScheduleType.allDay,
     startDate: DateTime.now(),
     endDate: DateTime.now(),
-    allDayNotificationType: AllDayNotificationType.none,
-    timeNotificationType: TimeNotificationType.none,
+    notificationTime: '',
     memo: '',
     color: const Color(0xFF409060),
   );
+
+  ///
+  /// 장기 일정인지 단기 일정인지
+  ///
+  bool get isLongSchedule {
+    final DateTime startDateOnly = DateTime(
+      startDate.year,
+      startDate.month,
+      startDate.day,
+    );
+    final DateTime endDateOnly = DateTime(
+      endDate.year,
+      endDate.month,
+      endDate.day,
+    );
+
+    return endDateOnly.difference(startDateOnly).inDays.abs() > 0;
+  }
 }
 
 enum ScheduleType {
-  allDay(displayText: '하루종일'), // 하루종일
-  time(displayText: '시간'); // 시간
+  allDay(displayText: '하루종일', queryValue: 'ALL_DAY'), // 하루종일
+  time(displayText: '시간', queryValue: 'TIME'); // 시간
 
   final String displayText;
+  final String queryValue;
 
-  const ScheduleType({required this.displayText});
+  const ScheduleType({required this.displayText, required this.queryValue});
+
+  static ScheduleType fromString(String value) {
+    return ScheduleType.values.firstWhere(
+      (type) => type.queryValue == value,
+      orElse: () => ScheduleType.allDay,
+    );
+  }
 }
-
-/// 하루종일 일정에 대한 알림 유형
-enum AllDayNotificationType {
-  today(displayText: '당일'), 
-  oneDayBefore(displayText: '1일 전'), 
-  threeDayBefore(displayText: '3일 전'),
-  oneWeekBefore(displayText: '1주일 전'),
-  custom(displayText: '직접 설정'), 
-  none(displayText: '알림 없음');
-
-  final String displayText;
-
-  const AllDayNotificationType({required this.displayText});
-}
-
-/// 시간 일정에 대한 알림 유형
-enum TimeNotificationType {
-  start(displayText: '시작 시간'), 
-  tenMinutesBefore(displayText: '10분 전'), 
-  thirtyMinutesBefore(displayText: '30분 전'), 
-  oneHourBefore(displayText: '1시간 전'), 
-  custom(displayText: '직접 설정'), 
-  none(displayText: '알림 없음');
-
-  final String displayText;
-  const TimeNotificationType({required this.displayText});
-}
-
 // 제목
 // 타입 (하루종일 or 시간)
 // 시작 날짜

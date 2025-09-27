@@ -12,15 +12,13 @@ class ScheduleNotificationView extends StatelessWidget {
   const ScheduleNotificationView({
     super.key,
     required this.scheduleType,
-    required this.allDayType,
-    required this.timeType,
+    required this.notificationTime,
     required this.onTapped,
     required this.lineColor,
   });
 
   final ScheduleType scheduleType;
-  final AllDayNotificationType allDayType;
-  final TimeNotificationType timeType;
+  final String notificationTime;
   final VoidCallback onTapped;
 
   final Color lineColor;
@@ -33,9 +31,7 @@ class ScheduleNotificationView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(
-            bottom: BorderSide(color: lineColor, width: 0.5),
-          ),
+          border: Border(bottom: BorderSide(color: lineColor, width: 0.5)),
         ),
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Row(
@@ -49,24 +45,12 @@ class ScheduleNotificationView extends StatelessWidget {
               textColor: lineColor,
             ),
             const Spacer(),
-
-            // 하루 종일 모드인 경우
-            if (scheduleType == ScheduleType.allDay) ...[
-              AppText(
-                text: allDayType.displayText,
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                textColor: lineColor,
-              ),
-            ] else ...[
-              // 시간 모드인 경우
-              AppText(
-                text: timeType.displayText,
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                textColor: lineColor,
-              ),
-            ],
+            AppText(
+              text: notificationTime,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              textColor: lineColor,
+            ),
           ],
         ),
       ),

@@ -5,12 +5,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
+import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
+import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/notification_picker_bottom_sheet.dart';
+import 'package:with_calendar/presentation/design_system/component/bottom_sheet/set_notification_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button_group.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
@@ -23,6 +26,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/s
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_memo_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_notification_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_title_text_field.dart';
+import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
   CreateScheduleScreen({super.key, required this.selectedDay});
@@ -172,8 +176,7 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
 
     return ScheduleNotificationView(
       scheduleType: schedule.type,
-      allDayType: schedule.allDayNotificationType,
-      timeType: schedule.timeNotificationType,
+      notificationTime: schedule.notificationTime,
       lineColor: schedule.color,
       onTapped: () =>
           _showNotificationPickerBottomSheet(ref, schedule: schedule),
@@ -222,7 +225,7 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
 
   ///
   /// 생성 버튼
-  /// 
+  ///
   @override
   Widget? buildBottomNavigationBar(BuildContext context, WidgetRef ref) {
     return SafeArea(
@@ -233,10 +236,7 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
           right: 16,
           bottom: AppSize.responsiveBottomInset,
         ),
-        child: AppButton(
-          text: '완료',
-          onTapped: () => create(ref),
-        ),
+        child: AppButton(text: '완료', onTapped: () => create(ref)),
       ),
     );
   }
@@ -262,11 +262,51 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
           schedule: schedule,
           onAllDaySelected: (allDayType) {
             ref.context.pop();
+
+            // 직접 설정인 경우
+            if (allDayType == AllDayNotificationType.custom) {
+              _showSetNotificationBottomSheet(ref);
+              return;
+            }
+
             updateAllDayNotificationType(ref, allDayType);
           },
           onTimeSelected: (timeType) {
             ref.context.pop();
+
+            // 직접 설정인 경우
+            if (timeType == TimeNotificationType.custom) {
+              _showSetNotificationBottomSheet(ref);
+              return;
+            }
+
             updateTimeNotificationType(ref, timeType);
+          },
+        );
+      },
+    );
+  }
+
+  ///
+  /// 알림 설정 바텀시트
+  ///
+  void _showSetNotificationBottomSheet(WidgetRef ref) {
+    FocusScope.of(ref.context).unfocus();
+
+    showModalBottomSheet(
+      context: ref.context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return SetNotificationTimeBottomSheet(
+          onChangeDate: (dateTime) {
+            ref.context.pop();
+            updateNotificationTime(
+              ref,
+              dateTime.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+            );
           },
         );
       },
