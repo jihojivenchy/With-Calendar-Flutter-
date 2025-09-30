@@ -83,6 +83,14 @@ mixin class CalendarScreenEvent {
     return yearDiff * 12 + monthDiff;
   }
 
+  // -------------------------------달력 화면 모드 변경 -----------------------------
+  ///
+  /// 달력 화면 모드 변경
+  ///
+  void updateCalendarMode(WidgetRef ref, CalendarScreenMode mode) {
+    ref.read(CalendarScreenState.calendarMode.notifier).state = mode;
+  }
+
   // -------------------------------음력 날짜 조회 --------------------------------
   ///
   /// 음력 날짜 조회

@@ -4,6 +4,7 @@ import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/grid/dynamic_height_grid_view.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/day_item.dart';
 
 /// 월 별 페이지 뷰
@@ -14,6 +15,7 @@ class MonthPageView extends StatelessWidget {
     required this.weekList,
     required this.scheduleMap,
     this.lunarDate,
+    required this.screenMode,
     required this.onTapped,
     required this.onLongPressed,
   });
@@ -22,6 +24,7 @@ class MonthPageView extends StatelessWidget {
   final List<String> weekList;
   final LunarDate? lunarDate;
   final ScheduleMap scheduleMap;
+  final CalendarScreenMode screenMode;
 
   final Function(Day) onTapped;
   final Function(Day) onLongPressed;
@@ -39,61 +42,64 @@ class MonthPageView extends StatelessWidget {
         // 요일 헤더를 제외한 나머지 영역을 rowCount로 나눈 값이 기본 높이
         final itemMinHeight = (constraints.maxHeight - 35) / rowCount;
 
-        return Column(
-          children: [
-            /// 요일 목록
-            SizedBox(
-              width: constraints.maxWidth,
-              height: 35,
-              child: Row(
-                children: [
-                  ...List.generate(weekList.length, (index) {
-                    final Color textColor = switch (index) {
-                      0 => const Color(0xFFCC3636),
-                      6 => const Color(0xFF277BC0),
-                      _ => const Color(0xFF000000),
-                    };
-              
-                    return SizedBox(
-                      width: itemWidth,
-                      height: 35,
-                      child: AppText(
-                        text: weekList[index],
-                        textAlign: TextAlign.center,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        textColor: textColor,
-                      ),
-                    );
-                  }),
-                ],
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              /// 요일 목록
+              SizedBox(
+                width: constraints.maxWidth,
+                height: 35,
+                child: Row(
+                  children: [
+                    ...List.generate(weekList.length, (index) {
+                      final Color textColor = switch (index) {
+                        0 => const Color(0xFFCC3636),
+                        6 => const Color(0xFF277BC0),
+                        _ => const Color(0xFF000000),
+                      };
+                
+                      return SizedBox(
+                        width: itemWidth,
+                        height: 35,
+                        child: AppText(
+                          text: weekList[index],
+                          textAlign: TextAlign.center,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          textColor: textColor,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ),
-            ),
-
-            /// Day 목록
-            DynamicHeightGridView(
-              itemCount: dayList.length,
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              builder: (context, index) {
-                final day = dayList[index];
-
-                return DayItem(
-                  day: day,
-                  lunarDate: lunarDate,
-                  scheduleList: _getScheduleList(day.date),
-                  itemWidth: itemWidth,
-                  itemMinHeight: itemMinHeight,
-                  maxWidth: constraints.maxWidth,
-                  onTapped: onTapped,
-                  onLongPressed: onLongPressed,
-                );
-              },
-              crossAxisCount: weekList.length,
-              crossAxisSpacing: 0,
-              mainAxisSpacing: 0,
-            ),
-          ],
+          
+              /// Day 목록
+              DynamicHeightGridView(
+                itemCount: dayList.length,
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                builder: (context, index) {
+                  final day = dayList[index];
+          
+                  return DayItem(
+                    day: day,
+                    lunarDate: lunarDate,
+                    scheduleList: _getScheduleList(day.date),
+                    screenMode: screenMode,
+                    itemWidth: itemWidth,
+                    itemMinHeight: itemMinHeight,
+                    maxWidth: constraints.maxWidth,
+                    onTapped: onTapped,
+                    onLongPressed: onLongPressed,
+                  );
+                },
+                crossAxisCount: weekList.length,
+                crossAxisSpacing: 0,
+                mainAxisSpacing: 0,
+              ),
+            ],
+          ),
         );
       },
     );

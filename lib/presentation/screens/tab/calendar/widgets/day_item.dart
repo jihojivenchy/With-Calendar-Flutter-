@@ -7,6 +7,7 @@ import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 
 class DayItem extends StatelessWidget {
   const DayItem({
@@ -14,6 +15,7 @@ class DayItem extends StatelessWidget {
     required this.day,
     required this.lunarDate,
     required this.scheduleList,
+    required this.screenMode,
     required this.itemWidth,
     required this.itemMinHeight,
     required this.maxWidth,
@@ -24,6 +26,7 @@ class DayItem extends StatelessWidget {
   final Day day;
   final LunarDate? lunarDate;
   final List<Schedule> scheduleList;
+  final CalendarScreenMode screenMode;
 
   final Function(Day) onTapped;
   final Function(Day) onLongPressed;
@@ -63,29 +66,45 @@ class DayItem extends StatelessWidget {
               SizedBox(height: 20, child: _buildDayText(isSelected)),
               const SizedBox(height: 4),
 
-              // 일정 리스트
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                clipBehavior: Clip.none,
-                itemCount: scheduleList.length,
-                itemBuilder: (context, index) {
-                  final schedule = scheduleList[index];
+              if (screenMode == CalendarScreenMode.full) ...[
+                // 일정 리스트
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  clipBehavior: Clip.none,
+                  itemCount: scheduleList.length,
+                  itemBuilder: (context, index) {
+                    final schedule = scheduleList[index];
 
-                  switch (schedule.duration) {
-                    // 단기 일정
-                    case ScheduleDuration.short:
-                      return _buildShortScheduleItem(schedule);
+                    switch (schedule.duration) {
+                      // 단기 일정
+                      case ScheduleDuration.short:
+                        return _buildShortScheduleItem(schedule);
 
-                    // 장기 일정
-                    case ScheduleDuration.long:
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: _buildLongScheduleItem(schedule),
-                      );
-                  }
-                },
-              ),
+                      // 장기 일정
+                      case ScheduleDuration.long:
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 3),
+                          child: _buildLongScheduleItem(schedule),
+                        );
+                    }
+                  },
+                ),
+              ] else ...[
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: scheduleList
+                      .where(
+                        (schedule) =>
+                            schedule.weekSegmentState != WeekCellState.spacer,
+                      )
+                      .map((schedule) {
+                        return _buildHalfModeScheduleItem(schedule);
+                      })
+                      .toList(),
+                ),
+              ],
             ],
           ),
         ),
@@ -191,6 +210,7 @@ class DayItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: AppText(
           text: schedule.title,
+          textAlign: TextAlign.center,
           fontSize: 10,
           fontWeight: FontWeight.w500,
           textColor: schedule.color,
@@ -234,5 +254,16 @@ class DayItem extends StatelessWidget {
       case WeekCellState.spacer:
         return SizedBox(width: itemWidth, height: 18);
     }
+  }
+
+  ///
+  /// 하프 모드 일정 아이템
+  ///
+  Widget _buildHalfModeScheduleItem(Schedule schedule) {
+    return Container(
+      width: 4,
+      height: 4,
+      decoration: BoxDecoration(color: schedule.color, shape: BoxShape.circle),
+    );
   }
 }

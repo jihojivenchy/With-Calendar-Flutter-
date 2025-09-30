@@ -35,6 +35,20 @@ extension DateTimeExtension on DateTime {
     final DateFormat formatter = DateFormat('yyyy년 MM월 dd일 (E)', 'ko_KR');
     return formatter.format(this);
   }
+
+  /// '08월 14일 (목)' 형식으로 변환
+  String toKoreanMonthDay({bool isShort = false}) {
+    const weekdays = ['월', '화', '수', '목', '금', '토', '일']; // 1=Mon ... 7=Sun
+    final mm = month.toString().padLeft(2, '0');
+    final dd = day.toString().padLeft(2, '0');
+    final w = weekdays[weekday - 1];
+
+    if (isShort) {
+      return '$mm.$dd ($w)';
+    } else {
+      return '$mm월 $dd일 ($w)';
+    }
+  }
 }
 
 extension StringDateExtension on String {

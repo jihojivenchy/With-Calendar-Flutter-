@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class Schedule {
   final String id;
@@ -81,7 +82,11 @@ class Schedule {
     );
   }
 
-  bool get isWeekAnchor => weekSegmentState == WeekCellState.start;
+  String get periodText {
+    final startText = startDate.toKoreanMonthDay(isShort: true);
+    final endText = endDate.toKoreanMonthDay(isShort: true);
+    return '$startText ~ $endText';
+  }
 }
 
 ///

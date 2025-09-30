@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar_list_dropdown.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
@@ -13,10 +14,12 @@ class CalendarHeader extends StatelessWidget {
     required this.calendar,
     required this.calendarList,
     required this.focusedMonth,
+    required this.screenMode,
     required this.onCalendarTapped,
     required this.onHeaderTap,
     required this.onTodayButtonTapped,
     required this.onMenuButtonTapped,
+    required this.onScreenModeButtonTapped,
   });
 
   /// 현재 캘린더 정보
@@ -27,6 +30,9 @@ class CalendarHeader extends StatelessWidget {
 
   /// 포커스 날짜
   final DateTime focusedMonth;
+
+  /// 달력 화면 모드
+  final CalendarScreenMode screenMode;
 
   /// 캘린더 선택
   final Function(CalendarInformation calendar) onCalendarTapped;
@@ -40,68 +46,87 @@ class CalendarHeader extends StatelessWidget {
   /// 메뉴 버튼 클릭
   final VoidCallback onMenuButtonTapped;
 
+  /// 달력 화면 모드 버튼 클릭
+  final Function(CalendarScreenMode mode) onScreenModeButtonTapped;
+
   @override
   Widget build(BuildContext context) {
-    final text = focusedMonth.toStringFormat();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        GestureDetector(
-          onTap: onHeaderTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return SizedBox(
+      height: 45,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: onHeaderTap,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(
+                  text: focusedMonth.toStringFormat(),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+                AppText(
+                  text: calendar.name,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  textColor: AppColors.primary,
+                ),
+              ],
+            ),
+          ),
+          Row(
             children: [
-              AppText(text: text, fontSize: 18, fontWeight: FontWeight.w700),
-              AppText(
-                text: calendar.name,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                textColor: AppColors.primary,
+              if (!focusedMonth.isToday) ...[
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    onTodayButtonTapped();
+                  },
+                  child: AppText(
+                    text: 'Today',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    textColor: const Color(0xFF000000),
+                  ),
+                ),
+                const SizedBox(width: 40),
+              ],
+              IconButton(
+                icon: Icon(
+                  screenMode == CalendarScreenMode.full
+                      ? Icons.fullscreen
+                      : Icons.fullscreen_exit,
+                  color: const Color(0xFF000000),
+                  size: 25,
+                ),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  onScreenModeButtonTapped(
+                    screenMode == CalendarScreenMode.full
+                        ? CalendarScreenMode.half
+                        : CalendarScreenMode.full,
+                  );
+                },
+              ),
+              const SizedBox(width: 30),
+              CalendarListDropdown(
+                currentCalendarID: calendar.id,
+                calendarList: calendarList,
+                onCalendarTapped: onCalendarTapped,
+              ),
+              const SizedBox(width: 30),
+              IconButton(
+                icon: Icon(Icons.menu, color: Color(0xFF000000), size: 20),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  onMenuButtonTapped();
+                },
               ),
             ],
           ),
-        ),
-        Row(
-          children: [
-            if (!focusedMonth.isToday) ...[
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  onTodayButtonTapped();
-                },
-                child: AppText(
-                  text: 'Today',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  textColor: const Color(0xFF000000),
-                ),
-              ),
-              const SizedBox(width: 40),
-            ],
-            CalendarListDropdown(
-              currentCalendarID: calendar.id,
-              calendarList: calendarList,
-              onCalendarTapped: onCalendarTapped,
-            ),
-            const SizedBox(width: 30),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                HapticFeedback.lightImpact();
-                onMenuButtonTapped();
-              },
-              child: const SizedBox(
-                width: 30,
-                height: 40,
-                child: Center(
-                  child: Icon(Icons.menu, color: Color(0xFF000000), size: 20),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
