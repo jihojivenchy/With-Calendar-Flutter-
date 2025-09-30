@@ -37,7 +37,7 @@ class MonthPageView extends StatelessWidget {
       builder: (context, constraints) {
         final itemWidth = constraints.maxWidth / weekList.length;
         // 요일 헤더를 제외한 나머지 영역을 rowCount로 나눈 값이 기본 높이
-        final baseRowHeight = (constraints.maxHeight - 35) / rowCount;
+        final itemMinHeight = (constraints.maxHeight - 35) / rowCount;
 
         return Column(
           children: [
@@ -82,7 +82,9 @@ class MonthPageView extends StatelessWidget {
                   day: day,
                   lunarDate: lunarDate,
                   scheduleList: _getScheduleList(day.date),
-                  baseRowHeight: baseRowHeight,
+                  itemWidth: itemWidth,
+                  itemMinHeight: itemMinHeight,
+                  maxWidth: constraints.maxWidth,
                   onTapped: onTapped,
                   onLongPressed: onLongPressed,
                 );

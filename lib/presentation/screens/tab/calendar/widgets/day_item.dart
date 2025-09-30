@@ -14,7 +14,9 @@ class DayItem extends StatelessWidget {
     required this.day,
     required this.lunarDate,
     required this.scheduleList,
-    required this.baseRowHeight,
+    required this.itemWidth,
+    required this.itemMinHeight,
+    required this.maxWidth,
     required this.onTapped,
     required this.onLongPressed,
   });
@@ -25,7 +27,10 @@ class DayItem extends StatelessWidget {
 
   final Function(Day) onTapped;
   final Function(Day) onLongPressed;
-  final double baseRowHeight;
+
+  final double maxWidth;
+  final double itemWidth; // 아이템 너비
+  final double itemMinHeight; // 행 최소 높이
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +49,11 @@ class DayItem extends StatelessWidget {
       child: Opacity(
         opacity: day.isOutside ? 0.4 : 1,
         child: Container(
-          constraints: BoxConstraints(minHeight: baseRowHeight),
+          constraints: BoxConstraints(minHeight: itemMinHeight),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.color727577.withValues(alpha: 0.1)
-                : Colors.white,
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Column(
@@ -62,9 +67,23 @@ class DayItem extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                clipBehavior: Clip.none,
                 itemCount: scheduleList.length,
                 itemBuilder: (context, index) {
-                  return _buildScheduleItem(scheduleList[index]);
+                  final schedule = scheduleList[index];
+
+                  switch (schedule.duration) {
+                    // 단기 일정
+                    case ScheduleDuration.short:
+                      return _buildShortScheduleItem(schedule);
+
+                    // 장기 일정
+                    case ScheduleDuration.long:
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 3),
+                        child: _buildLongScheduleItem(schedule),
+                      );
+                  }
                 },
               ),
             ],
@@ -158,17 +177,18 @@ class DayItem extends StatelessWidget {
   }
 
   ///
-  /// 일정 아이템
+  /// 단기 일정 아이템
   ///
-  Widget _buildScheduleItem(Schedule schedule) {
+  Widget _buildShortScheduleItem(Schedule schedule) {
     return Padding(
       padding: const EdgeInsets.only(left: 2, right: 2, bottom: 3),
       child: Container(
+        height: 18,
         decoration: BoxDecoration(
           color: schedule.color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(2),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: AppText(
           text: schedule.title,
           fontSize: 10,
@@ -178,5 +198,41 @@ class DayItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  ///
+  /// 장기 일정 아이템
+  ///
+  Widget _buildLongScheduleItem(Schedule schedule) {
+    switch (schedule.weekSegmentState) {
+      case WeekCellState.start:
+        return IntrinsicHeight(
+          child: OverflowBox(
+            maxWidth: maxWidth,
+            alignment: Alignment.centerLeft,
+            child: Container(
+              width: itemWidth * schedule.weekStartVisibleDayCount,
+              height: 18,
+              decoration: BoxDecoration(
+                color: schedule.color.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: AppText(
+                text: schedule.title,
+                textAlign: TextAlign.center,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                textColor: schedule.color,
+                maxLines: 1,
+              ),
+            ),
+          ),
+        );
+      case WeekCellState.content:
+        return SizedBox(width: itemWidth, height: 18);
+      case WeekCellState.spacer:
+        return SizedBox(width: itemWidth, height: 18);
+    }
   }
 }

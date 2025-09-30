@@ -23,6 +23,7 @@ mixin class CalendarScreenEvent {
   final ShareCalendarService _shareCalendarService = ShareCalendarService();
   final ScheduleService _scheduleService = ScheduleService();
 
+  // -------------------------------달력 날짜 계산 --------------------------------
   ///
   /// 달력 날짜 계산
   ///
@@ -82,6 +83,7 @@ mixin class CalendarScreenEvent {
     return yearDiff * 12 + monthDiff;
   }
 
+  // -------------------------------음력 날짜 조회 --------------------------------
   ///
   /// 음력 날짜 조회
   ///
@@ -116,6 +118,8 @@ mixin class CalendarScreenEvent {
       SnackBarService.showSnackBar('음력 변환에 실패했습니다. 다시 시도해주세요.');
     }
   }
+
+  // -------------------------------캘린더 스위칭 ----------------------------------
 
   ///
   /// 현재 선택된 달력 정보 조회
