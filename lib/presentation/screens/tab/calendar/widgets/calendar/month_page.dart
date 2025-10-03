@@ -5,7 +5,7 @@ import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/grid/dynamic_height_grid_view.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/day_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/day_item.dart';
 
 /// 월 별 페이지 뷰
 class MonthPageView extends StatelessWidget {
@@ -26,7 +26,7 @@ class MonthPageView extends StatelessWidget {
   final ScheduleMap scheduleMap;
   final CalendarScreenMode screenMode;
 
-  final Function(Day) onTapped;
+  final Function(Day day, bool isDoubleTap) onTapped;
   final Function(Day) onLongPressed;
 
   
@@ -78,7 +78,7 @@ class MonthPageView extends StatelessWidget {
               DynamicHeightGridView(
                 itemCount: dayList.length,
                 shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 builder: (context, index) {
                   final day = dayList[index];
           

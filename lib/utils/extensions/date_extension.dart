@@ -49,6 +49,26 @@ extension DateTimeExtension on DateTime {
       return '$mm월 $dd일 ($w)';
     }
   }
+
+  /// 오전/오후 hh시 mm분을 한국어로 표현합니다.
+  ///
+  /// [includeMinutes]가 false인 경우 분 정보는 출력하지 않습니다.
+  String toKoreanMeridiemTime({bool includeMinutes = true}) {
+    final bool isAm = hour < 12;
+    final String period = isAm ? '오전' : '오후';
+
+    int displayHour = hour % 12;
+    if (displayHour == 0) {
+      displayHour = 12;
+    }
+
+    String minuteText = '';
+    if (includeMinutes && minute != 0) {
+      minuteText = ' ${minute.toString().padLeft(2, '0')}분';
+    }
+
+    return '$period $displayHour시$minuteText';
+  }
 }
 
 extension StringDateExtension on String {

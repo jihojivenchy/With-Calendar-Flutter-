@@ -28,7 +28,7 @@ class DayItem extends StatelessWidget {
   final List<Schedule> scheduleList;
   final CalendarScreenMode screenMode;
 
-  final Function(Day) onTapped;
+  final Function(Day day, bool isDoubleTap) onTapped;
   final Function(Day) onLongPressed;
 
   final double maxWidth;
@@ -43,7 +43,7 @@ class DayItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () {
         HapticFeedback.lightImpact();
-        onTapped(day);
+        onTapped(day, isSelected);
       },
       onLongPress: () {
         HapticFeedback.lightImpact();
@@ -237,7 +237,6 @@ class DayItem extends StatelessWidget {
                 color: schedule.color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(2),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: AppText(
                 text: schedule.title,
                 textAlign: TextAlign.center,

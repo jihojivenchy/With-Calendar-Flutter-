@@ -1,29 +1,26 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
-import 'package:with_calendar/data/services/calendar/calendar_service.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
-import 'package:with_calendar/main.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
-import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
+import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/month_picker_bottom_sheet.dart';
+import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar_animation_builder.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar_header.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/month_page.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule_item.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule_title_view.dart';
-import 'package:with_calendar/utils/extensions/date_extension.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/month_page.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/schedule_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/schedule_title_view.dart';
 
 class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   CalendarScreen({super.key});
@@ -119,6 +116,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
         fetchCurrentCalendar(ref);
       },
       child: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(
             child: Column(
@@ -236,11 +234,13 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             lunarDate: lunarDate,
             scheduleMap: scheduleMap,
             screenMode: screenMode,
-            onTapped: (day) {
+            onTapped: (day, isDoubleTap) {
+              if (isDoubleTap) {
+                _showCreateBottomSheet(ref, day);
+              }
               fetchLunarDate(ref, day);
             },
             onLongPressed: (day) {
-              log('날짜 클릭 => 일정 생성 화면 이동: $day');
               ref.context.push(CreateScheduleRoute().location, extra: day);
             },
           );
@@ -292,7 +292,15 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
         itemCount: scheduleList.length,
         itemBuilder: (context, index) {
           final schedule = scheduleList[index];
-          return ScheduleItem(schedule: schedule);
+          return ScheduleItem(
+            schedule: schedule,
+            onTapped: () {
+              print('일정 클릭 => 일정 상세 화면 이동: $schedule');
+            },
+            onLongPressed: () {
+              _showDeleteDialog(ref, schedule.id);
+            },
+          );
         },
         separatorBuilder: (context, index) {
           return const SizedBox(height: 12);
@@ -321,6 +329,43 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
           },
         );
       },
+    );
+  }
+
+  // --------------------------------- 바텀 시트 ---------------------------------
+  ///
+  /// 일정 생성
+  ///
+  void _showCreateBottomSheet(WidgetRef ref, Day selectedDay) {
+    showModalBottomSheet(
+      context: ref.context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return CreateScheduleScreen(selectedDay: selectedDay);
+      },
+    );
+  }
+
+  // ------------------------------- Dialog ------------------------------------
+  ///
+  /// 일정 삭제 다이얼로그
+  ///
+  void _showDeleteDialog(WidgetRef ref, String scheduleID) {
+    DialogService.show(
+      dialog: AppDialog.doubleBtn(
+        title: '해당 일정을 삭제할까요?',
+        leftBtnContent: '취소',
+        rightBtnContent: '삭제',
+        rightBtnColor: const Color(0xFFEF4444),
+        onRightBtnClicked: () {
+          ref.context.pop();
+          deleteSchedule(ref, scheduleID);
+        },
+        onLeftBtnClicked: () => ref.context.pop(),
+      ),
     );
   }
 }

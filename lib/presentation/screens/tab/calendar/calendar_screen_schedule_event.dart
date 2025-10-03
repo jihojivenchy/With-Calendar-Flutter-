@@ -49,6 +49,19 @@ extension CalendarScheduleEvent on CalendarScreenEvent {
     subscribeScheduleList(ref);
   }
 
+  ///
+  /// 일정 삭제
+  ///
+  Future<void> deleteSchedule(WidgetRef ref, String scheduleID) async {
+    final calendar = ref.read(CalendarScreenState.currentCalendar);
+
+    await _scheduleService.deleteSchedule(
+      calendar: calendar,
+      scheduleID: scheduleID,
+    );
+    retry(ref);
+  }
+
   //--------------------------------Helper 메서드--------------------------------
   StreamSubscription<ScheduleMap>? _getSubscription(WidgetRef ref) =>
       ref.read(CalendarScreenState.subscriptionProvider.notifier).state;

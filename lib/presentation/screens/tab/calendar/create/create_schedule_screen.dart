@@ -43,47 +43,59 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
   }
 
   ///
-  /// 앱 바 구성
-  ///
-  @override
-  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return DefaultAppBar(title: '일정 생성');
-  }
-
-  ///
   /// 본문
   ///
   @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
-    return SingleChildScrollView(
+    return Container(
+      height: AppSize.deviceHeight * 0.6,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(14),
+          topRight: Radius.circular(14),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Container(
+                width: 34,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF767676),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
 
-          // 제목 입력
-          _buildTitleTextField(ref),
+            // 제목 입력
+            _buildTitleTextField(ref),
 
-          // 하루 종일 모드인지 or 시간 모드인지 설정
-          const SizedBox(height: 20),
-          _buildScheduleTypeButton(ref),
+            // 하루 종일 모드인지 or 시간 모드인지 설정
+            const SizedBox(height: 20),
+            _buildScheduleTypeButton(ref),
 
-          // 시작일 선택
-          _buildStartDatePickerView(ref),
+            // 시작일 선택
+            _buildStartDatePickerView(ref),
 
-          // 종료일 선택
-          _buildEndDatePickerView(ref),
+            // 종료일 선택
+            _buildEndDatePickerView(ref),
 
-          // 알림 선택
-          _buildNotificationPickerView(ref),
+            // 알림 선택
+            _buildNotificationPickerView(ref),
 
-          // 컬러 선택
-          _buildColorPickerView(ref),
+            // 컬러 선택
+            _buildColorPickerView(ref),
 
-          // 메모 입력
-          _buildMemoTextField(ref),
-          const SizedBox(height: 30),
-        ],
+            // 메모 입력
+            _buildMemoTextField(ref),
+            const SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }

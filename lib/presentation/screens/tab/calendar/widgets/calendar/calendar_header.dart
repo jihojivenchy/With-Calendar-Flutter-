@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar_list_dropdown.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_list_dropdown.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 
@@ -90,7 +90,7 @@ class CalendarHeader extends StatelessWidget {
                     textColor: const Color(0xFF000000),
                   ),
                 ),
-                const SizedBox(width: 40),
+                const SizedBox(width: 15),
               ],
               IconButton(
                 icon: Icon(
@@ -109,13 +109,13 @@ class CalendarHeader extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(width: 30),
+              const SizedBox(width: 12),
               CalendarListDropdown(
                 currentCalendarID: calendar.id,
                 calendarList: calendarList,
                 onCalendarTapped: onCalendarTapped,
               ),
-              const SizedBox(width: 30),
+              const SizedBox(width: 12),
               IconButton(
                 icon: Icon(Icons.menu, color: Color(0xFF000000), size: 20),
                 onPressed: () {

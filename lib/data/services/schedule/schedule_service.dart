@@ -247,4 +247,25 @@ class ScheduleService with BaseFirestoreMixin {
         .doc(scheduleID)
         .set(scheduleData);
   }
+
+  ///
+  /// 일정 삭제
+  ///
+  Future<void> deleteSchedule({
+    required CalendarInformation calendar,
+    required String scheduleID,
+  }) async {
+    // 캘린더 컬렉션 이름
+    final collectionName = calendar.type == CalendarType.private
+        ? FirestoreCollection.calendar
+        : FirestoreCollection.shareCalendar;
+
+    // 일정 삭제
+    await firestore
+        .collection(collectionName)
+        .doc(calendar.id)
+        .collection(collectionName)
+        .doc(scheduleID)
+        .delete();
+  }
 }
