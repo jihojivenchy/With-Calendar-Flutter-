@@ -1,0 +1,65 @@
+import 'package:bounce_tapper/bounce_tapper.dart';
+import 'package:flutter/material.dart';
+import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+
+class CreateScheduleButton extends StatelessWidget {
+  const CreateScheduleButton({
+    super.key,
+    required this.selectedDate,
+    required this.onTapped,
+  });
+
+  final DateTime selectedDate;
+  final VoidCallback onTapped;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 36),
+      sliver: SliverToBoxAdapter(
+        child: BounceTapper(
+          highlightColor: Colors.transparent,
+          onTap: onTapped,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  offset: const Offset(0, 8),
+                  blurRadius: 24,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.add, color: AppColors.gray800, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: AppText(
+                    text: '새로운 일정',
+                    textColor: AppColors.gray800,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right,
+                  color: Color(0xFFB0B3BC),
+                  size: 26,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

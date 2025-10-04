@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
@@ -19,7 +19,7 @@ class NotificationPickerBottomSheet extends StatefulWidget {
   });
 
   /// 일정
-  final ScheduleCreation schedule;
+  final ScheduleCreateRequest schedule;
 
   /// 하루 종일 알림 선택 콜백
   final Function(AllDayNotificationType allDayType) onAllDaySelected;
@@ -153,9 +153,7 @@ class _NotificationPickerBottomSheetState
         onTapped();
       },
       child: Container(
-        color: isSelected
-            ? color.withValues(alpha: 0.1)
-            : AppColors.white,
+        color: isSelected ? color.withValues(alpha: 0.1) : AppColors.white,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [

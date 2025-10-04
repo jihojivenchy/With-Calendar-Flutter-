@@ -60,7 +60,7 @@ class DayItem extends StatelessWidget {
             color: isSelected
                 ? AppColors.color727577.withValues(alpha: 0.1)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,67 +107,54 @@ class DayItem extends StatelessWidget {
   }
 
   ///
-  /// 화면 모드에 따른 일정 본문
+  /// 화면 모드에 따른 일정 리스트
   ///
   Widget _buildScheduleBody() {
     switch (screenMode) {
       case CalendarScreenMode.full:
         return KeyedSubtree(
           key: const ValueKey<String>('fullMode'),
-          child: _buildFullModeScheduleList(),
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            clipBehavior: Clip.none,
+            itemCount: scheduleList.length,
+            itemBuilder: (context, index) {
+              final schedule = scheduleList[index];
+
+              switch (schedule.duration) {
+                // 단기 일정
+                case ScheduleDuration.short:
+                  return _buildShortScheduleItem(schedule);
+
+                // 장기 일정
+                case ScheduleDuration.long:
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: _buildLongScheduleItem(schedule),
+                  );
+              }
+            },
+          ),
         );
       case CalendarScreenMode.half:
         return KeyedSubtree(
           key: const ValueKey<String>('halfMode'),
-          child: _buildHalfModeScheduleList(),
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: scheduleList
+                .where(
+                  (schedule) =>
+                      schedule.weekSegmentState != WeekCellState.spacer,
+                )
+                .map((schedule) {
+                  return _buildHalfModeScheduleItem(schedule);
+                })
+                .toList(),
+          ),
         );
     }
-  }
-
-  ///
-  /// full 모드 일정
-  ///
-  Widget _buildFullModeScheduleList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      clipBehavior: Clip.none,
-      itemCount: scheduleList.length,
-      itemBuilder: (context, index) {
-        final schedule = scheduleList[index];
-
-        switch (schedule.duration) {
-          // 단기 일정
-          case ScheduleDuration.short:
-            return _buildShortScheduleItem(schedule);
-
-          // 장기 일정
-          case ScheduleDuration.long:
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 3),
-              child: _buildLongScheduleItem(schedule),
-            );
-        }
-      },
-    );
-  }
-
-  ///
-  /// 하프 모드 일정
-  ///
-  Widget _buildHalfModeScheduleList() {
-    return Wrap(
-      spacing: 4,
-      runSpacing: 4,
-      children: scheduleList
-          .where(
-            (schedule) => schedule.weekSegmentState != WeekCellState.spacer,
-          )
-          .map((schedule) {
-            return _buildHalfModeScheduleItem(schedule);
-          })
-          .toList(),
-    );
   }
 
   ///

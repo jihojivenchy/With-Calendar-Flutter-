@@ -8,7 +8,7 @@ import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
@@ -169,9 +169,9 @@ mixin class CreateScheduleEvent {
   }
 
   //--------------------------------Helper 메서드--------------------------------
-  ScheduleCreation _getSchedule(WidgetRef ref) =>
+  ScheduleCreateRequest _getSchedule(WidgetRef ref) =>
       ref.read(CreateScheduleState.scheduleProvider.notifier).state;
 
-  void _setSchedule(WidgetRef ref, ScheduleCreation schedule) =>
+  void _setSchedule(WidgetRef ref, ScheduleCreateRequest schedule) =>
       ref.read(CreateScheduleState.scheduleProvider.notifier).state = schedule;
 }

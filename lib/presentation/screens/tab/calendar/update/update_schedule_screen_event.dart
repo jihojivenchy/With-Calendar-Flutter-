@@ -9,7 +9,7 @@ import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
@@ -25,7 +25,7 @@ mixin class UpdateScheduleEvent {
   ///
   /// 수정할 일정을 creation 형태로 변환
   ///
-  void initialize(WidgetRef ref, ScheduleCreation schedule) {
+  void initialize(WidgetRef ref, ScheduleCreateRequest schedule) {
     _setSchedule(ref, schedule);
   }
 
@@ -163,9 +163,9 @@ mixin class UpdateScheduleEvent {
   }
 
   //--------------------------------Helper 메서드--------------------------------
-  ScheduleCreation _getSchedule(WidgetRef ref) =>
+  ScheduleCreateRequest _getSchedule(WidgetRef ref) =>
       ref.read(UpdateScheduleState.scheduleProvider.notifier).state;
 
-  void _setSchedule(WidgetRef ref, ScheduleCreation schedule) =>
+  void _setSchedule(WidgetRef ref, ScheduleCreateRequest schedule) =>
       ref.read(UpdateScheduleState.scheduleProvider.notifier).state = schedule;
 }

@@ -5,7 +5,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
@@ -22,6 +22,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/update/update_sc
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/month_page.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/create_schedule_button.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/schedule_item.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/schedule_title_view.dart';
 
@@ -129,7 +130,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFFFFF),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,6 +161,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
           if (screenMode == CalendarScreenMode.half) ...[
             _buildDateTitleView(ref, focusedDate: focusedDate),
             _buildScheduleListView(ref),
+            _buildScheduleCreateButton(ref, focusedDate: focusedDate),
           ],
         ],
       ),
@@ -272,9 +274,13 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   Widget _buildScheduleListView(WidgetRef ref) {
     final scheduleList = ref.watch(CalendarScreenState.focusedScheduleList);
 
+    if (scheduleList.isEmpty) {
+      return const SliverToBoxAdapter();
+    }
+
     // 일정이 있는 경우
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 30),
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
       sliver: SliverList.separated(
         itemCount: scheduleList.length,
         itemBuilder: (context, index) {
@@ -296,6 +302,34 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     );
   }
 
+  ///
+  /// 일정 생성 버튼
+  ///
+  Widget _buildScheduleCreateButton(
+    WidgetRef ref, {
+    required DateTime focusedDate,
+  }) {
+    final lunarDate = ref.watch(CalendarScreenState.lunarDate);
+    final selectedDate = lunarDate?.solarDate ?? focusedDate;
+
+    return CreateScheduleButton(
+      selectedDate: selectedDate,
+      onTapped: () {
+        FocusScope.of(ref.context).unfocus();
+
+        final baseDate = selectedDate;
+        final targetDay = Day(
+          date: DateTime(baseDate.year, baseDate.month, baseDate.day),
+          isOutside: false,
+          state: DayCellState.basic,
+        );
+
+        _showCreateBottomSheet(ref, targetDay);
+      },
+    );
+  }
+
+  // --------------------------------- 바텀 시트 ---------------------------------
   ///
   /// 날짜 이동 bottom sheet
   ///
@@ -319,7 +353,6 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     );
   }
 
-  // --------------------------------- 바텀 시트 ---------------------------------
   ///
   /// 일정 생성
   ///
@@ -348,7 +381,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
       isScrollControlled: true,
       builder: (context) {
         return UpdateScheduleScreen(
-          schedule: ScheduleCreation(
+          schedule: ScheduleCreateRequest(
             id: schedule.id,
             title: schedule.title,
             type: schedule.type,

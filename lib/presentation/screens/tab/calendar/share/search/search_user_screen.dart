@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/share/calendar_participant.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';

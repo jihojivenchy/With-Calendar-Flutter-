@@ -12,7 +12,7 @@ import 'package:with_calendar/domain/entities/memo/memo.dart';
 import 'package:with_calendar/domain/entities/memo/memo_creation.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
 import 'package:with_calendar/utils/constants/firestore_constants.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 import 'package:with_calendar/utils/services/random/random_generator.dart';
@@ -214,7 +214,7 @@ class ScheduleService with BaseFirestoreMixin {
   ///
   /// 일정 생성
   ///
-  Future<void> create(ScheduleCreation schedule) async {
+  Future<void> create(ScheduleCreateRequest schedule) async {
     // 현재 선택된 캘린더 정보 가져오기
     final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
     final calendar = CalendarInformation.fromHiveJson(result);
@@ -272,7 +272,7 @@ class ScheduleService with BaseFirestoreMixin {
   ///
   /// 일정 수정
   ///
-  Future<void> updateSchedule(ScheduleCreation schedule) async {
+  Future<void> updateSchedule(ScheduleCreateRequest schedule) async {
     // 현재 선택된 캘린더 정보 가져오기
     final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
     final calendar = CalendarInformation.fromHiveJson(result);
