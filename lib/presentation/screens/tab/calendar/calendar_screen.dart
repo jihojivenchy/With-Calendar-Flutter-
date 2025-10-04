@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
@@ -16,6 +18,7 @@ import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/month_page.dart';
@@ -279,7 +282,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
           return ScheduleItem(
             schedule: schedule,
             onTapped: () {
-              print('일정 클릭 => 일정 상세 화면 이동: $schedule');
+              _showUpdateBottomSheet(ref, schedule);
             },
             onLongPressed: () {
               _showDeleteDialog(ref, schedule.id);
@@ -329,6 +332,33 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
       isScrollControlled: true,
       builder: (context) {
         return CreateScheduleScreen(selectedDay: selectedDay);
+      },
+    );
+  }
+
+  ///
+  /// 일정 수정
+  ///
+  void _showUpdateBottomSheet(WidgetRef ref, Schedule schedule) {
+    showModalBottomSheet(
+      context: ref.context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return UpdateScheduleScreen(
+          schedule: ScheduleCreation(
+            id: schedule.id,
+            title: schedule.title,
+            type: schedule.type,
+            startDate: schedule.startDate,
+            endDate: schedule.endDate,
+            notificationTime: schedule.notificationTime,
+            memo: schedule.memo,
+            color: schedule.color,
+          ),
+        );
       },
     );
   }

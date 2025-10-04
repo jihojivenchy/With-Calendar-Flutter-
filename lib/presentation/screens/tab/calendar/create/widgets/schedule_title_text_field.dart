@@ -5,11 +5,13 @@ class ScheduleTitleTextField extends StatelessWidget {
   const ScheduleTitleTextField({
     super.key,
     this.initialValue,
+    this.autoFocus = true,
     required this.onTitleChanged,
     this.lineColor = AppColors.primary,
   });
 
   final String? initialValue;
+  final bool autoFocus;
   final Function(String) onTitleChanged;
   final Color lineColor;
 
@@ -17,7 +19,7 @@ class ScheduleTitleTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: initialValue,
-      autofocus: true,
+      autofocus: autoFocus,
       keyboardType: TextInputType.text,
       maxLines: 1,
       textInputAction: TextInputAction.done,

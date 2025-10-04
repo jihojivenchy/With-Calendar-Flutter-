@@ -268,4 +268,37 @@ class ScheduleService with BaseFirestoreMixin {
         .doc(scheduleID)
         .delete();
   }
+
+  ///
+  /// 일정 수정
+  ///
+  Future<void> updateSchedule(ScheduleCreation schedule) async {
+    // 현재 선택된 캘린더 정보 가져오기
+    final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
+    final calendar = CalendarInformation.fromHiveJson(result);
+
+    final Map<String, dynamic> updateData = {
+      'title': schedule.title,
+      'isLong': schedule.isLongSchedule,
+      'durationPriority': schedule.durationPriority,
+      'type': schedule.type.queryValue,
+      'startDate': schedule.startDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+      'endDate': schedule.endDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+      'timestamp': Timestamp.fromDate(schedule.startDate),
+      'notificationTime': schedule.notificationTime,
+      'memo': schedule.memo,
+      'color': schedule.color.toARGB32(), // 32비트 색상 값으로 변환
+    };
+
+    final collectionName = calendar.type == CalendarType.private
+        ? FirestoreCollection.calendar
+        : FirestoreCollection.shareCalendar;
+
+    await firestore
+        .collection(collectionName)
+        .doc(calendar.id)
+        .collection(collectionName)
+        .doc(schedule.id)
+        .update(updateData);
+  }
 }

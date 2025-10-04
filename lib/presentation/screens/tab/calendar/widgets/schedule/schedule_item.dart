@@ -99,11 +99,13 @@ class ScheduleItem extends StatelessWidget {
       final String timeRange =
           '${schedule.startDate.toKoreanMeridiemTime()} ~ ${schedule.endDate.toKoreanMeridiemTime()}';
       detailTexts.add(timeRange);
+      detailTexts.add(_buildShortScheduleProgressText());
 
       // 하루종일 일정
     } else {
       final String dateText = schedule.startDate.toKoreanSimpleDateFormat();
       detailTexts.add(dateText);
+      detailTexts.add(_buildShortScheduleProgressText());
     }
 
     // 상세 텍스트가 없으면 빈 위젯
@@ -196,5 +198,26 @@ class ScheduleItem extends StatelessWidget {
 
     final int progressDays = todayDateOnly.difference(startDateOnly).inDays + 1;
     return '$progressDays일차';
+  }
+
+  ///
+  /// 단기 일정 진행 표시
+  ///
+  String _buildShortScheduleProgressText() {
+    final DateTime today = DateTime.now();
+    final DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
+    final DateTime startDateOnly = DateTime(
+      schedule.startDate.year,
+      schedule.startDate.month,
+      schedule.startDate.day,
+    );
+
+    // D-Day
+    if (todayDateOnly.isBefore(startDateOnly)) {
+      final int daysUntil = startDateOnly.difference(todayDateOnly).inDays;
+      return 'D - $daysUntil';
+    }
+
+    return schedule.type == ScheduleType.allDay ? '하루' : '시간';
   }
 }

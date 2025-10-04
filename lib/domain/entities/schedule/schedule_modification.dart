@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 
 class ScheduleCreation {
-  final String id;
   final String title;
   final ScheduleType type;
   final DateTime startDate;
@@ -13,7 +12,6 @@ class ScheduleCreation {
   final Color color;
 
   const ScheduleCreation({
-    required this.id,
     required this.title,
     required this.type,
     required this.startDate,
@@ -33,7 +31,6 @@ class ScheduleCreation {
     Color? color,
   }) {
     return ScheduleCreation(
-      id: id,
       title: title ?? this.title,
       type: type ?? this.type,
       startDate: startDate ?? this.startDate,
@@ -45,7 +42,6 @@ class ScheduleCreation {
   }
 
   static ScheduleCreation initialState = ScheduleCreation(
-    id: '',
     title: '',
     type: ScheduleType.allDay,
     startDate: DateTime.now(),

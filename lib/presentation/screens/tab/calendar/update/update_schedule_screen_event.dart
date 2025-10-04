@@ -8,31 +8,25 @@ import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
+import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen_state.dart';
 
 ///
-/// 일정 생성 화면 이벤트
+/// 일정 수정 화면 이벤트
 ///
-mixin class CreateScheduleEvent {
+mixin class UpdateScheduleEvent {
   final ScheduleService _scheduleService = ScheduleService();
 
   ///
-  /// 일정 초기화 (선택된 날짜로)
+  /// 수정할 일정을 creation 형태로 변환
   ///
-  void initialize(WidgetRef ref, Day selectedDay) {
-    final schedule = _getSchedule(ref);
-
-    final date = DateTime(
-      selectedDay.date.year,
-      selectedDay.date.month,
-      selectedDay.date.day,
-    );
-
-    _setSchedule(ref, schedule.copyWith(startDate: date, endDate: date));
+  void initialize(WidgetRef ref, ScheduleCreation schedule) {
+    _setSchedule(ref, schedule);
   }
 
   ///
@@ -131,9 +125,9 @@ mixin class CreateScheduleEvent {
   }
 
   ///
-  /// 일정 생성
+  /// 일정 수정
   ///
-  Future<void> create(WidgetRef ref) async {
+  Future<void> update(WidgetRef ref) async {
     final schedule = _getSchedule(ref);
 
     if (schedule.title.isEmpty) {
@@ -143,15 +137,15 @@ mixin class CreateScheduleEvent {
 
     try {
       // 일정 생성
-      await _scheduleService.create(schedule);
+      await _scheduleService.updateSchedule(schedule);
 
       // 일정 생성 완료 후 화면 이동
       if (ref.context.mounted) {
         ref.context.pop();
       }
     } catch (e) {
-      log('일정 생성 실패: ${e.toString()}');
-      _showDialog(ref, '일정 생성에 실패했습니다. ${e.toString()}');
+      log('일정 수정 실패: ${e.toString()}');
+      _showDialog(ref, '일정 수정에 실패했습니다. ${e.toString()}');
     }
   }
 
@@ -170,8 +164,8 @@ mixin class CreateScheduleEvent {
 
   //--------------------------------Helper 메서드--------------------------------
   ScheduleCreation _getSchedule(WidgetRef ref) =>
-      ref.read(CreateScheduleState.scheduleProvider.notifier).state;
+      ref.read(UpdateScheduleState.scheduleProvider.notifier).state;
 
   void _setSchedule(WidgetRef ref, ScheduleCreation schedule) =>
-      ref.read(CreateScheduleState.scheduleProvider.notifier).state = schedule;
+      ref.read(UpdateScheduleState.scheduleProvider.notifier).state = schedule;
 }
