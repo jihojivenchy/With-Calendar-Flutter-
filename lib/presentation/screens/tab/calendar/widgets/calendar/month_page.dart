@@ -14,8 +14,8 @@ class MonthPageView extends StatelessWidget {
     required this.dayList,
     required this.weekList,
     required this.scheduleMap,
-    this.lunarDate,
     required this.screenMode,
+    this.lunarDate,
     required this.onTapped,
     required this.onLongPressed,
   });
@@ -29,8 +29,6 @@ class MonthPageView extends StatelessWidget {
   final Function(Day day, bool isDoubleTap) onTapped;
   final Function(Day) onLongPressed;
 
-  
-
   @override
   Widget build(BuildContext context) {
     // 총 주차 갯수 (row)
@@ -43,6 +41,7 @@ class MonthPageView extends StatelessWidget {
         final itemMinHeight = (constraints.maxHeight - 35) / rowCount;
 
         return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
           child: Column(
             children: [
               /// 요일 목록
@@ -57,7 +56,7 @@ class MonthPageView extends StatelessWidget {
                         6 => const Color(0xFF277BC0),
                         _ => const Color(0xFF000000),
                       };
-                
+
                       return SizedBox(
                         width: itemWidth,
                         height: 35,
@@ -73,7 +72,7 @@ class MonthPageView extends StatelessWidget {
                   ],
                 ),
               ),
-          
+
               /// Day 목록
               DynamicHeightGridView(
                 itemCount: dayList.length,
@@ -81,14 +80,14 @@ class MonthPageView extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 builder: (context, index) {
                   final day = dayList[index];
-          
+
                   return DayItem(
                     day: day,
                     lunarDate: lunarDate,
                     scheduleList: _getScheduleList(day.date),
-                    screenMode: screenMode,
                     itemWidth: itemWidth,
                     itemMinHeight: itemMinHeight,
+                    screenMode: screenMode,
                     maxWidth: constraints.maxWidth,
                     onTapped: onTapped,
                     onLongPressed: onLongPressed,
@@ -107,7 +106,7 @@ class MonthPageView extends StatelessWidget {
 
   ///
   /// 해당 날짜의 일정 리스트 반환
-  /// 
+  ///
   List<Schedule> _getScheduleList(DateTime date) {
     return scheduleMap[date] ?? [];
   }

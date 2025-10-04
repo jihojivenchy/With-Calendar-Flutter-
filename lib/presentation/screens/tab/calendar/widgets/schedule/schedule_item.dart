@@ -21,7 +21,7 @@ class ScheduleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BounceTapper(
+    return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         onTapped();
@@ -54,7 +54,7 @@ class ScheduleItem extends StatelessWidget {
                 Expanded(
                   child: AppText(
                     text: schedule.title,
-                    fontSize: 17,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     textColor: AppColors.gray800,
                     maxLines: 1,
@@ -113,33 +113,34 @@ class ScheduleItem extends StatelessWidget {
 
     final textColor = Color.lerp(schedule.color, Colors.black, 0.35);
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 6,
-        children: detailTexts
-            .map(
-              (text) => Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: schedule.color.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: AppText(
-                  text: text,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  textColor: textColor ?? AppColors.gray600,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            )
-            .toList(),
+    return SizedBox(
+      height: 30,
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          final text = detailTexts[index];
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: schedule.color.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: AppText(
+              text: text,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              textColor: textColor ?? AppColors.gray600,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(width: 8);
+        },
+        itemCount: detailTexts.length,
       ),
     );
   }

@@ -72,6 +72,10 @@ class App extends ConsumerWidget {
         theme: ThemeData(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
+          textSelectionTheme: TextSelectionThemeData(
+            selectionHandleColor: Colors.transparent,
+            selectionColor: AppColors.gray200,
+          ),
           fontFamily: 'Pretendard',
         ),
         localizationsDelegates: const [

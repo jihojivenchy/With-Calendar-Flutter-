@@ -179,8 +179,8 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
       child: CalendarHeader(
         calendar: calendar,
         focusedMonth: focusedDate,
-        screenMode: screenMode,
         calendarList: calendarList, // 캘린더 리스트
+        screenMode: screenMode,
         // 날짜 이동 bottom sheet 표시
         onHeaderTap: () {
           _showDatePickerBottomSheet(ref, focusedDate);
@@ -221,6 +221,9 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
 
     return CalendarAnimationBuilder(
       screenMode: screenMode,
+      onScreenModeChanged: (mode) {
+        updateCalendarMode(ref, mode);
+      },
       child: PageView.builder(
         controller: pageController,
         itemCount: calendarMap.length,
@@ -241,7 +244,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
               fetchLunarDate(ref, day);
             },
             onLongPressed: (day) {
-              ref.context.push(CreateScheduleRoute().location, extra: day);
+              // ref.context.push(CreateScheduleRoute().location, extra: day);
             },
           );
         },
@@ -265,25 +268,6 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   ///
   Widget _buildScheduleListView(WidgetRef ref) {
     final scheduleList = ref.watch(CalendarScreenState.focusedScheduleList);
-
-    // 일정이 없는 경우
-    if (scheduleList.isEmpty) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
-          child: Center(
-            child: AppText(
-              text: '일정이 없습니다.',
-              textAlign: TextAlign.center,
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              textColor: AppColors.gray400,
-            ),
-          ),
-        ),
-      );
-    }
 
     // 일정이 있는 경우
     return SliverPadding(

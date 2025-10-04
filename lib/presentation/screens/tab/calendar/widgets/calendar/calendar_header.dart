@@ -95,8 +95,8 @@ class CalendarHeader extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   screenMode == CalendarScreenMode.full
-                      ? Icons.fullscreen
-                      : Icons.fullscreen_exit,
+                      ? Icons.fullscreen_exit
+                      : Icons.fullscreen,
                   color: const Color(0xFF000000),
                   size: 25,
                 ),

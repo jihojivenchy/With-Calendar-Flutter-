@@ -9,7 +9,9 @@ import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule_creation.dart';
+import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
+import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_state.dart';
 
 ///
@@ -138,7 +140,7 @@ mixin class CreateScheduleEvent {
     final schedule = _getSchedule(ref);
 
     if (schedule.title.isEmpty) {
-      SnackBarService.showSnackBar('제목을 입력해주세요');
+      _showDialog(ref, '제목을 입력해주세요');
       return;
     }
 
@@ -153,8 +155,21 @@ mixin class CreateScheduleEvent {
       }
     } catch (e) {
       log('일정 생성 실패: ${e.toString()}');
-      SnackBarService.showSnackBar('일정 생성에 실패했습니다. ${e.toString()}');
+      _showDialog(ref, '일정 생성에 실패했습니다. ${e.toString()}');
     }
+  }
+
+   ///
+  /// 다이얼로그
+  ///
+  void _showDialog(WidgetRef ref, String title) {
+    DialogService.show(
+      dialog: AppDialog.singleBtn(
+        title: title,
+        btnContent: '확인',
+        onBtnClicked: () => ref.context.pop(),
+      ),
+    );
   }
 
   //--------------------------------Helper 메서드--------------------------------

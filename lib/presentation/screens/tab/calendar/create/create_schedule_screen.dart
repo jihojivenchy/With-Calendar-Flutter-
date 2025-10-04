@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,27 +26,43 @@ import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/s
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_title_text_field.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
-class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
-  CreateScheduleScreen({super.key, required this.selectedDay});
+class CreateScheduleScreen extends ConsumerStatefulWidget {
+  const CreateScheduleScreen({super.key, required this.selectedDay});
 
   final Day selectedDay;
 
   @override
-  void onInit(WidgetRef ref) {
-    super.onInit(ref);
+  ConsumerState<CreateScheduleScreen> createState() =>
+      _CreateScheduleScreenState();
+}
+
+class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
+    with CreateScheduleEvent {
+  final scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
     // 일정 초기화
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initialize(ref, selectedDay);
+      initialize(ref, widget.selectedDay);
     });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   ///
   /// 본문
   ///
   @override
-  Widget buildBody(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Container(
-      height: AppSize.deviceHeight * 0.6,
+      height: AppSize.deviceHeight * 0.95,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -57,45 +71,57 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Container(
-                width: 34,
-                height: 3,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF767676),
-                  borderRadius: BorderRadius.circular(3),
-                ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Container(
+              width: 34,
+              height: 3,
+              decoration: BoxDecoration(
+                color: const Color(0xFF767676),
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
+          ),
 
-            // 제목 입력
-            _buildTitleTextField(ref),
+          Expanded(
+            child: SingleChildScrollView(
+              controller: scrollController,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  // 제목 입력
+                  _buildTitleTextField(ref),
 
-            // 하루 종일 모드인지 or 시간 모드인지 설정
-            const SizedBox(height: 20),
-            _buildScheduleTypeButton(ref),
+                  // 하루 종일 모드인지 or 시간 모드인지 설정
+                  const SizedBox(height: 20),
+                  _buildScheduleTypeButton(ref),
 
-            // 시작일 선택
-            _buildStartDatePickerView(ref),
+                  // 시작일 선택
+                  _buildStartDatePickerView(ref),
 
-            // 종료일 선택
-            _buildEndDatePickerView(ref),
+                  // 종료일 선택
+                  _buildEndDatePickerView(ref),
 
-            // 알림 선택
-            _buildNotificationPickerView(ref),
+                  // 알림 선택
+                  _buildNotificationPickerView(ref),
 
-            // 컬러 선택
-            _buildColorPickerView(ref),
+                  // 컬러 선택
+                  _buildColorPickerView(ref),
 
-            // 메모 입력
-            _buildMemoTextField(ref),
-            const SizedBox(height: 30),
-          ],
-        ),
+                  // 메모 입력
+                  _buildMemoTextField(ref, scrollController),
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+          ),
+          _buildCompletionButton(),
+        ],
       ),
     );
   }
@@ -224,7 +250,7 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
   ///
   /// 메모 입력
   ///
-  Widget _buildMemoTextField(WidgetRef ref) {
+  Widget _buildMemoTextField(WidgetRef ref, ScrollController scrollController) {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
@@ -241,32 +267,36 @@ class CreateScheduleScreen extends BaseScreen with CreateScheduleEvent {
       onMemoChanged: (memo) {
         updateMemo(ref, memo);
       },
+      onExpansionChanged: () {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent - 50,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        });
+      },
     );
   }
 
   ///
   /// 생성 버튼
   ///
-  @override
-  Widget? buildBottomNavigationBar(BuildContext context, WidgetRef ref) {
+  Widget _buildCompletionButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
     );
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          top: 10,
-          left: 16,
-          right: 16,
-          bottom: AppSize.responsiveBottomInset,
-        ),
-        child: AppButton(
-          text: '완료',
-          backgroundColor: selectedColor,
-          onTapped: () => create(ref),
-        ),
+    return Padding(
+      padding: EdgeInsets.only(top: 10, bottom: AppSize.responsiveBottomInset),
+      child: AppButton(
+        text: '완료',
+        backgroundColor: selectedColor,
+        onTapped: () {
+          FocusScope.of(ref.context).unfocus();
+          create(ref);
+        },
       ),
     );
   }
