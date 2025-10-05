@@ -30,6 +30,5 @@ enum DayCellState {
   basic,
   sunday,
   saturday,
-  holiday,
   today,
 }

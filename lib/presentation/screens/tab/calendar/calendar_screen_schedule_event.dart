@@ -12,21 +12,18 @@ extension CalendarScheduleEvent on CalendarScreenEvent {
     if (currentSubscription != null) return;
 
     // 일정 리스트 구독
-    final subscription = _scheduleService
-        .fetchScheduleList()
-        .listen(
-          (scheduleMap) {
-            // 일정 리스트 업데이트
-            ref.read(CalendarScreenState.scheduleListProvider.notifier).state =
-                scheduleMap;
-          },
-          onError: (error, stackTrace) {
-            SnackBarService.showSnackBar('일정 리스트 조회에 실패했습니다.');
-            // 오류 상태 업데이트
-            ref.read(CalendarScreenState.scheduleListProvider.notifier).state =
-                {};
-          },
-        );
+    final subscription = _scheduleService.fetchScheduleList().listen(
+      (scheduleMap) {
+        // 일정 리스트 업데이트
+        ref.read(CalendarScreenState.scheduleListProvider.notifier).state =
+            scheduleMap;
+      },
+      onError: (error, stackTrace) {
+        SnackBarService.showSnackBar('일정 리스트 조회에 실패했습니다.');
+        // 오류 상태 업데이트
+        ref.read(CalendarScreenState.scheduleListProvider.notifier).state = {};
+      },
+    );
 
     // 구독 상태 업데이트
     _setSubscription(ref, subscription);

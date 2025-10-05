@@ -2,10 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:with_calendar/data/network/error/error_type.dart';
 
-
 abstract class BaseURLs {
   static const String holidayAPI =
-      'http://ec2-15-164-248-13.ap-northeast-2.compute.amazonaws.com:3000/';
+      'https://apis.data.go.kr/';
 }
 
 /// 네트워크 서비스
@@ -14,7 +13,7 @@ class DioService {
   factory DioService() => _instance;
 
   late final Dio _dio;
-  
+
   // 생성자 (외부에서 인스턴스를 생성할 수 없음)
   DioService._internal() {
     _dio = Dio(

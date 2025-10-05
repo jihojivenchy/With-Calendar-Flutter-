@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 
 /// 달력 화면 모드
@@ -60,8 +61,7 @@ abstract class CalendarScreenState {
         return [];
       });
 
-  // ---------------------------------- 일정 관련 ----------------------------------
-
+  // ---------------------------------- 일정 관련 --------------------------------
   /// 일정 리스트
   static final scheduleListProvider = StateProvider.autoDispose<ScheduleMap>((
     ref,
@@ -87,5 +87,11 @@ abstract class CalendarScreenState {
     return scheduleList.where((schedule) {
       return schedule.weekSegmentState != WeekCellState.spacer;
     }).toList();
+  });
+
+  // ---------------------------------- 공휴일 관련 -------------------------------
+  /// 공휴일 맵 (날짜별 공휴일 리스트)
+  static final holidayMap = StateProvider.autoDispose<HolidayMap>((ref) {
+    return {};
   });
 }

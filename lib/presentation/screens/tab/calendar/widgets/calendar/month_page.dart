@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/grid/dynamic_height_grid_view.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
@@ -15,6 +17,7 @@ class MonthPageView extends StatelessWidget {
     required this.weekList,
     required this.scheduleMap,
     required this.screenMode,
+    required this.holidayMap,
     this.lunarDate,
     required this.onTapped,
     required this.onLongPressed,
@@ -25,6 +28,7 @@ class MonthPageView extends StatelessWidget {
   final LunarDate? lunarDate;
   final ScheduleMap scheduleMap;
   final CalendarScreenMode screenMode;
+  final HolidayMap holidayMap;
 
   final Function(Day day, bool isDoubleTap) onTapped;
   final Function(Day) onLongPressed;
@@ -85,6 +89,7 @@ class MonthPageView extends StatelessWidget {
                     day: day,
                     lunarDate: lunarDate,
                     scheduleList: _getScheduleList(day.date),
+                    holidayList: _getHolidayList(day.date),
                     itemWidth: itemWidth,
                     itemMinHeight: itemMinHeight,
                     screenMode: screenMode,
@@ -109,5 +114,12 @@ class MonthPageView extends StatelessWidget {
   ///
   List<Schedule> _getScheduleList(DateTime date) {
     return scheduleMap[date] ?? [];
+  }
+
+  ///
+  /// 해당 날짜의 공휴일 반환
+  ///
+  List<Holiday> _getHolidayList(DateTime date) {
+    return holidayMap[date] ?? [];
   }
 }

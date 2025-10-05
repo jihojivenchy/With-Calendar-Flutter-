@@ -38,7 +38,10 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       calculateCalendarDay(ref); // 달력 날짜 계산
-      subscribeScheduleList(ref); // 일정 리스트 구독
+      Future.wait([
+        subscribeScheduleList(ref), // 일정 리스트 구독
+        fetchHolidayList(ref, DateTime.now().year), // 공휴일 리스트 조회
+      ]);
     });
   }
 
@@ -223,6 +226,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   }) {
     final lunarDate = ref.watch(CalendarScreenState.lunarDate);
     final scheduleMap = ref.watch(CalendarScreenState.scheduleListProvider);
+    final holidayMap = ref.watch(CalendarScreenState.holidayMap);
 
     return CalendarAnimationBuilder(
       screenMode: screenMode,
@@ -242,6 +246,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             lunarDate: lunarDate,
             scheduleMap: scheduleMap,
             screenMode: screenMode,
+            holidayMap: holidayMap,
             onTapped: (day, isDoubleTap) {
               if (isDoubleTap) {
                 _showCreateBottomSheet(ref, day);
@@ -265,7 +270,13 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   ///
   Widget _buildDateTitleView(WidgetRef ref, {required DateTime focusedDate}) {
     final lunarDate = ref.watch(CalendarScreenState.lunarDate);
-    return ScheduleTitleView(focusedDate: focusedDate, lunarDate: lunarDate);
+    final holidayMap = ref.watch(CalendarScreenState.holidayMap);
+
+    return ScheduleTitleView(
+      focusedDate: focusedDate,
+      lunarDate: lunarDate,
+      holidayList: holidayMap[lunarDate?.solarDate ?? focusedDate] ?? [],
+    );
   }
 
   ///

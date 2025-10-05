@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
+import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
@@ -14,6 +15,7 @@ class DayItem extends StatelessWidget {
     required this.day,
     required this.lunarDate,
     required this.scheduleList,
+    required this.holidayList,
     required this.itemWidth,
     required this.itemMinHeight,
     required this.screenMode,
@@ -25,7 +27,7 @@ class DayItem extends StatelessWidget {
   final Day day;
   final LunarDate? lunarDate;
   final List<Schedule> scheduleList;
-
+  final List<Holiday> holidayList;
   final Function(Day day, bool isDoubleTap) onTapped;
   final Function(Day) onLongPressed;
 
@@ -69,6 +71,7 @@ class DayItem extends StatelessWidget {
               SizedBox(height: 20, child: _buildDayText(isSelected)),
               const SizedBox(height: 4),
               _buildScheduleSection(),
+              _buildHolidayList(),
             ],
           ),
         ),
@@ -215,7 +218,7 @@ class DayItem extends StatelessWidget {
   Color _buildDayContainerColor() {
     /// 오늘 날짜인 경우
     if (day.state == DayCellState.today) {
-      return AppColors.primary;
+      return AppColors.primary.withValues(alpha: 0.8);
     } else {
       /// 오늘 날짜가 아닌 경우
       return Colors.transparent;
@@ -226,6 +229,11 @@ class DayItem extends StatelessWidget {
   /// 날짜 텍스트 색상
   ///
   Color _getTextColor() {
+    /// 공휴일인 경우
+    if (holidayList.isNotEmpty) {
+      return const Color(0xFFCC3636);
+    }
+
     switch (day.state) {
       case DayCellState.basic:
         return const Color(0xFF000000);
@@ -233,8 +241,6 @@ class DayItem extends StatelessWidget {
         return const Color(0xFFCC3636);
       case DayCellState.saturday:
         return const Color(0xFF277BC0);
-      case DayCellState.holiday:
-        return const Color(0xFFCC3636);
       case DayCellState.today:
         return Colors.white;
     }
@@ -314,6 +320,34 @@ class DayItem extends StatelessWidget {
       width: 4,
       height: 4,
       decoration: BoxDecoration(color: schedule.color, shape: BoxShape.circle),
+    );
+  }
+
+  ///
+  /// 공휴일 리스트
+  ///
+  Widget _buildHolidayList() {
+    if (holidayList.isEmpty || screenMode == CalendarScreenMode.half) {
+      return const SizedBox.shrink();
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: holidayList.length,
+      itemBuilder: (context, index) {
+        final holiday = holidayList[index];
+
+        return AppText(
+          text: holiday.title,
+          textAlign: TextAlign.center,
+          fontSize: 9,
+          fontWeight: FontWeight.w500,
+          textColor: const Color(0xFFCC3636),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        );
+      },
     );
   }
 }

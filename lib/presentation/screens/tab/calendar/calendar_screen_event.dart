@@ -7,6 +7,7 @@ import 'package:klc/klc.dart';
 import 'package:with_calendar/data/services/calendar/calendar_service.dart';
 import 'package:with_calendar/data/services/calendar/share_calendar_service.dart';
 import 'package:with_calendar/data/services/hive/hive_service.dart';
+import 'package:with_calendar/data/services/holiday/holiday_service.dart';
 import 'package:with_calendar/data/services/schedule/schedule_service.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
@@ -22,6 +23,7 @@ mixin class CalendarScreenEvent {
   final CalendarService _calendarService = CalendarService();
   final ShareCalendarService _shareCalendarService = ShareCalendarService();
   final ScheduleService _scheduleService = ScheduleService();
+  final HolidayService _holidayService = HolidayService();
 
   // -------------------------------달력 날짜 계산 --------------------------------
   ///
@@ -56,6 +58,15 @@ mixin class CalendarScreenEvent {
   /// 포커싱 날짜 변경
   ///
   void updateFocusedDate(WidgetRef ref, DateTime date) {
+    final currentYear = ref.read(CalendarScreenState.focusedDate).year;
+    final targetYear = date.year;
+
+    // 포커싱 날짜의 년도가 변경되었으면 공휴일 리스트 조회
+    if (currentYear != targetYear) {
+      print('공휴일 리스트 조회: $targetYear');
+      fetchHolidayList(ref, targetYear);
+    }
+
     ref.read(CalendarScreenState.focusedDate.notifier).state = date;
   }
 
@@ -81,6 +92,16 @@ mixin class CalendarScreenEvent {
     final monthDiff = targetDate.month - startMonth;
 
     return yearDiff * 12 + monthDiff;
+  }
+
+  ///
+  /// 공휴일 리스트 조회
+  ///
+  Future<void> fetchHolidayList(WidgetRef ref, int year) async {
+    final currentMap = ref.read(CalendarScreenState.holidayMap);
+    final newMap = await _holidayService.fetchHolidayList(year);
+    currentMap.addAll(newMap);
+    ref.read(CalendarScreenState.holidayMap.notifier).state = currentMap;
   }
 
   // -------------------------------달력 화면 모드 변경 -----------------------------
