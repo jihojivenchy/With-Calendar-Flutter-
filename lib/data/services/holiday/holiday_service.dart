@@ -16,19 +16,17 @@ class HolidayService {
       },
     );
     final items = response['response']['body']['items'];
-    if (items == null || items['item'] == null) {
+    final rawItems = items?['item'];
+    if (rawItems == null || rawItems is! List) {
       return {};
     }
 
     // 공휴일 리스트
-    final holidayList = (items['item'] as List)
-        .map((e) => Holiday.fromJson(e))
-        .toList();
-
-    // 공휴일 맵으로 변경
     final HolidayMap holidayMap = {};
 
-    for (final holiday in holidayList) {
+    // 파싱 후 맵에 추가
+    for (final item in rawItems) {
+      final holiday = Holiday.fromJson(item);
       holidayMap.putIfAbsent(holiday.date, () => []).add(holiday);
     }
     return holidayMap;

@@ -94,4 +94,9 @@ abstract class CalendarScreenState {
   static final holidayMap = StateProvider.autoDispose<HolidayMap>((ref) {
     return {};
   });
+
+  /// 공휴일을 이미 조회한 연도 집합
+  static final loadedHolidayYears = StateProvider<Set<int>>((ref) {
+    return <int>{};
+  });
 }
