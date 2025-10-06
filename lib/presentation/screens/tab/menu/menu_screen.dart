@@ -76,7 +76,7 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
         print('notification');
         break;
       case MenuType.notificationList:
-        print('notificationList');
+        NotificationListRoute().push(ref.context);
         break;
       case MenuType.feedback:
         print('feedback');

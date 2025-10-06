@@ -46,4 +46,6 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // implementation("androidx.core:core-ktx:1.13.1")  // 기본 API에 대한 코틀린 extension
+    // implementation("androidx.window:window:1.3.0") // 필요 시
 }

@@ -173,6 +173,12 @@ RouteBase get $tabRoute => GoRouteData.$route(
 
       factory: _$UpdateProfileRoute._fromState,
     ),
+    GoRouteData.$route(
+      path: 'notification/list',
+      name: 'notification list',
+
+      factory: _$NotificationListRoute._fromState,
+    ),
   ],
 );
 
@@ -357,6 +363,27 @@ mixin _$UpdateProfileRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/profile/update');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$NotificationListRoute on GoRouteData {
+  static NotificationListRoute _fromState(GoRouterState state) =>
+      NotificationListRoute();
+
+  @override
+  String get location => GoRouteData.$location('/notification/list');
 
   @override
   void go(BuildContext context) => context.go(location);

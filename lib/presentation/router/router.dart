@@ -15,7 +15,8 @@ import 'package:with_calendar/presentation/screens/tab/calendar/share/share_cale
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/notification_list/notification_list_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/tab_screen.dart';
 
 part 'router.g.dart';
@@ -184,6 +185,10 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: UpdateProfileRoute.path,
       name: UpdateProfileRoute.name,
     ),
+    TypedGoRoute<NotificationListRoute>(
+      path: NotificationListRoute.path,
+      name: NotificationListRoute.name,
+    ),
   ],
 )
 class TabRoute extends GoRouteData with _$TabRoute {
@@ -320,5 +325,18 @@ class UpdateProfileRoute extends GoRouteData with _$UpdateProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return UpdateProfileScreen();
+  }
+}
+
+///
+/// 알림 리스트 라우트
+///
+class NotificationListRoute extends GoRouteData with _$NotificationListRoute {
+  static const String path = 'notification/list';
+  static const String name = 'notification list';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return NotificationListScreen();
   }
 }

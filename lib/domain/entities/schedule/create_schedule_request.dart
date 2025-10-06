@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 
-class ScheduleCreateRequest {
+class CreateScheduleRequest {
   final String id;
   final String title;
   final ScheduleType type;
@@ -12,7 +12,7 @@ class ScheduleCreateRequest {
   final String memo;
   final Color color;
 
-  const ScheduleCreateRequest({
+  const CreateScheduleRequest({
     required this.id,
     required this.title,
     required this.type,
@@ -23,7 +23,7 @@ class ScheduleCreateRequest {
     required this.color,
   });
 
-  ScheduleCreateRequest copyWith({
+  CreateScheduleRequest copyWith({
     String? title,
     ScheduleType? type,
     DateTime? startDate,
@@ -32,7 +32,7 @@ class ScheduleCreateRequest {
     String? memo,
     Color? color,
   }) {
-    return ScheduleCreateRequest(
+    return CreateScheduleRequest(
       id: id,
       title: title ?? this.title,
       type: type ?? this.type,
@@ -44,7 +44,7 @@ class ScheduleCreateRequest {
     );
   }
 
-  static ScheduleCreateRequest initialState = ScheduleCreateRequest(
+  static CreateScheduleRequest initialState = CreateScheduleRequest(
     id: '',
     title: '',
     type: ScheduleType.allDay,

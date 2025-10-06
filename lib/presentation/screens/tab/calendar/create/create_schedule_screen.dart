@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
+import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
@@ -307,7 +307,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   void _showNotificationPickerBottomSheet(
     WidgetRef ref, {
-    required ScheduleCreateRequest schedule,
+    required CreateScheduleRequest schedule,
   }) {
     FocusScope.of(ref.context).unfocus();
 

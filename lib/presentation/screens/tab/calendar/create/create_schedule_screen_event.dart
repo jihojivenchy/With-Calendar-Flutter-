@@ -1,14 +1,16 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:with_calendar/data/services/notification/notification_service.dart';
 import 'package:with_calendar/data/services/schedule/schedule_service.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
+import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
@@ -143,7 +145,10 @@ mixin class CreateScheduleEvent {
 
     try {
       // 일정 생성
-      await _scheduleService.create(schedule);
+      final scheduleID = await _scheduleService.create(schedule);
+
+      // 알림 생성
+      unawaited(NotificationService.instance.create(scheduleID, schedule));
 
       // 일정 생성 완료 후 화면 이동
       if (ref.context.mounted) {
@@ -169,9 +174,9 @@ mixin class CreateScheduleEvent {
   }
 
   //--------------------------------Helper 메서드--------------------------------
-  ScheduleCreateRequest _getSchedule(WidgetRef ref) =>
+  CreateScheduleRequest _getSchedule(WidgetRef ref) =>
       ref.read(CreateScheduleState.scheduleProvider.notifier).state;
 
-  void _setSchedule(WidgetRef ref, ScheduleCreateRequest schedule) =>
+  void _setSchedule(WidgetRef ref, CreateScheduleRequest schedule) =>
       ref.read(CreateScheduleState.scheduleProvider.notifier).state = schedule;
 }

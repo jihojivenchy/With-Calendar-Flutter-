@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:with_calendar/domain/entities/schedule/schedule_create_request.dart';
+import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';

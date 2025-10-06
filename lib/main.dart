@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:with_calendar/data/services/hive/hive_service.dart';
+import 'package:with_calendar/data/services/notification/notification_service.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'firebase_options.dart';
@@ -20,6 +21,9 @@ void main() async {
 
   // 로컬 디비 초기화
   await initHive();
+
+  // 알림 서비스 초기화
+  await NotificationService.instance.initialize();
 
   // 세로 방향 고정
   await SystemChrome.setPreferredOrientations([

@@ -17,8 +17,8 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_screen_event.dart';
-import 'package:with_calendar/presentation/screens/tab/menu/update_profile.dart/update_profile_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen_state.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {

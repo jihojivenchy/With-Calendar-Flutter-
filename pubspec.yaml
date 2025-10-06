@@ -55,8 +55,9 @@ dependencies:
   url_launcher: ^6.2.5 # url 런쳐
   uuid: ^4.5.1
   collection: any
-  flutter_local_notifications: ^19.3.0  # 알림
+  flutter_local_notifications: ^19.4.2 # 알림
   klc: ^0.1.0 # 음력 날짜 계산
+  
 
   # UI 관련
   bounce_tapper: ^1.1.4             
