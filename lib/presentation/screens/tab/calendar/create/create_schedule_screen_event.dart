@@ -148,7 +148,12 @@ mixin class CreateScheduleEvent {
       final scheduleID = await _scheduleService.create(schedule);
 
       // 알림 생성
-      unawaited(NotificationService.instance.create(scheduleID, schedule));
+      unawaited(
+        NotificationService.instance.create(
+          scheduleID: scheduleID,
+          schedule: schedule,
+        ),
+      );
 
       // 일정 생성 완료 후 화면 이동
       if (ref.context.mounted) {

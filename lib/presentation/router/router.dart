@@ -15,6 +15,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/share/share_cale
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/feedback/feedback_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/notification_list/notification_list_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/tab_screen.dart';
@@ -189,6 +190,10 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: NotificationListRoute.path,
       name: NotificationListRoute.name,
     ),
+    TypedGoRoute<FeedbackRoute>(
+      path: FeedbackRoute.path,
+      name: FeedbackRoute.name,
+    ),
   ],
 )
 class TabRoute extends GoRouteData with _$TabRoute {
@@ -338,5 +343,18 @@ class NotificationListRoute extends GoRouteData with _$NotificationListRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return NotificationListScreen();
+  }
+}
+
+///
+/// 피드백 라우트
+///
+class FeedbackRoute extends GoRouteData with _$FeedbackRoute {
+  static const String path = 'feedback';
+  static const String name = 'feedback';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return FeedbackScreen();
   }
 }

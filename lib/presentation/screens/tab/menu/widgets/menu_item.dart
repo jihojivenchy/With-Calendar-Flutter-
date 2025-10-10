@@ -1,14 +1,23 @@
 import 'package:bounce_tapper/bounce_tapper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/menu/menu_item.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 
 class MenuItem extends StatelessWidget {
-  const MenuItem({super.key, required this.menu, required this.onTapped});
+  const MenuItem({
+    super.key,
+    required this.menu,
+    required this.onTapped,
+    this.notificationEnabled = false,
+    this.onNotificationChanged,
+  });
 
   final Menu menu;
   final VoidCallback onTapped;
+  final bool notificationEnabled;
+  final ValueChanged<bool>? onNotificationChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -25,31 +34,66 @@ class MenuItem extends StatelessWidget {
           ),
         ],
       ),
-      child: BounceTapper(
-        highlightColor: Colors.transparent,
-        onTap: onTapped,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-          child: Row(
-            children: [
-              Icon(menu.icon, color: const Color(0xFF1A1A1A), size: 20),
-              const SizedBox(width: 16),
-              Expanded(
-                child: AppText(
-                  text: menu.title,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  textColor: const Color(0xFF1A1A1A),
+      child: menu.type == MenuType.notification
+          ? _buildSetNotificationView(menu)
+          : BounceTapper(
+              highlightColor: Colors.transparent,
+              onTap: onTapped,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 18,
+                ),
+                child: Row(
+                  children: [
+                    Icon(menu.icon, color: const Color(0xFF1A1A1A), size: 20),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: AppText(
+                        text: menu.title,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        textColor: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: const Color(0xFF9E9E9E),
+                      size: 16,
+                    ),
+                  ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: const Color(0xFF9E9E9E),
-                size: 16,
-              ),
-            ],
+            ),
+    );
+  }
+
+  ///
+  /// 알림 설정의 경우
+  ///
+  Widget _buildSetNotificationView(Menu menu) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(menu.icon, color: const Color(0xFF1A1A1A), size: 20),
+          const SizedBox(width: 16),
+          Expanded(
+            child: AppText(
+              text: menu.title,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              textColor: const Color(0xFF1A1A1A),
+            ),
           ),
-        ),
+          CupertinoSwitch(
+            value: notificationEnabled,
+            onChanged: onNotificationChanged,
+            activeTrackColor: AppColors.primary,
+            inactiveTrackColor: AppColors.gray200,
+            inactiveThumbColor: AppColors.white,
+          ),
+        ],
       ),
     );
   }

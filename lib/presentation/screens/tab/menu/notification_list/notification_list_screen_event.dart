@@ -27,6 +27,19 @@ mixin class NotificationListEvent {
     }
   }
 
+  ///
+  /// 알림 삭제
+  ///
+  Future<void> deleteNotification(WidgetRef ref, int notificationID) async {
+    try {
+      await NotificationService.instance.delete(notificationID);
+      fetchNotificationList(ref);
+    } catch (e) {
+      log('알림 삭제 실패: $e');
+      SnackBarService.showSnackBar('알림 삭제 실패');
+    }
+  }
+
   // -------------------------------- Helper -----------------------------------
   void _setNotificationList(
     WidgetRef ref,

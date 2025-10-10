@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:with_calendar/data/services/notification/notification_service.dart';
 import 'package:with_calendar/domain/entities/notification/schedule_notification.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
+import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
+import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
@@ -97,11 +101,36 @@ class NotificationListScreen extends BaseScreen with NotificationListEvent {
       itemCount: notificationList.length,
       itemBuilder: (context, index) {
         final notification = notificationList[index];
-        return NotificationItem(notification: notification);
+        return NotificationItem(
+          notification: notification,
+          onTapped: () {
+            _showDeleteDialog(ref, notification.id);
+          },
+        );
       },
       separatorBuilder: (context, index) {
         return const SizedBox(height: 12);
       },
+    );
+  }
+
+  // ------------------------------- Dialog ------------------------------------
+  ///
+  /// 알림 삭제 다이얼로그
+  ///
+  void _showDeleteDialog(WidgetRef ref, int notificationID) {
+    DialogService.show(
+      dialog: AppDialog.doubleBtn(
+        title: '해당 알림을 삭제할까요?',
+        leftBtnContent: '취소',
+        rightBtnContent: '삭제',
+        rightBtnColor: const Color(0xFFEF4444),
+        onRightBtnClicked: () {
+          ref.context.pop();
+          deleteNotification(ref, notificationID);
+        },
+        onLeftBtnClicked: () => ref.context.pop(),
+      ),
     );
   }
 }

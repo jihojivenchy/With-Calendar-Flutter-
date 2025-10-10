@@ -179,6 +179,12 @@ RouteBase get $tabRoute => GoRouteData.$route(
 
       factory: _$NotificationListRoute._fromState,
     ),
+    GoRouteData.$route(
+      path: 'feedback',
+      name: 'feedback',
+
+      factory: _$FeedbackRoute._fromState,
+    ),
   ],
 );
 
@@ -384,6 +390,26 @@ mixin _$NotificationListRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/notification/list');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$FeedbackRoute on GoRouteData {
+  static FeedbackRoute _fromState(GoRouterState state) => FeedbackRoute();
+
+  @override
+  String get location => GoRouteData.$location('/feedback');
 
   @override
   void go(BuildContext context) => context.go(location);

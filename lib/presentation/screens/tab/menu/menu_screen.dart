@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/menu/menu_item.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
@@ -28,15 +29,20 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
   Widget buildBody(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 15),
-          AppText(text: '메뉴', fontSize: 28, fontWeight: FontWeight.w800),
-          _buildMenuList(ref),
-        ],
+    return FocusDetector(
+      onFocusGained: () {
+        fetchNotificationPermissionStatus(ref);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 15),
+            AppText(text: '메뉴', fontSize: 28, fontWeight: FontWeight.w800),
+            _buildMenuList(ref),
+          ],
+        ),
       ),
     );
   }
@@ -46,6 +52,7 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
   ///
   Widget _buildMenuList(WidgetRef ref) {
     final menuList = ref.watch(MenuScreenState.menuListProvider);
+    final isEnabled = ref.watch(MenuScreenState.notificationEnabledProvider);
 
     return Expanded(
       child: ListView.builder(
@@ -58,6 +65,10 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
           return MenuItem(
             menu: menu,
             onTapped: () => _handleMenuTapped(ref, menu),
+            notificationEnabled: isEnabled,
+            onNotificationChanged: (value) {
+              openSystemNotificationSettings(ref);
+            },
           );
         },
       ),
@@ -73,13 +84,12 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
         UpdateProfileRoute().push(ref.context);
         break;
       case MenuType.notification:
-        print('notification');
         break;
       case MenuType.notificationList:
         NotificationListRoute().push(ref.context);
         break;
       case MenuType.feedback:
-        print('feedback');
+        FeedbackRoute().push(ref.context);
         break;
       case MenuType.privacyPolicy:
         goToPrivacyPolicyLink();

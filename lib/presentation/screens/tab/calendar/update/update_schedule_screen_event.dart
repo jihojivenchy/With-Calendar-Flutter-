@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:with_calendar/data/services/notification/notification_service.dart';
 import 'package:with_calendar/data/services/schedule/schedule_service.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
@@ -136,8 +138,16 @@ mixin class UpdateScheduleEvent {
     }
 
     try {
-      // 일정 생성
+      // 일정 수정
       await _scheduleService.updateSchedule(schedule);
+
+      // 알림 수정
+      unawaited(
+        NotificationService.instance.create(
+          scheduleID: schedule.id,
+          schedule: schedule,
+        ),
+      );
 
       // 일정 생성 완료 후 화면 이동
       if (ref.context.mounted) {

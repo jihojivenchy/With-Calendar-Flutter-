@@ -7,6 +7,7 @@ abstract class FirestoreCollection {
   static const String calendarList = 'CALENDAR_LIST';
   static const String shareCalendar = 'SHARE_CALENDAR';
   static const String shareCalendarInfo = 'SHARE_CALENDAR_INFORMATION';
+  static const String feedback = 'FEEDBACK';
 
   // 도큐먼트 아이디들
 }
