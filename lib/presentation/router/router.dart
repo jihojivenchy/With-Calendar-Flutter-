@@ -14,6 +14,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/share/search/sea
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/search/search_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/feedback/feedback_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/notification_list/notification_list_screen.dart';
@@ -180,6 +181,10 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: CreateMemoRoute.path,
       name: CreateMemoRoute.name,
     ),
+    TypedGoRoute<SearchMemoRoute>(
+      path: SearchMemoRoute.path,
+      name: SearchMemoRoute.name,
+    ),
 
     // ------------------------------ 메뉴 라우트 ------------------------------
     TypedGoRoute<UpdateProfileRoute>(
@@ -241,6 +246,19 @@ class UpdateMemoRoute extends GoRouteData with _$UpdateMemoRoute {
   Widget build(BuildContext context, GoRouterState state) {
     final Memo memo = state.extra as Memo;
     return UpdateMemoScreen(memo: memo);
+  }
+}
+
+///
+/// 메모 검색 라우트
+///
+class SearchMemoRoute extends GoRouteData with _$SearchMemoRoute {
+  static const String path = 'memo/search';
+  static const String name = 'search memo';
+  
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SearchMemoScreen();
   }
 }
 

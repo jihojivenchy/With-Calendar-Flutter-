@@ -168,6 +168,12 @@ RouteBase get $tabRoute => GoRouteData.$route(
       factory: _$CreateMemoRoute._fromState,
     ),
     GoRouteData.$route(
+      path: 'memo/search',
+      name: 'search memo',
+
+      factory: _$SearchMemoRoute._fromState,
+    ),
+    GoRouteData.$route(
       path: 'profile/update',
       name: 'update profile',
 
@@ -348,6 +354,26 @@ mixin _$CreateMemoRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/memo/create');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$SearchMemoRoute on GoRouteData {
+  static SearchMemoRoute _fromState(GoRouterState state) => SearchMemoRoute();
+
+  @override
+  String get location => GoRouteData.$location('/memo/search');
 
   @override
   void go(BuildContext context) => context.go(location);

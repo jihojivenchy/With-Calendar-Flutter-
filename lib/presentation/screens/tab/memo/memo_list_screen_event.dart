@@ -58,7 +58,6 @@ mixin class MemoListScreenEvent {
   ///
   Future<void> deleteMemo(WidgetRef ref, String memoID) async {
     await _memoService.deleteMemo(memoID);
-    retry(ref);
   }
 
   //--------------------------------Helper 메서드--------------------------------

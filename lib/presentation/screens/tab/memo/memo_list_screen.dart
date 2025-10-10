@@ -60,7 +60,9 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
       isShowBackButton: false,
       actions: [
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            SearchMemoRoute().push(ref.context);
+          },
           child: Container(
             padding: const EdgeInsets.all(8),
             child: const Icon(Icons.search, size: 24, color: Colors.black54),

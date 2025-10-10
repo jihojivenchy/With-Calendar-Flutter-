@@ -16,33 +16,21 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/widgets/guide_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/widgets/searched_user_item.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/search/search_memo_screen_event.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/search/search_memo_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/search/widgets/search_memo_guide_view.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/search/widgets/searched_memo_item.dart';
+import 'package:with_calendar/presentation/screens/tab/memo/widgets/memo_item.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 
-enum SearchMode {
-  create('CREATE'),
-  update('UPDATE'),
-  none('NONE');
-
-  final String value;
-  const SearchMode(this.value);
-
-  static SearchMode fromValue(String value) {
-    return SearchMode.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => SearchMode.none,
-    );
-  }
-}
-
-/// 유저 검색 바텀 시트
-class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
-  SearchUserScreen({super.key, required this.mode});
-
-  final SearchMode mode;
+/// 메모 검색 화면
+class SearchMemoScreen extends BaseScreen with SearchMemoScreenEvent {
+  SearchMemoScreen({super.key});
 
   ///
   /// 배경색
@@ -56,7 +44,7 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
     return const DefaultAppBar(
-      title: '유저 검색',
+      title: '메모 검색',
       backgroundColor: Color(0xFFF2F2F7),
     );
   }
@@ -72,12 +60,12 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppSearchBar(
-            placeholder: '유저 코드를 입력하세요',
             controller: searchController,
-            onSearch: (userCode) => searchUser(ref, userCode),
+            onSearch: (keyword) => search(ref, keyword),
+            placeholder: '검색어를 입력하세요',
           ),
           const SizedBox(height: 24),
-          _buildSearchedUserList(ref),
+          _buildSearchedMemoList(ref, searchController.text),
         ],
       ),
     );
@@ -86,24 +74,26 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
   ///
   /// 검색 결과 리스트
   ///
-  Widget _buildSearchedUserList(WidgetRef ref) {
-    final userList = ref.watch(SearchUserScreenState.searchedUserListProvider);
+  Widget _buildSearchedMemoList(WidgetRef ref, String keyword) {
+    final memoList = ref.watch(SearchMemoState.memoListProvider);
 
-    if (userList.isEmpty) {
-      return Expanded(child: const GuideView());
+    if (memoList.isEmpty) {
+      return Expanded(child: const SearchMemoGuideView());
     }
 
     return Expanded(
       child: ListView.separated(
-        itemCount: userList.length,
+        itemCount: memoList.length,
         padding: const EdgeInsets.only(top: 10, bottom: 30),
         itemBuilder: (context, index) {
-          final user = userList[index];
-          return SearchedUserItem(
-            user: user,
+          final memo = memoList[index];
+          return SearchedMemoItem(
+            keyword: keyword,
+            memo: memo,
             onTapped: () {
-              _showInviteDialog(ref, user);
+              context.push(UpdateMemoRoute().location, extra: memo);
             },
+            onLongPressed: () => _showDeleteDialog(ref, memo.id),
           );
         },
         separatorBuilder: (context, index) {
@@ -113,28 +103,21 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
     );
   }
 
+  // ------------------------------- Dialog ------------------------------------
   ///
-  /// 유저 초대 다이얼로그
+  /// 메모 삭제 다이얼로그
   ///
-  void _showInviteDialog(WidgetRef ref, CalendarParticipant user) {
+  void _showDeleteDialog(WidgetRef ref, String memoID) {
     DialogService.show(
       dialog: AppDialog.doubleBtn(
-        title: '유저 초대',
-        subTitle: '해당 유저를 초대하시겠습니까?',
+        title: '메모 삭제',
+        subTitle: '정말 이 메모를 삭제할까요?',
         leftBtnContent: '취소',
-        rightBtnContent: '초대',
+        rightBtnContent: '삭제',
+        rightBtnColor: const Color(0xFFEF4444),
         onRightBtnClicked: () {
           ref.context.pop();
-          switch (mode) {
-            case SearchMode.create:
-              inviteUserForCreate(ref, user);
-              break;
-            case SearchMode.update:
-              inviteUserForUpdate(ref, user);
-              break;
-            case SearchMode.none:
-              break;
-          }
+          deleteMemo(ref, memoID);
         },
         onLeftBtnClicked: () => ref.context.pop(),
       ),

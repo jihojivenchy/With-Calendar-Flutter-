@@ -87,9 +87,8 @@ class FeedbackScreen extends BaseScreen with FeedbackEvent {
             return;
           }
 
-          FocusScope.of(ref.context).unfocus();
-          textController.clear();
           create(ref, textController.text);
+          textController.clear();
         },
       ),
     );
