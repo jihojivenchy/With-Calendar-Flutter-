@@ -9,6 +9,8 @@ import 'package:with_calendar/presentation/design_system/component/text/app_text
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/day_long_schedule_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/day_short_schedule_item.dart';
 
 class DayItem extends StatelessWidget {
   const DayItem({
@@ -71,7 +73,7 @@ class DayItem extends StatelessWidget {
               // 날짜 텍스트
               SizedBox(height: 20, child: _buildDayText(context, isSelected)),
               const SizedBox(height: 4),
-              _buildScheduleSection(),
+              _buildScheduleSection(context),
               _buildHolidayList(),
             ],
           ),
@@ -83,7 +85,7 @@ class DayItem extends StatelessWidget {
   ///
   /// 일정 섹션 생성
   ///
-  Widget _buildScheduleSection() {
+  Widget _buildScheduleSection(BuildContext context) {
     final hasSchedule = scheduleList.isNotEmpty;
 
     if (!hasSchedule) {
@@ -106,14 +108,14 @@ class DayItem extends StatelessWidget {
       transitionBuilder: (child, animation) {
         return FadeTransition(opacity: animation, child: child);
       },
-      child: _buildScheduleBody(),
+      child: _buildScheduleBody(context),
     );
   }
 
   ///
   /// 화면 모드에 따른 일정 리스트
   ///
-  Widget _buildScheduleBody() {
+  Widget _buildScheduleBody(BuildContext context) {
     switch (screenMode) {
       case CalendarScreenMode.full:
         return KeyedSubtree(
@@ -129,13 +131,14 @@ class DayItem extends StatelessWidget {
               switch (schedule.duration) {
                 // 단기 일정
                 case ScheduleDuration.short:
-                  return _buildShortScheduleItem(schedule);
+                  return ShortScheduleItem(schedule: schedule);
 
                 // 장기 일정
                 case ScheduleDuration.long:
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: _buildLongScheduleItem(schedule),
+                  return LongScheduleItem(
+                    schedule: schedule,
+                    maxWidth: maxWidth,
+                    itemWidth: itemWidth,
                   );
               }
             },
@@ -244,72 +247,6 @@ class DayItem extends StatelessWidget {
         return const Color(0xFF277BC0);
       case DayCellState.today:
         return Colors.white;
-    }
-  }
-
-  ///
-  /// 단기 일정 아이템
-  ///
-  Widget _buildShortScheduleItem(Schedule schedule) {
-    final textColor = Color.lerp(schedule.color, Colors.black, 0.4);
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 2, right: 2, bottom: 3),
-      child: Container(
-        height: 18,
-        decoration: BoxDecoration(
-          color: schedule.color.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(2),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: AppText(
-          text: schedule.title,
-          textAlign: TextAlign.center,
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-          textColor: textColor ?? schedule.color,
-          maxLines: 1,
-        ),
-      ),
-    );
-  }
-
-  ///
-  /// 장기 일정 아이템
-  ///
-  Widget _buildLongScheduleItem(Schedule schedule) {
-    switch (schedule.weekSegmentState) {
-      case WeekCellState.start:
-        final textColor = Color.lerp(schedule.color, Colors.black, 0.4);
-
-        return IntrinsicHeight(
-          child: OverflowBox(
-            maxWidth: maxWidth,
-            alignment: Alignment.centerLeft,
-            child: Container(
-              width: itemWidth * schedule.weekStartVisibleDayCount,
-              height: 18,
-              decoration: BoxDecoration(
-                color: schedule.color.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: AppText(
-                text: schedule.title,
-                textAlign: TextAlign.center,
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                textColor: textColor ?? schedule.color,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-        );
-      case WeekCellState.content:
-        return SizedBox(width: itemWidth, height: 18);
-      case WeekCellState.spacer:
-        return SizedBox(width: itemWidth, height: 18);
     }
   }
 

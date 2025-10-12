@@ -139,7 +139,6 @@ class _DatePickerBottomSheetState extends State<MonthPickerBottomSheet> {
                               child: AppText(
                                 text: year,
                                 fontSize: 20,
-                                textColor: Colors.black,
                               ),
                             ),
                           )
@@ -164,7 +163,6 @@ class _DatePickerBottomSheetState extends State<MonthPickerBottomSheet> {
                           child: AppText(
                             text: month,
                             fontSize: 20,
-                            textColor: Colors.black,
                           ),
                         );
                       }).toList(),

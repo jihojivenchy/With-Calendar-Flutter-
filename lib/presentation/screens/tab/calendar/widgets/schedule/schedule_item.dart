@@ -5,6 +5,7 @@ import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class ScheduleItem extends StatelessWidget {
@@ -32,7 +33,9 @@ class ScheduleItem extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: schedule.color.withValues(alpha: 0.1),
+          color: context.isDarkMode
+              ? context.surface
+              : schedule.color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -56,21 +59,20 @@ class ScheduleItem extends StatelessWidget {
                     text: schedule.title,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    textColor: AppColors.gray800,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 12),
                 // 일정 상세 표시
-                _buildDetailWidgets(),
+                _buildDetailWidgets(context),
               ],
             ),
 
             // 일정 메모 표시
             if (schedule.memo.trim().isNotEmpty) ...[
               const SizedBox(height: 14),
-              _buildMemoBlock(),
+              _buildMemoBlock(context),
             ],
           ],
         ),
@@ -81,7 +83,7 @@ class ScheduleItem extends StatelessWidget {
   ///
   /// 일정 상세 표시
   ///
-  Widget _buildDetailWidgets() {
+  Widget _buildDetailWidgets(BuildContext context) {
     final List<String> detailTexts = [];
 
     // 장기 일정
@@ -113,7 +115,7 @@ class ScheduleItem extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final textColor = Color.lerp(schedule.color, Colors.black, 0.35);
+    final textColor = context.dynamicColor(schedule.color);
 
     return SizedBox(
       height: 30,
@@ -133,7 +135,7 @@ class ScheduleItem extends StatelessWidget {
               text: text,
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              textColor: textColor ?? AppColors.gray600,
+              textColor: textColor,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -150,8 +152,8 @@ class ScheduleItem extends StatelessWidget {
   ///
   /// 일정 메모 표시
   ///
-  Widget _buildMemoBlock() {
-    final textColor = Color.lerp(schedule.color, Colors.black, 0.35);
+  Widget _buildMemoBlock(BuildContext context) {
+    final textColor = context.dynamicColor(schedule.color);
 
     return Container(
       width: double.infinity,
@@ -164,7 +166,7 @@ class ScheduleItem extends StatelessWidget {
         text: schedule.memo,
         fontSize: 13,
         fontWeight: FontWeight.w400,
-        textColor: textColor ?? AppColors.gray600,
+        textColor: textColor,
       ),
     );
   }

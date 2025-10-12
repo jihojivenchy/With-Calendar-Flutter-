@@ -187,6 +187,15 @@ extension ThemeColorsExtension on BuildContext {
   Color get surface2 => appColors.surface2;
   Color get surface3 => appColors.surface3;
   Color get surface4 => appColors.surface4;
+
+  /// 다크모드 여부
+  bool get isDarkMode => Theme.of(this).brightness == Brightness.dark;
+
+  /// 동적 색상
+  Color dynamicColor(Color baseColor, {double strength = 0.4}) {
+    final targetColor = isDarkMode ? Colors.white : Colors.black;
+    return Color.lerp(baseColor, targetColor, strength) ?? baseColor;
+  }
 }
 
 // 화이트 컬러 베이스
@@ -199,4 +208,3 @@ extension ThemeColorsExtension on BuildContext {
 // blackLayer1: Color(0xFF1E1E1E),    // 레이어 1
 // blackLayer2: Color(0xFF2C2C2E),    // 레이어 2
 // blackLayer3: Color(0xFF3C3C3E),    // 레이어 3
-
