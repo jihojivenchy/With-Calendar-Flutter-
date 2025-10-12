@@ -15,10 +15,6 @@ class Holiday {
       title = '크리스마스';
     }
 
-    if (title == '부처님오신날') {
-      title = '석가탄신일';
-    }
-
     final locdateStr = json['locdate'].toString();
     final year = int.parse(locdateStr.substring(0, 4));
     final month = int.parse(locdateStr.substring(4, 6));

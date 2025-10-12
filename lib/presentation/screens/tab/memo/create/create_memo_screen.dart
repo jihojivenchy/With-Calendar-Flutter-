@@ -10,6 +10,7 @@ import 'package:with_calendar/presentation/design_system/component/bottom_sheet/
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/widgets/color_picker_button.dart';
@@ -32,19 +33,13 @@ class CreateMemoScreen extends BaseScreen with CreateMemoScreenEvent {
   }
 
   ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => const Color(0xFFF2F2F7);
-
-  ///
   /// 앱바
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
     return DefaultAppBar(
       title: '메모 작성',
-      backgroundColor: const Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
       actions: [_buildColorPickerButton(ref), const SizedBox(width: 16)],
     );
   }
@@ -89,7 +84,7 @@ class CreateMemoScreen extends BaseScreen with CreateMemoScreenEvent {
         placeholderText: '내용을 입력하세요',
         keyboardType: TextInputType.multiline,
         maxLines: null,
-        backgroundColor: Colors.white,
+        backgroundColor: ref.context.surface,
         borderColor: Colors.transparent,
         onTextChanged: (content) {
           updateContent(ref, content);

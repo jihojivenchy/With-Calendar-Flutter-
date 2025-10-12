@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/notification/schedule_notification.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class NotificationItem extends StatelessWidget {
@@ -22,11 +23,11 @@ class NotificationItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: context.textColor.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -57,7 +58,6 @@ class NotificationItem extends StatelessWidget {
                     children: [
                       AppText(
                         text: notification.title,
-                        textColor: AppColors.gray800,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         maxLines: 2,

@@ -5,7 +5,9 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/menu/menu_item.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
+import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/menu_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/menu_screen_state.dart';
@@ -17,10 +19,18 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
   MenuScreen({super.key});
 
   ///
-  /// 배경색
+  /// 앱 바 구성
   ///
   @override
-  Color? get backgroundColor => const Color(0xFFF2F2F7);
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    return DefaultAppBar(
+      title: '메뉴',
+      fontSize: 28,
+      fontWeight: FontWeight.w800,
+      backgroundColor: context.backgroundColor,
+      isShowBackButton: false,
+    );
+  }
 
   ///
   /// 본문
@@ -33,17 +43,7 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
       onFocusGained: () {
         fetchNotificationPermissionStatus(ref);
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 15),
-            AppText(text: '메뉴', fontSize: 28, fontWeight: FontWeight.w800),
-            _buildMenuList(ref),
-          ],
-        ),
-      ),
+      child: _buildMenuList(ref),
     );
   }
 
@@ -54,24 +54,27 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
     final menuList = ref.watch(MenuScreenState.menuListProvider);
     final isEnabled = ref.watch(MenuScreenState.notificationEnabledProvider);
 
-    return Expanded(
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(top: 16, bottom: 30),
-        itemCount: menuList.length,
-        itemBuilder: (context, index) {
-          final menu = menuList[index];
-
-          return MenuItem(
-            menu: menu,
-            onTapped: () => _handleMenuTapped(ref, menu),
-            notificationEnabled: isEnabled,
-            onNotificationChanged: (value) {
-              openSystemNotificationSettings(ref);
-            },
-          );
-        },
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(
+        top: 16,
+        left: 16,
+        right: 16,
+        bottom: 30,
       ),
+      itemCount: menuList.length,
+      itemBuilder: (context, index) {
+        final menu = menuList[index];
+    
+        return MenuItem(
+          menu: menu,
+          onTapped: () => _handleMenuTapped(ref, menu),
+          notificationEnabled: isEnabled,
+          onNotificationChanged: (value) {
+            openSystemNotificationSettings(ref);
+          },
+        );
+      },
     );
   }
 
@@ -82,6 +85,9 @@ class MenuScreen extends BaseScreen with MenuScreenEvent {
     switch (menu.type) {
       case MenuType.profile:
         UpdateProfileRoute().push(ref.context);
+        break;
+      case MenuType.displayMode:
+        DisplayModeRoute().push(ref.context);
         break;
       case MenuType.notification:
         break;

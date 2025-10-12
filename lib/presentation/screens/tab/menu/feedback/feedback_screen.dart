@@ -11,16 +11,11 @@ import 'package:with_calendar/presentation/design_system/component/button/app_bu
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/feedback/feedback_screen_event.dart';
 
 class FeedbackScreen extends BaseScreen with FeedbackEvent {
   FeedbackScreen({super.key});
-
-  ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => AppColors.background;
 
   ///
   /// 앱바
@@ -29,7 +24,7 @@ class FeedbackScreen extends BaseScreen with FeedbackEvent {
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
     return DefaultAppBar(
       title: '피드백',
-      backgroundColor: const Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
     );
   }
 
@@ -65,7 +60,7 @@ class FeedbackScreen extends BaseScreen with FeedbackEvent {
       placeholderText: '내용을 입력하세요',
       keyboardType: TextInputType.multiline,
       maxLines: 8,
-      backgroundColor: Colors.white,
+      backgroundColor: ref.context.surface,
       borderColor: Colors.transparent,
     );
   }

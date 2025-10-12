@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
   final Color textColor;
   final Color disableTextColor;
   final Color backgroundColor;
-  final Color disableBackgroundColor;
+  final Color? disableBackgroundColor;
   final double fontSize;
   final FontWeight fontWeight;
   final String fontFamily;
@@ -29,7 +30,7 @@ class AppButton extends StatelessWidget {
     this.textColor = Colors.white,
     this.disableTextColor = const Color(0xFF8B8D95),
     this.backgroundColor = AppColors.primary,
-    this.disableBackgroundColor = const Color(0xFFDADCDF),
+    this.disableBackgroundColor,
     this.fontFamily = 'Pretendard',
     this.textAlign = TextAlign.left,
     this.overflow = TextOverflow.ellipsis,
@@ -57,7 +58,9 @@ class AppButton extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: isEnabled ? backgroundColor : disableBackgroundColor,
+          color: isEnabled
+              ? backgroundColor
+              : disableBackgroundColor ?? context.disableBackgroundColor,
           borderRadius: BorderRadius.circular(borderRadius),
           border: border,
         ),

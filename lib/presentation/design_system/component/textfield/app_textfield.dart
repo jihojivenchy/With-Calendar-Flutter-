@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class AppTextField extends StatelessWidget {
   final String? initialValue;
@@ -11,7 +12,7 @@ class AppTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final double borderWidth;
   final double borderRadius;
-  final Color borderColor;
+  final Color? borderColor;
   final Color focusedBorderColor;
   final int? maxLines;
   final int? maxLength;
@@ -44,7 +45,7 @@ class AppTextField extends StatelessWidget {
     this.placeholderText = '입력해주세요',
     this.borderWidth = 1,
     this.borderRadius = 6,
-    this.borderColor = AppColors.colord2d5d7,
+    this.borderColor,
     this.focusedBorderColor = AppColors.primary,
     this.cursorColor = AppColors.primary,
     this.maxLines = 1,
@@ -99,11 +100,17 @@ class AppTextField extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: borderColor, width: borderWidth),
+            borderSide: BorderSide(
+              color: borderColor ?? context.textFieldBorderColor,
+              width: borderWidth,
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: borderColor, width: borderWidth),
+            borderSide: BorderSide(
+              color: borderColor ?? context.textFieldBorderColor,
+              width: borderWidth,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -129,8 +136,8 @@ class AppTextField extends StatelessWidget {
         ),
         cursorColor: cursorColor,
         cursorHeight: 15,
-        style: const TextStyle(
-          color: Colors.black,
+        style: TextStyle(
+          color: context.textColor,
           fontSize: 16,
           fontWeight: FontWeight.w400,
           letterSpacing: -0.34,

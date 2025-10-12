@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/provider/auth/auth_state_provider.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen.dart';
@@ -67,14 +68,14 @@ class _TabScreenState extends ConsumerState<TabScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        backgroundColor: const Color(0xFFF2F2F7),
+        backgroundColor: context.backgroundColor,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
         enableFeedback: false,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.color727577,
+        unselectedItemColor: context.tabIconColor,
         selectedLabelStyle: TextStyle(
           fontFamily: 'Pretendard',
           fontSize: 12,
@@ -96,7 +97,7 @@ class _TabScreenState extends ConsumerState<TabScreen> {
               height: 25,
               cacheWidth: 25.cacheSize(context),
               cacheHeight: 25.cacheSize(context),
-              color: AppColors.color727577,
+              color: context.tabIconColor,
             ),
             activeIcon: Image.asset(
               ImagePaths.calendarON,
@@ -115,7 +116,7 @@ class _TabScreenState extends ConsumerState<TabScreen> {
               height: 23,
               cacheWidth: 23.cacheSize(context),
               cacheHeight: 23.cacheSize(context),
-              color: AppColors.color727577,
+              color: context.tabIconColor,
             ),
             activeIcon: Image.asset(
               ImagePaths.memo,
@@ -134,7 +135,7 @@ class _TabScreenState extends ConsumerState<TabScreen> {
               height: 22,
               cacheWidth: 22.cacheSize(context),
               cacheHeight: 22.cacheSize(context),
-              color: AppColors.color727577,
+              color: context.tabIconColor,
             ),
             activeIcon: Image.asset(
               ImagePaths.menu,

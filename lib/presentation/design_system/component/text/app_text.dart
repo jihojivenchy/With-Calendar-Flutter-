@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class AppText extends StatelessWidget {
   final TextDecoration? textDecoration;
   final String text;
-  final Color textColor;
+  final Color? textColor;
   final double? fontSize;
   final FontWeight? fontWeight;
   final String fontFamily;
@@ -19,7 +20,7 @@ class AppText extends StatelessWidget {
   const AppText({
     super.key,
     required this.text,
-    this.textColor = Colors.black,
+    this.textColor,
     this.fontFamily = 'Pretendard',
     this.height,
     this.textAlign,
@@ -50,7 +51,7 @@ class AppText extends StatelessWidget {
         letterSpacing: letterSpacing ?? -0.32,
         fontStyle: fontStyle ?? FontStyle.normal,
         fontWeight: fontWeight ?? FontWeight.w700,
-        color: textColor,
+        color: textColor ?? context.textColor,
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import '../button/app_button.dart';
 
 class ColorPickerBottomSheet extends StatefulWidget {
@@ -51,8 +52,8 @@ class _ColorPickerBottomSheetState extends State<ColorPickerBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.surface3,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -100,7 +101,11 @@ class _ColorPickerBottomSheetState extends State<ColorPickerBottomSheet> {
                         shape: BoxShape.circle,
                       ),
                       child: isSelected
-                          ? const Icon(Icons.check, color: Colors.white, size: 24)
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 24,
+                            )
                           : null,
                     ),
                   ),
@@ -112,10 +117,10 @@ class _ColorPickerBottomSheetState extends State<ColorPickerBottomSheet> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: AppButton(
-                text: '완료',
-                onTapped: () => widget.onColorSelected(_selectedColor),
-              ),
+              text: '완료',
+              onTapped: () => widget.onColorSelected(_selectedColor),
             ),
+          ),
           const SizedBox(height: 24),
         ],
       ),

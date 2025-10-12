@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 enum MenuType {
   profile,
+  displayMode,
   notification,
   notificationList,
   feedback,
@@ -25,6 +26,11 @@ class Menu {
       type: MenuType.profile,
       title: '프로필 설정',
       icon: Icons.person_outline,
+    ),
+    const Menu(
+      type: MenuType.displayMode,
+      title: '화면 모드',
+      icon: Icons.display_settings_outlined,
     ),
     const Menu(
       type: MenuType.notification,
@@ -57,6 +63,11 @@ class Menu {
   /// 로그아웃 상태일 때 메뉴 리스트
   ///
   static List<Menu> signOutStatusList = [
+    const Menu(
+      type: MenuType.displayMode,
+      title: '화면 모드',
+      icon: Icons.display_settings_outlined,
+    ),  
     const Menu(
       type: MenuType.notification,
       title: '알림 설정',

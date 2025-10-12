@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 ///
 /// 검색어 하이라이트 텍스트
@@ -47,7 +48,7 @@ class SearchHighlightText extends StatelessWidget {
           TextSpan(
             text: extractedText.substring(startIndex, indexOfMatch),
             style: TextStyle(
-              color: AppColors.gray800,
+              color: context.textColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -76,7 +77,7 @@ class SearchHighlightText extends StatelessWidget {
         TextSpan(
           text: extractedText.substring(startIndex),
           style: TextStyle(
-            color: AppColors.gray800,
+            color: context.textColor,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

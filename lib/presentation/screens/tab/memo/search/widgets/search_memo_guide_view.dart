@@ -15,6 +15,7 @@ class SearchMemoGuideView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 40),
             // 제목
             AppText(
               text: '메모 검색 팁',

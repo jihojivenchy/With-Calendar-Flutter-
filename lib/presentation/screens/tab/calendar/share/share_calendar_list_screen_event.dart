@@ -5,6 +5,7 @@ import 'package:with_calendar/data/services/calendar/share_calendar_service.dart
 import 'package:with_calendar/data/services/hive/hive_service.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/data_state/data_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
 
@@ -55,6 +56,10 @@ mixin class ShareCalendarListEvent {
 
     // 현재 선택된 캘린더 ID 설정
     _setCurrentCalendarID(ref, calendar.id);
+
+    // 일정 구독 재시작
+    final calendarEvent = CalendarScreenEvent();
+    calendarEvent.retry(ref);
   }
 
   // -------------------------------- Helper -----------------------------------

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class CreateScheduleButton extends StatelessWidget {
   const CreateScheduleButton({
@@ -25,11 +26,11 @@ class CreateScheduleButton extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.surface,
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: context.whiteAndBlack.withValues(alpha: 0.05),
                   offset: const Offset(0, 8),
                   blurRadius: 24,
                   spreadRadius: 0,
@@ -38,12 +39,11 @@ class CreateScheduleButton extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.add, color: AppColors.gray800, size: 20),
+                Icon(Icons.add, color: context.textColor, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: AppText(
                     text: '새로운 일정',
-                    textColor: AppColors.gray800,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     maxLines: 1,

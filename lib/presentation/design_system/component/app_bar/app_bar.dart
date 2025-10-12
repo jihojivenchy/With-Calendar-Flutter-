@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 
 class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -39,7 +40,12 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: AppText(text: title, fontSize: fontSize, fontWeight: fontWeight),
       leading: isShowBackButton
           ? IconButton(
-              icon: Image.asset(ImagePaths.arrowLeft, width: 20, height: 20),
+              icon: Image.asset(
+                ImagePaths.arrowLeft,
+                width: 20,
+                height: 20,
+                color: context.textColor,
+              ),
               iconSize: 20,
               onPressed: onBackPressed ?? () => context.pop(),
             )

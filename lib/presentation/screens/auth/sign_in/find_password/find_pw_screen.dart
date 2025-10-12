@@ -7,6 +7,7 @@ import 'package:with_calendar/presentation/design_system/component/app_bar/app_b
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/find_password/find_pw_screen_event.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_event.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
@@ -23,6 +24,28 @@ class FindPasswordScreen extends BaseScreen with FindPasswordScreenEvent {
     super.onDispose(ref);
   }
 
+  ///
+  /// 앱 바
+  ///
+  @override
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
+    return DefaultAppBar(
+      title: '비밀번호 찾기',
+      backgroundColor: context.whiteAndBlack,
+    );
+  }
+
+  ///
+  /// 배경색
+  ///
+  @override
+  Color? backgroundColor(BuildContext context) {
+    return context.whiteAndBlack;
+  }
+
+  ///
+  /// 화면 본문
+  ///
   @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
     return Form(
@@ -41,13 +64,13 @@ class FindPasswordScreen extends BaseScreen with FindPasswordScreenEvent {
                     text: '비밀번호 재설정 이메일을 받을 \n아이디(이메일)를 작성해주세요.',
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    textColor: Colors.black,
                   ),
                   const SizedBox(height: 15),
                   AppTextField(
                     controller: _emailController,
                     placeholderText: '이메일 형식',
                     keyboardType: TextInputType.emailAddress,
+                    backgroundColor: ref.context.surface,
                     textInputAction: TextInputAction.send,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (email) => email?.validateEmail(),
@@ -69,12 +92,6 @@ class FindPasswordScreen extends BaseScreen with FindPasswordScreenEvent {
         ],
       ),
     );
-  }
-
-  /// 앱 바 구성
-  @override
-  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return DefaultAppBar(title: '비밀번호 찾기');
   }
 
   Widget _buildBottomButton(WidgetRef ref) {

@@ -17,6 +17,7 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen_state.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
@@ -37,13 +38,6 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
     });
   }
 
-
-  ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => const Color(0xFFF2F2F7);
-
   ///
   /// 앱 바 구성
   ///
@@ -51,7 +45,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
     return DefaultAppBar(
       title: '프로필 수정',
-      backgroundColor: const Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
       actions: [
         // 회원 탈퇴
         GestureDetector(
@@ -122,7 +116,11 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
                 children: [
                   const SizedBox(height: 10),
                   // 이메일
-                  _buildReadOnlyField(title: '이메일', value: profile.email),
+                  _buildReadOnlyField(
+                    ref.context,
+                    title: '이메일',
+                    value: profile.email,
+                  ),
                   const SizedBox(height: 24),
 
                   // 이름
@@ -130,7 +128,6 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
                     text: '이름',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    textColor: Colors.black,
                   ),
                   const SizedBox(height: 10),
                   AppTextField(
@@ -142,7 +139,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
                     ),
                     borderRadius: 16,
                     borderColor: Colors.transparent,
-                    backgroundColor: Colors.white,
+                    backgroundColor: ref.context.surface,
                     onTextChanged: (name) => updateName(ref, name),
                   ),
                   const SizedBox(height: 24),
@@ -153,6 +150,7 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
 
                   // 생성 날짜
                   _buildReadOnlyField(
+                    ref.context,
                     title: '생성 날짜',
                     value: profile.createdAt.toAnotherDateFormat(),
                   ),
@@ -172,22 +170,21 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
   ///
   /// 읽기 전용 필드
   ///
-  Widget _buildReadOnlyField({required String title, required String value}) {
+  Widget _buildReadOnlyField(
+    BuildContext context, {
+    required String title,
+    required String value,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          text: title,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          textColor: Colors.black,
-        ),
+        AppText(text: title, fontSize: 16, fontWeight: FontWeight.w600),
         const SizedBox(height: 10),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: context.surface,
             borderRadius: BorderRadius.circular(16),
           ),
           child: AppText(
@@ -206,18 +203,13 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          text: '코드',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          textColor: Colors.black,
-        ),
+        AppText(text: '코드', fontSize: 16, fontWeight: FontWeight.w600),
         const SizedBox(height: 10),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: ref.context.surface,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -228,7 +220,6 @@ class UpdateProfileScreen extends BaseScreen with UpdateProfileScreenEvent {
                   text: userCode,
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  textColor: const Color(0xFF000000),
                 ),
               ),
               const SizedBox(width: 12),

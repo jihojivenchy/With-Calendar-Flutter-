@@ -12,6 +12,7 @@ import 'package:with_calendar/presentation/design_system/component/view/empty_vi
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/notification_list/notification_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/notification_list/notification_list_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/notification_list/widgets/notification_item.dart';
@@ -31,17 +32,14 @@ class NotificationListScreen extends BaseScreen with NotificationListEvent {
   }
 
   ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => AppColors.background;
-
-  ///
   /// 앱 바
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return DefaultAppBar(title: '알림 목록', backgroundColor: Color(0xFFF2F2F7));
+    return DefaultAppBar(
+      title: '알림 목록',
+      backgroundColor: context.backgroundColor,
+    );
   }
 
   ///

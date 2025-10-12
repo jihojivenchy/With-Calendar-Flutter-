@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class AppDialog extends Dialog {
   const AppDialog({
@@ -10,7 +11,7 @@ class AppDialog extends Dialog {
     this.subTitle, // 부제목 텍스트
     this.onLeftBtnClicked, // 왼쪽 버튼 클릭 콜백
     required this.leftBtnText, // 왼쪽 버튼 텍스트
-    this.leftBtnColor = AppColors.colorf4f7f9,
+    this.leftBtnColor,
     this.rightBtnColor = AppColors.primary,
     required this.rightBtnText, // 오른쪽 버튼 텍스트
     required this.onRightBtnClicked, // 오른쪽 버튼 클릭 콜백
@@ -49,7 +50,7 @@ class AppDialog extends Dialog {
     onLeftBtnClicked: onLeftBtnClicked,
     leftBtnText: leftBtnContent,
     rightBtnText: rightBtnContent,
-    leftBtnColor: leftBtnColor ?? AppColors.colorf4f7f9,
+    leftBtnColor: leftBtnColor,
     rightBtnColor: rightBtnColor ?? AppColors.primary,
   );
 
@@ -60,7 +61,7 @@ class AppDialog extends Dialog {
   final String rightBtnText;
   final String leftBtnText;
   final String? subTitle;
-  final Color leftBtnColor;
+  final Color? leftBtnColor;
   final Color rightBtnColor;
 
   @override
@@ -75,7 +76,7 @@ class AppDialog extends Dialog {
         constraints: const BoxConstraints(minHeight: 120),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
+          color: context.surface3,
           boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(163, 163, 179, 0.07),
@@ -126,8 +127,8 @@ class AppDialog extends Dialog {
                       text: leftBtnText,
                       onTapped: onLeftBtnClicked ?? () {},
                       height: 40,
-                      backgroundColor: leftBtnColor,
-                      textColor: AppColors.color727577,
+                      backgroundColor: leftBtnColor ?? context.surface4,
+                      textColor: context.textColor,
                       borderRadius: 4,
                     ),
                   ),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 
 class AppSearchBar extends HookWidget {
@@ -26,7 +27,7 @@ class AppSearchBar extends HookWidget {
         width: AppSize.deviceWidth,
         height: 50,
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(100),
         ),
         padding: EdgeInsets.symmetric(horizontal: 5),
@@ -35,11 +36,11 @@ class AppSearchBar extends HookWidget {
             autofocus: true,
             controller: controller,
             style: TextStyle(
-              color: AppColors.gray800,
+              color: context.textColor,
               fontSize: 15,
               fontWeight: FontWeight.w400,
             ),
-            cursorColor: AppColors.gray800,
+            cursorColor: context.textColor,
             cursorHeight: 20,
             maxLines: 1,
             textAlignVertical: TextAlignVertical.center,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
 
 class SetPasswordPage extends StatefulWidget {
@@ -71,6 +72,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
       placeholderText: '비밀번호를 입력하세요 (6자 이상)',
       keyboardType: TextInputType.visiblePassword,
       obscureText: !widget.isPasswordVisible,
+      backgroundColor: context.surface,
       textInputAction: TextInputAction.next,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textAlignVertical: TextAlignVertical.center,
@@ -98,6 +100,7 @@ class _SetPasswordPageState extends State<SetPasswordPage>
       placeholderText: '비밀번호 확인',
       keyboardType: TextInputType.visiblePassword,
       obscureText: !widget.isPasswordConfirmVisible,
+      backgroundColor: context.surface,
       textInputAction: TextInputAction.done,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textAlignVertical: TextAlignVertical.center,

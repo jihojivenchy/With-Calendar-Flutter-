@@ -16,6 +16,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/share/update/upd
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/search/search_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/update/update_memo_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/menu/display_mode/display_mode_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/feedback/feedback_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/notification_list/notification_list_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/menu/update_profile/update_profile_screen.dart';
@@ -199,6 +200,10 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: FeedbackRoute.path,
       name: FeedbackRoute.name,
     ),
+    TypedGoRoute<DisplayModeRoute>(
+      path: DisplayModeRoute.path,
+      name: DisplayModeRoute.name,
+    ),
   ],
 )
 class TabRoute extends GoRouteData with _$TabRoute {
@@ -255,7 +260,7 @@ class UpdateMemoRoute extends GoRouteData with _$UpdateMemoRoute {
 class SearchMemoRoute extends GoRouteData with _$SearchMemoRoute {
   static const String path = 'memo/search';
   static const String name = 'search memo';
-  
+
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SearchMemoScreen();
@@ -374,5 +379,18 @@ class FeedbackRoute extends GoRouteData with _$FeedbackRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return FeedbackScreen();
+  }
+}
+
+///
+/// 화면 모드 라우트
+///
+class DisplayModeRoute extends GoRouteData with _$DisplayModeRoute {
+  static const String path = 'display-mode';
+  static const String name = 'display mode';
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return DisplayModeScreen();
   }
 }

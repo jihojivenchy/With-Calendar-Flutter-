@@ -14,6 +14,7 @@ import 'package:with_calendar/presentation/design_system/component/dialog/app_di
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
@@ -38,6 +39,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       calculateCalendarDay(ref); // 달력 날짜 계산
+
       Future.wait([
         subscribeScheduleList(ref), // 일정 리스트 구독
         fetchHolidayList(ref, DateTime.now().year), // 공휴일 리스트 조회
@@ -53,12 +55,6 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     super.onDispose(ref);
     disposeSubscription(ref); // 일정 리스트 구독 해제
   }
-
-  ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => const Color(0xFFF2F2F7);
 
   ///
   /// 본문
@@ -132,7 +128,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
                   padding: const EdgeInsets.all(10),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFFFFF),
+                      color: context.surface,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(

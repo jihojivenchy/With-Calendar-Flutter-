@@ -13,6 +13,7 @@ import 'package:with_calendar/presentation/design_system/component/view/error_vi
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
@@ -30,19 +31,13 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
   }
 
   ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => AppColors.background;
-
-  ///
   /// 앱 바
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
     return DefaultAppBar(
       title: '달력 목록',
-      backgroundColor: Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
       actions: [
         IconButton(
           icon: const Icon(Icons.add, size: 26),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_list_dropdown.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
@@ -51,30 +52,14 @@ class CalendarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final headerKey = ValueKey<String>(calendar.id);
+
     return SizedBox(
       height: 45,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: onHeaderTap,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(
-                  text: focusedMonth.toStringFormat(),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-                AppText(
-                  text: calendar.name,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  textColor: AppColors.primary,
-                ),
-              ],
-            ),
-          ),
+          _buildTitleView(headerKey: headerKey),
           Row(
             children: [
               if (!focusedMonth.isToday) ...[
@@ -87,7 +72,7 @@ class CalendarHeader extends StatelessWidget {
                     text: 'Today',
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    textColor: const Color(0xFF000000),
+                    textColor: context.textColor,
                   ),
                 ),
                 const SizedBox(width: 15),
@@ -97,7 +82,7 @@ class CalendarHeader extends StatelessWidget {
                   screenMode == CalendarScreenMode.full
                       ? Icons.fullscreen_exit
                       : Icons.fullscreen,
-                  color: const Color(0xFF000000),
+                  color: context.textColor,
                   size: 25,
                 ),
                 onPressed: () {
@@ -117,7 +102,7 @@ class CalendarHeader extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               IconButton(
-                icon: Icon(Icons.menu, color: Color(0xFF000000), size: 20),
+                icon: Icon(Icons.menu, color: context.textColor, size: 20),
                 onPressed: () {
                   HapticFeedback.lightImpact();
                   onMenuButtonTapped();
@@ -126,6 +111,70 @@ class CalendarHeader extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  ///
+  /// 타이틀 뷰
+  ///
+  Widget _buildTitleView({required ValueKey<String> headerKey}) {
+    return GestureDetector(
+      onTap: onHeaderTap,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        // 이전 위젯이 사라지는 동시에 새로운 위젯이 나타나는 애니메이션
+        layoutBuilder: (currentChild, previousChildren) {
+          return Stack(
+            alignment: Alignment.topLeft,
+            children: [
+              ...previousChildren, // 이전 위젯
+              if (currentChild != null) currentChild, // 새로운 위젯
+            ],
+          );
+        },
+        //
+        transitionBuilder: (child, animation) {
+          final isCurrentCalendar = child.key == headerKey;
+          final curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack, // 바운싱 효과
+            reverseCurve: Curves.easeInCubic,
+          );
+          final slideTween = Tween<Offset>(
+            begin: isCurrentCalendar
+                ? const Offset(0.0, 0.3) // 새로운 위젯 => 아래에서 위로
+                : const Offset(0.0, -0.3), // 이전 위젯 => 위로 사라짐
+            end: Offset.zero,
+          );
+
+          return FadeTransition(
+            opacity: curvedAnimation,
+            child: SlideTransition(
+              position: curvedAnimation.drive(slideTween),
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: headerKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                text: focusedMonth.toStringFormat(),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+              AppText(
+                text: calendar.name,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                textColor: AppColors.primary,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

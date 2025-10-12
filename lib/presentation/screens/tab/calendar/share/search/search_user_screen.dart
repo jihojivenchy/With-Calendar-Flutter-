@@ -16,6 +16,7 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/widgets/guide_view.dart';
@@ -45,19 +46,13 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
   final SearchMode mode;
 
   ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => AppColors.background;
-
-  ///
   /// 앱 바
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return const DefaultAppBar(
+    return DefaultAppBar(
       title: '유저 검색',
-      backgroundColor: Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
     );
   }
 
@@ -90,7 +85,7 @@ class SearchUserScreen extends BaseScreen with SearchUserScreenEvent {
     final userList = ref.watch(SearchUserScreenState.searchedUserListProvider);
 
     if (userList.isEmpty) {
-      return Expanded(child: const GuideView());
+      return const GuideView();
     }
 
     return Expanded(

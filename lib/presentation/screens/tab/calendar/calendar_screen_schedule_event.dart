@@ -42,7 +42,13 @@ extension CalendarScheduleEvent on CalendarScreenEvent {
   /// 일정 리스트 구독 재시도
   ///
   Future<void> retry(WidgetRef ref) async {
+    // 구독 해제
     await disposeSubscription(ref);
+
+    // 일정 리스트 초기화
+    ref.read(CalendarScreenState.scheduleListProvider.notifier).state = {};
+
+    // 일정 리스트 재구독
     subscribeScheduleList(ref);
   }
 
@@ -56,7 +62,6 @@ extension CalendarScheduleEvent on CalendarScreenEvent {
       calendar: calendar,
       scheduleID: scheduleID,
     );
-    retry(ref);
   }
 
   //--------------------------------Helper 메서드--------------------------------

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class CalendarItem extends StatelessWidget {
   const CalendarItem({
@@ -27,7 +28,7 @@ class CalendarItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
@@ -46,7 +47,6 @@ class CalendarItem extends StatelessWidget {
                     text: information.name,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    textColor: Colors.black87,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -63,16 +63,11 @@ class CalendarItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 150),
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeIn,
-              child: Icon(
-                isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
-                key: ValueKey<bool>(isSelected),
-                color: isSelected ? AppColors.primary : AppColors.colord2d5d7,
-                size: 22,
-              ),
+            Icon(
+              isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
+              key: ValueKey<bool>(isSelected),
+              color: isSelected ? AppColors.primary : AppColors.colord2d5d7,
+              size: 22,
             ),
           ],
         ),

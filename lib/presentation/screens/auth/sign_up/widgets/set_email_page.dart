@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
 
 class SetEmailPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _SetEmailPageState extends State<SetEmailPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     return Form(
       key: _formKey,
       child: Padding(
@@ -46,6 +47,7 @@ class _SetEmailPageState extends State<SetEmailPage>
               onTextChanged: widget.onEmailChanged,
               placeholderText: '이메일을 입력하세요',
               keyboardType: TextInputType.emailAddress,
+              backgroundColor: context.surface,
               textInputAction: TextInputAction.next,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (email) => email?.validateEmail(),

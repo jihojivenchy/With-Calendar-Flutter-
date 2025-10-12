@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 /// 핀 색상 선택 버튼
 class ColorPickerButton extends StatelessWidget {
@@ -26,16 +27,16 @@ class ColorPickerButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isPinned
               ? pinColor.withValues(alpha: 0.1)
-              : Colors.grey.shade100,
+              : context.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isPinned ? pinColor : Colors.grey.shade300,
+            color: isPinned ? pinColor : Colors.transparent,
             width: 2,
           ),
         ),
         child: Icon(
           isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-          color: isPinned ? pinColor : Colors.grey.shade600,
+          color: isPinned ? pinColor : context.textColor,
           size: 20,
         ),
       ),

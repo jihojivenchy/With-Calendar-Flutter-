@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 /// 캘린더 날짜 이동을 위한 바텀시트
 class MonthPickerBottomSheet extends StatefulWidget {
@@ -36,8 +37,10 @@ class _DatePickerBottomSheetState extends State<MonthPickerBottomSheet> {
     _yearList = List.generate(51, (index) => (2000 + index).toString());
 
     // 월 리스트 생성 (01-12)
-    _monthList =
-        List.generate(12, (index) => (index + 1).toString().padLeft(2, '0'));
+    _monthList = List.generate(
+      12,
+      (index) => (index + 1).toString().padLeft(2, '0'),
+    );
 
     // 선택된 값을 설정
     _selectedYear = widget.focusedDate.year.toString();
@@ -75,8 +78,8 @@ class _DatePickerBottomSheetState extends State<MonthPickerBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.surface3,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(14),
           topRight: Radius.circular(14),
@@ -177,10 +180,7 @@ class _DatePickerBottomSheetState extends State<MonthPickerBottomSheet> {
             onTapped: () {
               context.pop();
               widget.onChangeDate(
-                DateTime(
-                  int.parse(_selectedYear),
-                  int.parse(_selectedMonth),
-                ),
+                DateTime(int.parse(_selectedYear), int.parse(_selectedMonth)),
               );
             },
           ),

@@ -10,6 +10,8 @@ import 'package:with_calendar/data/services/hive/hive_service.dart';
 import 'package:with_calendar/data/services/notification/notification_service.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
+import 'package:with_calendar/presentation/provider/display_mode/display_mode_provider.dart';
 import 'firebase_options.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 
@@ -65,6 +67,9 @@ class App extends ConsumerWidget {
     debugInvertOversizedImages = true;
     AppSize.init(context);
 
+    // 화면 모드 설정
+    final displayMode = ref.watch(DisplayModeState.displayModeProvider);
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -73,15 +78,9 @@ class App extends ConsumerWidget {
       child: MaterialApp.router(
         routerConfig: _router,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          textSelectionTheme: TextSelectionThemeData(
-            selectionHandleColor: Colors.transparent,
-            selectionColor: AppColors.gray200,
-          ),
-          fontFamily: 'Pretendard',
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: displayMode.themeMode,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
@@ -92,8 +91,3 @@ class App extends ConsumerWidget {
     );
   }
 }
-
-
-// TODO: ---할일  
-// 1. FireStore API 모듈 추가
-// 2. 

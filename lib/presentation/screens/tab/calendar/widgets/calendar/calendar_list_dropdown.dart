@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 /// 캘린더 리스트 드롭다운
 class CalendarListDropdown extends StatefulWidget {
@@ -67,7 +68,7 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
       child: Container(
         width: 150,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface3,
           borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
@@ -106,7 +107,7 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
                   ),
                   color: isSelected
                       ? AppColors.primary.withValues(alpha: 0.05)
-                      : Colors.white,
+                      : context.surface3,
                   child: Row(
                     children: [
                       Expanded(
@@ -147,9 +148,9 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
+      child: IconButton(
+        icon: Icon(Icons.swap_horiz, color: context.textColor, size: 20),
+        onPressed: () {
           HapticFeedback.lightImpact();
           if (_entry == null) {
             _show();
@@ -157,13 +158,6 @@ class _CalendarListDropdownState extends State<CalendarListDropdown> {
             _hide();
           }
         },
-        child: const SizedBox(
-          width: 30,
-          height: 40,
-          child: Center(
-            child: Icon(Icons.swap_horiz, color: Color(0xFF000000), size: 20),
-          ),
-        ),
       ),
     );
   }

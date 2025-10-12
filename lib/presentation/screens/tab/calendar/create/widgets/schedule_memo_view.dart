@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 ///
 /// 일정 메모 뷰
@@ -27,13 +28,13 @@ class ScheduleMemoView extends HookWidget {
     final focusNode = useFocusNode();
 
     return Container(
-      color: Colors.white,
+      color: context.surface,
       padding: const EdgeInsets.only(top: 5),
       child: ExpansionTile(
         tilePadding: EdgeInsets.zero,
         childrenPadding: const EdgeInsets.symmetric(vertical: 10),
         shape: const RoundedRectangleBorder(side: BorderSide.none),
-        backgroundColor: Colors.white,
+        backgroundColor: context.surface,
         title: Row(
           children: [
             Icon(Icons.create, color: lineColor, size: 20),
@@ -68,7 +69,7 @@ class ScheduleMemoView extends HookWidget {
             focusNode.unfocus();
           }
         },
-        children: [_buildMemoTextField(focusNode)],
+        children: [_buildMemoTextField(context, focusNode)],
       ),
     );
   }
@@ -76,12 +77,14 @@ class ScheduleMemoView extends HookWidget {
   ///
   /// 메모 입력 텍스트 필드
   ///
-  Widget _buildMemoTextField(FocusNode focusNode) {
+  Widget _buildMemoTextField(BuildContext context, FocusNode focusNode) {
     return AppTextField(
       focusNode: focusNode,
       initialValue: memo,
       placeholderText: '메모 입력',
       maxLines: 5,
+      backgroundColor: context.surface,
+      
       focusedBorderColor: lineColor,
       cursorColor: lineColor,
       onTextChanged: onMemoChanged,

@@ -148,5 +148,8 @@ mixin class CalendarScreenEvent {
 
     // 현재 선택된 캘린더 ID 설정
     ref.read(CalendarScreenState.currentCalendar.notifier).state = calendar;
+
+    // 일정 구독 재시작
+    retry(ref);
   }
 }

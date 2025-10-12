@@ -16,6 +16,7 @@ import 'package:with_calendar/presentation/design_system/component/textfield/app
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_state.dart';
@@ -33,19 +34,13 @@ class SearchMemoScreen extends BaseScreen with SearchMemoScreenEvent {
   SearchMemoScreen({super.key});
 
   ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => AppColors.background;
-
-  ///
   /// 앱 바
   ///
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return const DefaultAppBar(
+    return DefaultAppBar(
       title: '메모 검색',
-      backgroundColor: Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
     );
   }
 
@@ -78,7 +73,7 @@ class SearchMemoScreen extends BaseScreen with SearchMemoScreenEvent {
     final memoList = ref.watch(SearchMemoState.memoListProvider);
 
     if (memoList.isEmpty) {
-      return Expanded(child: const SearchMemoGuideView());
+      return const SearchMemoGuideView();
     }
 
     return Expanded(

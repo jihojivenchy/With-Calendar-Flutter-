@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class SetNamePage extends StatefulWidget {
   const SetNamePage({
@@ -43,6 +44,7 @@ class _SetNamePageState extends State<SetNamePage>
           AppTextField(
             focusNode: widget.focusNode,
             placeholderText: '닉네임을 입력하세요',
+            backgroundColor: context.surface,
             onTextChanged: widget.onNameChanged,
           ),
           const SizedBox(height: 40),
@@ -64,7 +66,8 @@ class _SetNamePageState extends State<SetNamePage>
         children: [
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => widget.onPrivacyPolicyAgreed(!widget.isPrivacyPolicyAgreed),
+            onTap: () =>
+                widget.onPrivacyPolicyAgreed(!widget.isPrivacyPolicyAgreed),
             child: Row(
               children: [
                 Container(

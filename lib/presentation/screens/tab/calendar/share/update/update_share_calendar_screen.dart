@@ -21,6 +21,7 @@ import 'package:with_calendar/presentation/design_system/component/view/empty_vi
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen_state.dart';
@@ -50,12 +51,6 @@ class UpdateShareCalendarScreen extends BaseScreen
   }
 
   ///
-  /// 배경색
-  ///
-  @override
-  Color? get backgroundColor => AppColors.background;
-
-  ///
   /// 앱 바
   ///
   @override
@@ -67,7 +62,10 @@ class UpdateShareCalendarScreen extends BaseScreen
 
     // 조회되지 않았을 경우, 기본 앱바 반환
     if (!calendarState.state.isFetched) {
-      return DefaultAppBar(title: '달력 수정', backgroundColor: Color(0xFFF2F2F7));
+      return DefaultAppBar(
+        title: '달력 수정',
+        backgroundColor: context.backgroundColor,
+      );
     }
 
     final isOwner = calendarState.value.isOwner;
@@ -75,7 +73,7 @@ class UpdateShareCalendarScreen extends BaseScreen
     // 조회되었을 경우, 앱바 반환
     return DefaultAppBar(
       title: '달력 수정',
-      backgroundColor: Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
       actions: [
         if (isOwner) ...[
           // 삭제
@@ -218,6 +216,7 @@ class UpdateShareCalendarScreen extends BaseScreen
             AppTextField(
               initialValue: title,
               placeholderText: '제목을 입력하세요.',
+              backgroundColor: ref.context.surface,
               onTextChanged: (text) {
                 updateTitle(ref, text);
               },

@@ -6,6 +6,7 @@ import 'package:with_calendar/domain/entities/schedule/create_schedule_request.d
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/view/app_date_time_picker_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 ///
@@ -33,7 +34,7 @@ class ScheduleDatePickerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         border: Border(bottom: BorderSide(color: lineColor, width: 0.5)),
       ),
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -41,7 +42,7 @@ class ScheduleDatePickerView extends StatelessWidget {
         tilePadding: EdgeInsets.zero,
         childrenPadding: const EdgeInsets.symmetric(vertical: 15),
         shape: const RoundedRectangleBorder(side: BorderSide.none),
-        backgroundColor: Colors.white,
+        backgroundColor: context.surface,
         title: Row(
           children: [
             Icon(Icons.date_range, color: lineColor, size: 20),

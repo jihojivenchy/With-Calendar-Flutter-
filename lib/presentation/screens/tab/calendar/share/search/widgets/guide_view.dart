@@ -15,6 +15,7 @@ class GuideView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 40),
             // 제목
             AppText(
               text: '공유달력 이용 방법',

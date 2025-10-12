@@ -191,6 +191,12 @@ RouteBase get $tabRoute => GoRouteData.$route(
 
       factory: _$FeedbackRoute._fromState,
     ),
+    GoRouteData.$route(
+      path: 'display-mode',
+      name: 'display mode',
+
+      factory: _$DisplayModeRoute._fromState,
+    ),
   ],
 );
 
@@ -436,6 +442,26 @@ mixin _$FeedbackRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/feedback');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$DisplayModeRoute on GoRouteData {
+  static DisplayModeRoute _fromState(GoRouterState state) => DisplayModeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/display-mode');
 
   @override
   void go(BuildContext context) => context.go(location);

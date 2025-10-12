@@ -12,6 +12,7 @@ import 'package:with_calendar/presentation/design_system/component/button/app_bu
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_event.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_up/sign_up_screen_state.dart';
@@ -71,6 +72,11 @@ class SignUpScreen extends BaseScreen with SignUpScreenEvent {
   }
 
   @override
+  Color? backgroundColor(BuildContext context) {
+    return context.whiteAndBlack;
+  }
+
+  @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
@@ -94,7 +100,7 @@ class SignUpScreen extends BaseScreen with SignUpScreenEvent {
   /// 앱 바 구성
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) {
-    return DefaultAppBar(title: '회원가입');
+    return DefaultAppBar(title: '회원가입', backgroundColor: context.whiteAndBlack);
   }
 
   ///

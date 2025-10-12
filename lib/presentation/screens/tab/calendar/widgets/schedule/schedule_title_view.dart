@@ -52,7 +52,6 @@ class ScheduleTitleView extends StatelessWidget {
                   text: lunarDate?.solarDate.toKoreanMonthDay() ?? '',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  textColor: AppColors.gray600,
                 ),
                 const SizedBox(width: 10),
                 AppText(
@@ -78,12 +77,11 @@ class ScheduleTitleView extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 30,
+      height: 25,
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(bottom: 10),
         itemCount: holidayList.length,
         itemBuilder: (context, index) {
           final holiday = holidayList[index];

@@ -14,21 +14,18 @@ class Day {
   final bool isOutside;
   final DayCellState state;
 
-  const Day({
-    required this.date,
-    required this.isOutside,
-    required this.state
-  });
+  const Day({required this.date, required this.isOutside, required this.state});
 
   @override
   String toString() {
     return 'Day(day: ${date.day}, isOutside: $isOutside)';
   }
+
+  static Day today = Day(
+    date: DateTime.now(),
+    isOutside: false,
+    state: DayCellState.today,
+  );
 }
 
-enum DayCellState {
-  basic,
-  sunday,
-  saturday,
-  today,
-}
+enum DayCellState { basic, sunday, saturday, today }

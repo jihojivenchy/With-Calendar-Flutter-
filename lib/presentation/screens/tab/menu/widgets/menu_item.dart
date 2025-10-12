@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/menu/menu_item.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class MenuItem extends StatelessWidget {
   const MenuItem({
@@ -24,11 +25,11 @@ class MenuItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: context.textColor.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -46,14 +47,13 @@ class MenuItem extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(menu.icon, color: const Color(0xFF1A1A1A), size: 20),
+                    Icon(menu.icon, size: 20),
                     const SizedBox(width: 16),
                     Expanded(
                       child: AppText(
                         text: menu.title,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        textColor: const Color(0xFF1A1A1A),
                       ),
                     ),
                     Icon(
@@ -76,14 +76,13 @@ class MenuItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          Icon(menu.icon, color: const Color(0xFF1A1A1A), size: 20),
+          Icon(menu.icon, size: 20),
           const SizedBox(width: 16),
           Expanded(
             child: AppText(
               text: menu.title,
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              textColor: const Color(0xFF1A1A1A),
             ),
           ),
           CupertinoSwitch(

@@ -5,7 +5,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 /// 각 데이터 파일 경로
 enum HiveBoxPath {
-  currentCalendar(key: "CURRENT_CALENDAR"); // 현재 선택된 캘린더 데이터
+  currentCalendar(key: "CURRENT_CALENDAR"), // 현재 선택된 캘린더 데이터
+  displayMode(key: "DISPLAY_MODE"); // 화면 모드 데이터
 
   final String key;
   const HiveBoxPath({required this.key});

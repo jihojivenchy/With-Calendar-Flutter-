@@ -7,6 +7,7 @@ import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 
 class DayItem extends StatelessWidget {
@@ -68,7 +69,7 @@ class DayItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 날짜 텍스트
-              SizedBox(height: 20, child: _buildDayText(isSelected)),
+              SizedBox(height: 20, child: _buildDayText(context, isSelected)),
               const SizedBox(height: 4),
               _buildScheduleSection(),
               _buildHolidayList(),
@@ -163,7 +164,7 @@ class DayItem extends StatelessWidget {
   ///
   /// 날짜 텍스트 생성
   ///
-  Widget _buildDayText(bool isSelected) {
+  Widget _buildDayText(BuildContext context, bool isSelected) {
     if (isSelected) {
       return Row(
         children: [
@@ -179,7 +180,7 @@ class DayItem extends StatelessWidget {
                 text: '${day.date.day}',
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                textColor: _getTextColor(),
+                textColor: _getTextColor(context),
               ),
             ),
           ),
@@ -205,7 +206,7 @@ class DayItem extends StatelessWidget {
             text: '${day.date.day}',
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            textColor: _getTextColor(),
+            textColor: _getTextColor(context),
           ),
         ),
       );
@@ -228,7 +229,7 @@ class DayItem extends StatelessWidget {
   ///
   /// 날짜 텍스트 색상
   ///
-  Color _getTextColor() {
+  Color _getTextColor(BuildContext context) {
     /// 공휴일인 경우
     if (holidayList.isNotEmpty) {
       return const Color(0xFFCC3636);
@@ -236,7 +237,7 @@ class DayItem extends StatelessWidget {
 
     switch (day.state) {
       case DayCellState.basic:
-        return const Color(0xFF000000);
+        return context.textColor;
       case DayCellState.sunday:
         return const Color(0xFFCC3636);
       case DayCellState.saturday:
@@ -334,6 +335,7 @@ class DayItem extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
       itemCount: holidayList.length,
       itemBuilder: (context, index) {
         final holiday = holidayList[index];

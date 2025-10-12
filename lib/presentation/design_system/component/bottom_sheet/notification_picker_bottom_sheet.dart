@@ -7,6 +7,7 @@ import 'package:with_calendar/domain/entities/schedule/create_schedule_request.d
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 
 /// 일정 알림 선택 바텀 시트
@@ -41,8 +42,8 @@ class _NotificationPickerBottomSheetState
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.surface3,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(14),
           topRight: Radius.circular(14),
@@ -153,7 +154,7 @@ class _NotificationPickerBottomSheetState
         onTapped();
       },
       child: Container(
-        color: isSelected ? color.withValues(alpha: 0.1) : AppColors.white,
+        color: isSelected ? color.withValues(alpha: 0.1) : context.surface3,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
@@ -163,12 +164,7 @@ class _NotificationPickerBottomSheetState
               size: 24,
             ),
             const SizedBox(width: 16),
-            AppText(
-              text: title,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              textColor: AppColors.gray700,
-            ),
+            AppText(text: title, fontSize: 14, fontWeight: FontWeight.w500),
           ],
         ),
       ),

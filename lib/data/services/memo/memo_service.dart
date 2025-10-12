@@ -114,18 +114,18 @@ class MemoService with BaseFirestoreMixin {
       '를',
       '의',
       '에',
-      '에서',
       '로',
-      '으로',
       '와',
       '과',
       '도',
       '만',
+      '께',
+      '에서',
+      '으로',
       '부터',
       '까지',
       '에게',
       '한테',
-      '께',
       '께서',
       '이나',
       '이든',
@@ -134,6 +134,7 @@ class MemoService with BaseFirestoreMixin {
       '든지',
       '라도',
       '이라도',
+      '에게서',
       // 대명사
       '나',
       '너',
@@ -203,15 +204,62 @@ class MemoService with BaseFirestoreMixin {
       'with',
     };
 
+    // 영어와 숫자 정규식
+    final RegExp tokenRegExp = RegExp(r'[\p{L}\p{N}]+', unicode: true);
+
+    // 한글 정규식
+    final RegExp koreanRegExp = RegExp(r'[가-힣]');
+
+    // 긴 조사부터 제거할 수 있도록 내림차순 정렬된 조사 목록
+    const List<String> particles = <String>[
+      '으로부터',
+      '에서부터',
+      '이든지',
+      '이라도',
+      '에게서',
+      '께서',
+      '부터',
+      '까지',
+      '에게',
+      '한테',
+      '에서',
+      '으로',
+      '이나',
+      '이든',
+      '든지',
+      '라도',
+      '은',
+      '는',
+      '이',
+      '가',
+      '을',
+      '를',
+      '의',
+      '에',
+      '로',
+      '와',
+      '과',
+      '도',
+      '만',
+      '든',
+      '께',
+      '랑',
+    ];
+
     // 유니코드 문자(한글, 영어 등) + 숫자 추출
-    final tokenRegExp = RegExp(r'[\p{L}\p{N}]+', unicode: true);
-    final keywordSet = <String>{};
+    final Set<String> keywordSet = {};
 
     for (final match in tokenRegExp.allMatches(normalized)) {
-      final token = match.group(0);
+      var token = match.group(0);
+      if (token == null) continue;
+
+      // 한글이 포함된 키워드는 조사 제거 시도
+      if (koreanRegExp.hasMatch(token)) {
+        token = _removeParticle(token, particles);
+      }
 
       // 2글자 미만 제외
-      if (token == null || token.length < 2) {
+      if (token.length < 2) {
         continue;
       }
 
@@ -223,10 +271,43 @@ class MemoService with BaseFirestoreMixin {
       keywordSet.add(token);
     }
 
+    // 키워드가 없으면 빈 리스트 반환
     if (keywordSet.isEmpty) {
       return const [];
     }
 
+    // 키워드 리스트 반환
     return List<String>.unmodifiable(keywordSet);
+  }
+
+  ///
+  /// 조사 제거
+  ///
+  String _removeParticle(String word, List<String> particles) {
+    var stem = word;
+
+    // 어미가 이어 붙은 경우를 대비해 더 이상 제거할 조사 없을 때까지 반복
+    var hasRemovedParticle = true;
+    while (hasRemovedParticle) {
+      hasRemovedParticle = false;
+
+      // 긴 조사부터 검사해 잘못된 절단(예: '으로'보다 '로'를 먼저 제거)을 막음
+      for (final particle in particles) {
+        if (!stem.endsWith(particle)) {
+          continue;
+        }
+
+        final candidate = stem.substring(0, stem.length - particle.length);
+
+        // 조사 제거 후에도 최소 두 글자를 유지할 때만 반영
+        if (candidate.length >= 2) {
+          stem = candidate;
+          hasRemovedParticle = true;
+          break;
+        }
+      }
+    }
+
+    return stem;
   }
 }

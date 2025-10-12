@@ -10,6 +10,7 @@ import 'package:with_calendar/presentation/design_system/component/button/app_bu
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_event.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_state.dart';
@@ -20,6 +21,11 @@ import 'package:with_calendar/utils/extensions/validation_extension.dart';
 class SignInScreen extends BaseScreen with SignInScreenEvent {
   SignInScreen({super.key});
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  Color? backgroundColor(BuildContext context) {
+    return context.whiteAndBlack;
+  }
 
   @override
   Widget buildBody(BuildContext context, WidgetRef ref) {
@@ -50,7 +56,6 @@ class SignInScreen extends BaseScreen with SignInScreenEvent {
                 text: '이메일',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                textColor: Colors.black,
               ),
             ),
             const SizedBox(height: 8),
@@ -62,7 +67,6 @@ class SignInScreen extends BaseScreen with SignInScreenEvent {
                 text: '비밀번호',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                textColor: Colors.black,
               ),
             ),
             const SizedBox(height: 8),
@@ -115,6 +119,7 @@ class SignInScreen extends BaseScreen with SignInScreenEvent {
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      backgroundColor: ref.context.surface,
       validator: (email) => email?.validateEmail(),
       onTextChanged: (email) {
         updateEmail(ref, email);
@@ -133,6 +138,7 @@ class SignInScreen extends BaseScreen with SignInScreenEvent {
       placeholderText: '6자 이상',
       obscureText: !isPasswordVisible,
       textInputAction: TextInputAction.done,
+      backgroundColor: ref.context.surface,
       onSubmitted: (_) {
         if (!isValid) {
           SnackBarService.showSnackBar('이메일 또는 비밀번호를 확인해주세요.');

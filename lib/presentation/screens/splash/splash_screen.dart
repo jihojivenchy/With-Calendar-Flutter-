@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:with_calendar/data/services/auth/auth_service.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 import 'package:with_calendar/utils/extensions/image_extension.dart';
@@ -31,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: context.whiteAndBlack,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Center(

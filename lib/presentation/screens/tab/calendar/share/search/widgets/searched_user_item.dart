@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:with_calendar/domain/entities/calendar/share/calendar_participant.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 
 class SearchedUserItem extends StatelessWidget {
   const SearchedUserItem({
@@ -22,7 +23,7 @@ class SearchedUserItem extends StatelessWidget {
         height: 60,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.transparent, width: 1),
         ),
@@ -39,7 +40,6 @@ class SearchedUserItem extends StatelessWidget {
                 text: user.userName,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                textColor: Colors.black87,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

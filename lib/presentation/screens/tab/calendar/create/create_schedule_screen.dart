@@ -17,6 +17,7 @@ import 'package:with_calendar/presentation/design_system/component/button/app_bu
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/component/view/app_date_time_picker_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_color_view.dart';
@@ -62,9 +63,9 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: AppSize.deviceHeight * 0.95,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      height: AppSize.deviceHeight * 0.9,
+      decoration: BoxDecoration(
+        color: context.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(14),
           topRight: Radius.circular(14),
@@ -158,7 +159,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ref.context.surface,
         border: Border(bottom: BorderSide(color: selectedColor, width: 0.5)),
       ),
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -168,6 +169,8 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
           AppButtonOption(text: '시간 설정', value: ScheduleType.time),
         ],
         selectedValue: selectedType,
+        backgroundColor: ref.context.surface2,
+        selectedBackgroundColor: ref.context.surface,
         selectedBorderColor: selectedColor,
         selectedTextColor: selectedColor,
         onChanged: (type) {

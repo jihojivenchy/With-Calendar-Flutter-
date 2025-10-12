@@ -1,6 +1,7 @@
 import 'package:bounce_tapper/bounce_tapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 import '../../../../../domain/entities/memo/memo.dart';
 import '../../../../design_system/foundation/app_color.dart';
@@ -29,17 +30,20 @@ class MemoItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: context.textColor.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
           border: memo.isPinned
-              ? Border.all(color: memo.pinColor.withOpacity(0.3), width: 1)
+              ? Border.all(
+                  color: memo.pinColor.withValues(alpha: 0.3),
+                  width: 1,
+                )
               : null,
         ),
         child: Column(
@@ -50,7 +54,6 @@ class MemoItem extends StatelessWidget {
                 Expanded(
                   child: AppText(
                     text: memo.content,
-                    textColor: Colors.black87,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     maxLines: 1,
@@ -62,7 +65,7 @@ class MemoItem extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: memo.pinColor.withOpacity(0.1),
+                      color: memo.pinColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(Icons.push_pin, size: 16, color: memo.pinColor),

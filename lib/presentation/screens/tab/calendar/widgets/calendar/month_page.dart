@@ -6,6 +6,7 @@ import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/presentation/design_system/component/grid/dynamic_height_grid_view.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/day_item.dart';
 
@@ -58,7 +59,7 @@ class MonthPageView extends StatelessWidget {
                       final Color textColor = switch (index) {
                         0 => const Color(0xFFCC3636),
                         6 => const Color(0xFF277BC0),
-                        _ => const Color(0xFF000000),
+                        _ => context.textColor,
                       };
 
                       return SizedBox(

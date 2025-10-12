@@ -11,6 +11,7 @@ import 'package:with_calendar/presentation/design_system/component/text/app_text
 import 'package:with_calendar/presentation/design_system/component/view/empty_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/memo_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/memo_list_screen_state.dart';
@@ -42,12 +43,6 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
   }
 
   ///
-  /// 배경색 설정
-  ///
-  @override
-  Color? get backgroundColor => const Color(0xFFF2F2F7);
-
-  ///
   /// 앱 바 구성
   ///
   @override
@@ -56,7 +51,7 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
       title: '메모',
       fontSize: 28,
       fontWeight: FontWeight.w800,
-      backgroundColor: const Color(0xFFF2F2F7),
+      backgroundColor: context.backgroundColor,
       isShowBackButton: false,
       actions: [
         GestureDetector(
@@ -65,7 +60,7 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
           },
           child: Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.search, size: 24, color: Colors.black54),
+            child: const Icon(Icons.search, size: 24),
           ),
         ),
         const SizedBox(width: 15),
@@ -75,7 +70,7 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
           },
           child: Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.add, size: 24, color: Colors.black54),
+            child: const Icon(Icons.add, size: 24),
           ),
         ),
         const SizedBox(width: 16),
