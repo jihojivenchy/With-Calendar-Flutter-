@@ -72,8 +72,12 @@ class DayItem extends StatelessWidget {
             children: [
               // 날짜 텍스트
               SizedBox(height: 20, child: _buildDayText(context, isSelected)),
-              const SizedBox(height: 4),
-              _buildScheduleSection(context),
+              // 일정 리스트
+              if (scheduleList.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                _buildScheduleSection(context),
+              ],
+              // 공휴일 리스트
               _buildHolidayList(),
             ],
           ),
@@ -86,12 +90,6 @@ class DayItem extends StatelessWidget {
   /// 일정 섹션 생성
   ///
   Widget _buildScheduleSection(BuildContext context) {
-    final hasSchedule = scheduleList.isNotEmpty;
-
-    if (!hasSchedule) {
-      return const SizedBox.shrink();
-    }
-
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       switchInCurve: Curves.easeInOutCubic,

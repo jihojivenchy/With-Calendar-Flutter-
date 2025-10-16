@@ -6,10 +6,10 @@ import 'package:with_calendar/presentation/design_system/foundation/app_theme.da
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 ///
-/// 일정 색상 선택 뷰
+/// 일정 색상 선택 버튼
 ///
-class ScheduleColorView extends StatelessWidget {
-  const ScheduleColorView({
+class ScheduleColorButton extends StatelessWidget {
+  const ScheduleColorButton({
     super.key,
     required this.selectedColor,
     required this.onColorSelected,

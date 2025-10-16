@@ -6,12 +6,14 @@ import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/notification_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/set_notification_bottom_sheet.dart';
+import 'package:with_calendar/presentation/design_system/component/bottom_sheet/set_todo_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button_group.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
@@ -20,11 +22,12 @@ import 'package:with_calendar/presentation/design_system/foundation/app_color.da
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_color_view.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_color_button.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_date_picker_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_memo_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_notification_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_title_text_field.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_todo_list_button.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class CreateScheduleScreen extends ConsumerStatefulWidget {
@@ -112,10 +115,14 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
                   _buildNotificationPickerView(ref),
 
                   // 컬러 선택
-                  _buildColorPickerView(ref),
+                  _buildColorPickerButton(ref),
+
+                  // 할 일 목록 버튼
+                  _buildTodoListButton(ref),
 
                   // 메모 입력
                   _buildMemoTextField(ref, scrollController),
+
                   const SizedBox(height: 30),
                 ],
               ),
@@ -236,13 +243,13 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 컬러 선택 버튼
   ///
-  Widget _buildColorPickerView(WidgetRef ref) {
+  Widget _buildColorPickerButton(WidgetRef ref) {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
     );
 
-    return ScheduleColorView(
+    return ScheduleColorButton(
       selectedColor: selectedColor,
       onColorSelected: () {
         _showColorPickerBottomSheet(ref, selectedColor);
@@ -278,6 +285,33 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
             curve: Curves.easeOut,
           );
         });
+      },
+    );
+  }
+
+  ///
+  /// 할 일 목록 버튼
+  ///
+  Widget _buildTodoListButton(WidgetRef ref) {
+    // 선택된 색상
+    final selectedColor = ref.watch(
+      CreateScheduleState.scheduleProvider.select((value) => value.color),
+    );
+
+    // 할 일 목록
+    final todoList = ref.watch(
+      CreateScheduleState.scheduleProvider.select((value) => value.todoList),
+    );
+
+    return ScheduleTodoListButton(
+      checkList: todoList,
+      selectedColor: selectedColor,
+      onTodoListBtnTapped: () {
+        _showTodoListBottomSheet(
+          ref,
+          todoList: todoList,
+          selectedColor: selectedColor,
+        );
       },
     );
   }
@@ -394,6 +428,35 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
           onColorSelected: (color) {
             ref.context.pop();
             updateColor(ref, color);
+          },
+        );
+      },
+    );
+  }
+
+  ///
+  /// 할 일 목록 바텀시트
+  ///
+  void _showTodoListBottomSheet(
+    WidgetRef ref, {
+    required List<Todo> todoList,
+    required Color selectedColor,
+  }) {
+    FocusScope.of(ref.context).unfocus();
+
+    showModalBottomSheet(
+      context: ref.context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return SetTodoBottomSheet(
+          selectedColor: selectedColor,
+          todoList: todoList,
+          onCompletedBtnTapped: (todoList) {
+            ref.context.pop();
+            updateTodoList(ref, todoList);
           },
         );
       },

@@ -18,7 +18,7 @@ import 'package:with_calendar/presentation/design_system/component/view/app_date
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen_event.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_color_view.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_color_button.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_date_picker_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_memo_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_notification_view.dart';
@@ -244,7 +244,7 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
       UpdateScheduleState.scheduleProvider.select((value) => value.color),
     );
 
-    return ScheduleColorView(
+    return ScheduleColorButton(
       selectedColor: selectedColor,
       onColorSelected: () {
         _showColorPickerBottomSheet(ref, selectedColor);

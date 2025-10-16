@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
+import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 
 class CreateScheduleRequest {
   final String id;
@@ -11,6 +12,7 @@ class CreateScheduleRequest {
   final String notificationTime;
   final String memo;
   final Color color;
+  final List<Todo> todoList;
 
   const CreateScheduleRequest({
     required this.id,
@@ -21,6 +23,7 @@ class CreateScheduleRequest {
     required this.notificationTime,
     required this.memo,
     required this.color,
+    required this.todoList,
   });
 
   CreateScheduleRequest copyWith({
@@ -31,6 +34,7 @@ class CreateScheduleRequest {
     String? notificationTime,
     String? memo,
     Color? color,
+    List<Todo>? todoList,
   }) {
     return CreateScheduleRequest(
       id: id,
@@ -41,6 +45,7 @@ class CreateScheduleRequest {
       notificationTime: notificationTime ?? this.notificationTime,
       memo: memo ?? this.memo,
       color: color ?? this.color,
+      todoList: todoList ?? this.todoList,
     );
   }
 
@@ -53,6 +58,7 @@ class CreateScheduleRequest {
     notificationTime: '',
     memo: '',
     color: const Color(0xFF409060),
+    todoList: [],
   );
 
   ///

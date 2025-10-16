@@ -11,6 +11,7 @@ import 'package:with_calendar/domain/entities/schedule/app_date_time.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
@@ -130,6 +131,14 @@ mixin class CreateScheduleEvent {
   void updateColor(WidgetRef ref, Color color) {
     final schedule = _getSchedule(ref);
     _setSchedule(ref, schedule.copyWith(color: color));
+  }
+
+  ///
+  /// 일정 할 일 목록 수정
+  ///
+  void updateTodoList(WidgetRef ref, List<Todo> todoList) {
+    final schedule = _getSchedule(ref);
+    _setSchedule(ref, schedule.copyWith(todoList: todoList));
   }
 
   ///

@@ -397,6 +397,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             notificationTime: schedule.notificationTime,
             memo: schedule.memo,
             color: schedule.color,
+            todoList: [],
           ),
         );
       },

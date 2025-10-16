@@ -37,7 +37,7 @@ class ScheduleMemoView extends HookWidget {
         backgroundColor: context.surface,
         title: Row(
           children: [
-            Icon(Icons.create, color: lineColor, size: 20),
+            Icon(Icons.edit_note, color: lineColor, size: 20),
             const SizedBox(width: 15),
             AppText(
               text: '메모',
@@ -61,6 +61,7 @@ class ScheduleMemoView extends HookWidget {
         ),
         trailing: const SizedBox.shrink(),
         showTrailingIcon: false,
+        
         onExpansionChanged: (isExpanded) {
           if (isExpanded) {
             focusNode.requestFocus();
