@@ -62,61 +62,34 @@ class HolidayService with BaseFirestoreMixin {
 
     return holidays;
   }
-
-  ///
-  /// Firestore에 공휴일 데이터를 주입합니다.
-  ///
-  /// [holidaySeedPayload] 는 연도(문서 ID) -> 'yyyy-MM-dd' 문자열 -> Holiday 리스트 구조입니다.
-  /// Firestore에는 날짜별 Holiday 리스트를 Map<String, dynamic> 형태로 직렬화하여 저장합니다.
-  ///
-  Future<void> seedHolidayDocuments(
-    HolidaySeedPayload holidaySeedPayload,
-  ) async {
-    if (holidaySeedPayload.isEmpty) {
-      return;
-    }
-
-    final writeJobs = <Future<void>>[];
-
-    holidaySeedPayload.forEach((yearKey, holidaysByDate) {
-      if (holidaysByDate.isEmpty) {
-        return;
-      }
-
-      final sortedEntries = holidaysByDate.entries.toList()
-        ..sort((a, b) => a.key.compareTo(b.key));
-
-      final serializedDates = <String, List<Map<String, dynamic>>>{};
-
-      for (final entry in sortedEntries) {
-        final holidays = entry.value;
-        if (holidays.isEmpty) {
-          continue;
-        }
-
-        serializedDates[entry.key] = holidays
-            .map((holiday) => holiday.toFirestoreMap())
-            .toList();
-      }
-
-      if (serializedDates.isEmpty) {
-        return;
-      }
-
-      final data = <String, dynamic>{
-        FirestoreHolidayField.year: int.tryParse(yearKey) ?? yearKey,
-        FirestoreHolidayField.dates: serializedDates,
-      };
-
-      writeJobs.add(
-        set(FirestoreCollection.holiday, documentID: yearKey, data: data),
-      );
-    });
-
-    if (writeJobs.isEmpty) {
-      return;
-    }
-
-    await Future.wait(writeJobs);
-  }
 }
+
+
+// TODO: - 공휴일 리스트 조회 공공데이터 포털 API 연동 후 사용하세요.
+// Future<HolidayMap> fetchHolidayList(int year) async {
+//     final response = await _dioService.get(
+//       path: 'B090041/openapi/service/SpcdeInfoService/getRestDeInfo',
+//       parameters: {
+//         'solYear': year.toString(),
+//         'ServiceKey':
+//             'IIL7UWdyZVoWG7cxSTS8dR7GOOF39dZfa5Yb2ycPnkfuzythdYSJAHrD3ymecrT0Ll0p1B9F%2Bc3diiWELt3nUw%3D%3D',
+//         '_type': 'json',
+//         'numOfRows': '30',
+//       },
+//     );
+//     final items = response['response']['body']['items'];
+//     final rawItems = items?['item'];
+//     if (rawItems == null || rawItems is! List) {
+//       return {};
+//     }
+
+//     // 공휴일 리스트
+//     final HolidayMap holidayMap = {};
+
+//     // 파싱 후 맵에 추가
+//     for (final item in rawItems) {
+//       final holiday = Holiday.fromJson(item);
+//       holidayMap.putIfAbsent(holiday.date, () => []).add(holiday);
+//     }
+//     return holidayMap;
+//   }
