@@ -1,5 +1,3 @@
-
-
 abstract class ImagePaths {
   static const _base = 'assets/images';
 

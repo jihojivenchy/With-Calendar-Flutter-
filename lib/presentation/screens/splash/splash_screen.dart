@@ -39,9 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Image.asset(
             ImagePaths.logo,
             width: 300.cacheSize(context).toDouble(),
-            height: 300.cacheSize(context).toDouble(),
-            cacheWidth: 300.cacheSize(context),
-            cacheHeight: 300.cacheSize(context),
+            cacheWidth: 500.cacheSize(context),
           ),
         ),
       ),

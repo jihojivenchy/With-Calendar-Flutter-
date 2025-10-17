@@ -16,6 +16,7 @@ import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_e
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen_state.dart';
 import 'package:with_calendar/utils/constants/image_paths.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
+import 'package:with_calendar/utils/extensions/image_extension.dart';
 import 'package:with_calendar/utils/extensions/validation_extension.dart';
 
 class SignInScreen extends BaseScreen with SignInScreenEvent {
@@ -37,12 +38,12 @@ class SignInScreen extends BaseScreen with SignInScreenEvent {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 60),
-            const AppText(
-              text: 'With Calendar',
-              fontSize: 40,
-              fontWeight: FontWeight.w700,
-              textColor: AppColors.primary,
+            Image.asset(
+              ImagePaths.logo,
+              width: 300.cacheSize(context).toDouble(),
+              cacheWidth: 500.cacheSize(context),
             ),
+            const SizedBox(height: 20),
             const AppText(
               text: '함께하는 일정 관리',
               fontSize: 20,
