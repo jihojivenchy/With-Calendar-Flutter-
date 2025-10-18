@@ -3,6 +3,7 @@ import 'package:with_calendar/domain/entities/calendar/lunar_date.dart';
 import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
+import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class ScheduleTitleView extends StatelessWidget {
@@ -22,17 +23,17 @@ class ScheduleTitleView extends StatelessWidget {
     if (lunarDate == null) {
       return SliverToBoxAdapter(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHolidayListView(),
               AppText(
                 text: focusedDate.toKoreanMonthDay(),
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                textColor: AppColors.gray600,
+                textColor: _getDateTextColor(focusedDate, context),
               ),
+              _buildHolidayListView(),
             ],
           ),
         ),
@@ -45,13 +46,17 @@ class ScheduleTitleView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHolidayListView(),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 AppText(
                   text: lunarDate?.solarDate.toKoreanMonthDay() ?? '',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
+                  textColor: _getDateTextColor(
+                    lunarDate?.solarDate ?? focusedDate,
+                    context,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 AppText(
@@ -60,12 +65,37 @@ class ScheduleTitleView extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   textColor: AppColors.gray400,
                 ),
+                const SizedBox(width: 12),
+                _buildHolidayListView(),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  ///
+  /// 날짜에 따른 텍스트 색상 결정
+  ///
+  Color _getDateTextColor(DateTime date, BuildContext context) {
+    // 1. 공휴일이 가장 우선 (공휴일이 있으면 sundayRed)
+    if (holidayList.isNotEmpty) {
+      return AppColors.sundayRed;
+    }
+
+    // 2. 일요일인 경우 sundayRed
+    if (date.weekday == DateTime.sunday) {
+      return AppColors.sundayRed;
+    }
+
+    // 3. 토요일인 경우 saturdayBlue
+    if (date.weekday == DateTime.saturday) {
+      return AppColors.saturdayBlue;
+    }
+
+    // 4. 나머지는 모두 텍스트 컬러
+    return context.textColor;
   }
 
   ///
@@ -77,30 +107,32 @@ class ScheduleTitleView extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 25,
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemCount: holidayList.length,
-        itemBuilder: (context, index) {
-          final holiday = holidayList[index];
+      height: 19,
+      child: Center(
+        child: ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          itemCount: holidayList.length,
+          itemBuilder: (context, index) {
+            final holiday = holidayList[index];
 
-          return AppText(
-            text: holiday.title,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            textColor: const Color(0xFFCC3636),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return AppText(
-            text: ',  ',
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            textColor: const Color(0xFFCC3636),
-          );
-        },
+            return AppText(
+              text: holiday.title,
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              textColor: const Color(0xFFCC3636),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return AppText(
+              text: ',  ',
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              textColor: const Color(0xFFCC3636),
+            );
+          },
+        ),
       ),
     );
   }

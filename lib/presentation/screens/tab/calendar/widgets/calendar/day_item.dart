@@ -71,7 +71,7 @@ class DayItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 날짜 텍스트
-              SizedBox(height: 20, child: _buildDayText(context, isSelected)),
+              _buildDayText(context, isSelected),
               // 일정 리스트
               if (scheduleList.isNotEmpty) ...[
                 const SizedBox(height: 4),
@@ -167,11 +167,12 @@ class DayItem extends StatelessWidget {
   ///
   Widget _buildDayText(BuildContext context, bool isSelected) {
     if (isSelected) {
-      return Row(
+      return Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 16,
-            height: 16,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
               color: _buildDayContainerColor(),
               borderRadius: BorderRadius.circular(10),
@@ -179,19 +180,20 @@ class DayItem extends StatelessWidget {
             child: Center(
               child: AppText(
                 text: '${day.date.day}',
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 textColor: _getTextColor(context),
               ),
             ),
           ),
-          const SizedBox(width: 3),
-          AppText(
-            text: lunarDate?.dateString ?? '',
-            fontSize: 8,
-            fontWeight: FontWeight.w400,
-            textColor: AppColors.calendarBlue,
-          ),
+          if (scheduleList.isEmpty) ...[
+            AppText(
+              text: lunarDate?.dateString ?? '',
+              fontSize: 8,
+              fontWeight: FontWeight.w400,
+              textColor: AppColors.calendarBlue,
+            ),
+          ],
         ],
       );
     } else {
