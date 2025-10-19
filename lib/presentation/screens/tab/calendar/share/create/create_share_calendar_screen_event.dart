@@ -10,6 +10,7 @@ import 'package:with_calendar/presentation/common/services/dialog/dialog_service
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/calendar_menu_view_event.dart';
 
 mixin class CreateShareCalendarEvent {
   final ShareCalendarService _service = ShareCalendarService();
@@ -78,6 +79,11 @@ mixin class CreateShareCalendarEvent {
 
     try {
       await _service.createCalendar(creation);
+
+      // 사이드 메뉴 캘린더 리스트 갱신
+      final calendarEvent = CalendarMenuEvent();
+      await calendarEvent.fetchCalendarList(ref);
+
       if (ref.context.mounted) {
         _showCreateSuccessDialog(ref, '${creation.title} 달력 생성 완료');
       }

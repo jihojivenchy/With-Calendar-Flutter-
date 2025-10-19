@@ -14,31 +14,11 @@ import 'package:with_calendar/presentation/design_system/component/view/loading_
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/calendar_action_dialog.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/calendar_item.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/calendar_menu_view_event.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/calendar_menu_view_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/create_calendar_button.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/profile_header.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/share_calendar_item.dart';
-
-///
-/// 사이드 메뉴 표시
-///
-Future<void> showCalendarMenu({required BuildContext context}) async {
-  // 전체 화면을 덮는 다이얼로그 표시
-  final result = await showGeneralDialog<void>(
-    context: context,
-    barrierDismissible: false, // 배경 터치로 닫기 비활성화 (애니메이션으로만 닫기)
-    barrierColor: Colors.transparent,
-    transitionDuration: const Duration(milliseconds: 300),
-    pageBuilder: (context, _, __) {
-      return CalendarMenuView();
-    },
-  );
-
-  return result;
-}
+import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/calendar_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/calendar_menu_view_event.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/calendar_menu_view_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/create_calendar_button.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/profile_header.dart';
 
 class CalendarMenuView extends ConsumerStatefulWidget {
   const CalendarMenuView({super.key});
@@ -49,12 +29,8 @@ class CalendarMenuView extends ConsumerStatefulWidget {
 
 class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
     with SingleTickerProviderStateMixin, CalendarMenuEvent {
-  // 애니메이션 컨트롤러 - 애니메이션의 시작/정지/역재생을 담당
   late final AnimationController _animationController;
-  // 슬라이드 애니메이션 - 오른쪽에서 왼쪽으로 슬라이드하는 효과
   late final Animation<Offset> _slideAnimation;
-  // 배경 어둡게 처리하는 애니메이션 (스크림 효과)
-  late final Animation<double> _scrimOpacityAnimation;
 
   // 메뉴가 열려있는지 상태를 추적
   bool _isOpen = false;
@@ -110,12 +86,6 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
       begin: const Offset(1.0, 0.0), // 화면 오른쪽 밖에서 시작
       end: Offset.zero, // 화면 중앙으로 이동
     ).animate(curvedAnimation);
-
-    // 배경 어둡게 처리하는 애니메이션
-    _scrimOpacityAnimation = Tween<double>(
-      begin: 0,
-      end: 0.5,
-    ).animate(curvedAnimation);
   }
 
   /// 메뉴 열기 - 슬라이드 애니메이션 시작
@@ -168,9 +138,7 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
                         await _close();
                       },
                       child: Container(
-                        color: Colors.black.withValues(
-                          alpha: _scrimOpacityAnimation.value,
-                        ),
+                        color: Colors.black.withValues(alpha: 0.3),
                       ),
                     ),
                   ),
@@ -282,6 +250,7 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
               HapticFeedback.selectionClick();
               updateSelectedCalendar(ref, calendar: calendar);
             },
+            onLongPressed: () {},
           );
         },
       ),
@@ -304,38 +273,21 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
         itemBuilder: (context, index) {
           final calendar = sharedList[index];
 
-          return ShareCalendarItem(
+          return CalendarItem(
             information: calendar,
             isSelected: calendar.id == currentCalendarID,
             onTapped: () {
               HapticFeedback.selectionClick();
               updateSelectedCalendar(ref, calendar: calendar);
             },
-            onUpdateTapped: (calendar) {
+            onLongPressed: () {
+              HapticFeedback.selectionClick();
               UpdateShareCalendarRoute(calendarID: calendar.id).push(context);
             },
-            onDeleteTapped: (calendar) {},
           );
         },
         separatorBuilder: (context, index) {
           return const SizedBox(height: 12);
-        },
-      ),
-    );
-  }
-
-  // ------------------------------- Dialog ------------------------------------
-  ///
-  /// 달력 액션 다이얼로그
-  ///
-  Future<void> showCalendarActionDialog() async {
-    DialogService.show(
-      dialog: CalendarActionDialog(
-        onEditTapped: () {
-          context.pop();
-        },
-        onDeleteTapped: () {
-          context.pop();
         },
       ),
     );

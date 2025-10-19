@@ -11,7 +11,6 @@ import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_s
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen_state.dart';
 
 mixin class SearchUserScreenEvent {

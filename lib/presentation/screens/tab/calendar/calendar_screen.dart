@@ -19,7 +19,7 @@ import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/calendar_menu_view.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/calendar_menu_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
@@ -172,8 +172,6 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   }) {
     final calendar = ref.watch(CalendarScreenState.currentCalendar);
 
-    print('calendar: ${calendar.name}');
-
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 16, right: 10),
       child: CalendarHeader(
@@ -191,8 +189,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
         },
         // 캘린더 메뉴 버튼 클릭 (공유 캘린더 이동)
         onMenuButtonTapped: () {
-          // ShareCalendarListRoute().push(ref.context);
-          showCalendarMenu(context: ref.context);
+          _showCalendarMenu(context: ref.context);
         },
         // 달력 화면 모드 변경
         onScreenModeButtonTapped: (mode) {
@@ -414,5 +411,23 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
         onLeftBtnClicked: () => ref.context.pop(),
       ),
     );
+  }
+
+  ///
+  /// 사이드 메뉴 표시
+  ///
+  Future<void> _showCalendarMenu({required BuildContext context}) async {
+    // 전체 화면을 덮는 다이얼로그 표시
+    final result = await showGeneralDialog<void>(
+      context: context,
+      barrierDismissible: false, // 배경 터치로 닫기 비활성화 (애니메이션으로만 닫기)
+      barrierColor: Colors.transparent,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, _, __) {
+        return CalendarMenuView();
+      },
+    );
+
+    return result;
   }
 }

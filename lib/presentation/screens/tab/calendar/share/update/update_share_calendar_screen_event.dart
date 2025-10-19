@@ -12,6 +12,7 @@ import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_s
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen_state.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/share/calendar_menu_view_event.dart';
 
 mixin class UpdateShareCalendarEvent {
   final ShareCalendarService _service = ShareCalendarService();
@@ -90,6 +91,10 @@ mixin class UpdateShareCalendarEvent {
 
     try {
       await _service.updateCalendar(calendar);
+
+      // 사이드 메뉴 캘린더 리스트 갱신
+      await updateCalendarList(ref);
+
       if (ref.context.mounted) {
         _showDialog(ref, '${calendar.title} 달력 수정 완료');
       }
@@ -106,7 +111,10 @@ mixin class UpdateShareCalendarEvent {
     try {
       final calendar = _getShareCalendar(ref);
       await _service.deleteCalendar(calendar);
-      
+
+      // 사이드 메뉴 캘린더 리스트 갱신
+      await updateCalendarList(ref);
+
       if (ref.context.mounted) {
         _showDialog(ref, '달력 삭제 완료');
       }
@@ -123,6 +131,10 @@ mixin class UpdateShareCalendarEvent {
     try {
       final calendar = _getShareCalendar(ref);
       await _service.exitCalendar(calendar);
+
+      // 사이드 메뉴 캘린더 리스트 갱신
+      await updateCalendarList(ref);
+
       if (ref.context.mounted) {
         _showDialog(ref, '달력 나가기 완료');
       }
@@ -130,6 +142,19 @@ mixin class UpdateShareCalendarEvent {
       log('공유달력 생성 실패: ${e.toString()}');
       SnackBarService.showSnackBar('달력 생성에 실패했습니다. ${e.toString()}');
     }
+  }
+
+  ///
+  /// 사이드메뉴 캘린더 리스트 갱신
+  ///
+  Future<void> updateCalendarList(WidgetRef ref) async {
+    // 기본 캘린더로 선택 전환
+    final defaultCalendar = _service.setDefaultCalendar();
+
+    // 사이드 메뉴 캘린더 리스트 갱신
+    final calendarEvent = CalendarMenuEvent();
+    await calendarEvent.fetchCalendarList(ref);
+    await calendarEvent.updateSelectedCalendar(ref, calendar: defaultCalendar);
   }
 
   ///

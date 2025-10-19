@@ -11,7 +11,6 @@ import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/create/create_memo_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/memo/search/search_memo_screen.dart';
@@ -154,23 +153,17 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: CreateScheduleRoute.path,
       name: CreateScheduleRoute.name,
     ),
-    TypedGoRoute<ShareCalendarListRoute>(
-      path: ShareCalendarListRoute.path,
-      name: ShareCalendarListRoute.name,
-      routes: [
-        TypedGoRoute<CreateShareCalendarRoute>(
-          path: CreateShareCalendarRoute.path,
-          name: CreateShareCalendarRoute.name,
-        ),
-        TypedGoRoute<UpdateShareCalendarRoute>(
-          path: UpdateShareCalendarRoute.path,
-          name: UpdateShareCalendarRoute.name,
-        ),
-        TypedGoRoute<SearchUserRoute>(
-          path: SearchUserRoute.path,
-          name: SearchUserRoute.name,
-        ),
-      ],
+    TypedGoRoute<CreateShareCalendarRoute>(
+      path: CreateShareCalendarRoute.path,
+      name: CreateShareCalendarRoute.name,
+    ),
+    TypedGoRoute<UpdateShareCalendarRoute>(
+      path: UpdateShareCalendarRoute.path,
+      name: UpdateShareCalendarRoute.name,
+    ),
+    TypedGoRoute<SearchUserRoute>(
+      path: SearchUserRoute.path,
+      name: SearchUserRoute.name,
     ),
 
     // ------------------------------ 메모 라우트 ------------------------------
@@ -279,19 +272,6 @@ class CreateScheduleRoute extends GoRouteData with _$CreateScheduleRoute {
   Widget build(BuildContext context, GoRouterState state) {
     final Day selectedDay = state.extra as Day;
     return CreateScheduleScreen(selectedDay: selectedDay);
-  }
-}
-
-///
-/// 공유 캘린더 목록 라우트
-///
-class ShareCalendarListRoute extends GoRouteData with _$ShareCalendarListRoute {
-  static const String path = 'calendar/share-calendar-list';
-  static const String name = 'share calendar list';
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return ShareCalendarListScreen();
   }
 }
 

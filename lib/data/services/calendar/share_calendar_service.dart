@@ -199,9 +199,6 @@ class ShareCalendarService with BaseFirestoreMixin {
 
     // 배치 실행
     await batch.commit();
-
-    // 기본 캘린더로 선택 전환
-    setDefaultCalendar();
   }
 
   ///
@@ -235,15 +232,12 @@ class ShareCalendarService with BaseFirestoreMixin {
 
     // 배치 실행
     await batch.commit();
-
-    // 기본 캘린더로 선택 전환
-    setDefaultCalendar();
   }
 
   //
   /// 기본 캘린더로 선택 전환
   ///
-  void setDefaultCalendar() {
+  CalendarInformation setDefaultCalendar() {
     // 기본 캘린더 정보
     final defaultCalendar = CalendarInformation(
       id: getUserUID,
@@ -255,5 +249,7 @@ class ShareCalendarService with BaseFirestoreMixin {
       HiveBoxPath.currentCalendar,
       value: defaultCalendar.toJson(),
     );
+
+    return defaultCalendar;
   }
 }

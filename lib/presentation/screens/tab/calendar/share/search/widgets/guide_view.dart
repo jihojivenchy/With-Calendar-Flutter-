@@ -44,7 +44,7 @@ class GuideView extends StatelessWidget {
 
             _buildGuideItem(
               stepNumber: '4',
-              content: '달력을 편집하고 싶다면 카테고리 창에서 달력을 꾹 눌러주세요.',
+              content: '달력을 편집하고 싶다면 메뉴에서 달력을 꾹 눌러주세요.',
             ),
           ],
         ),
