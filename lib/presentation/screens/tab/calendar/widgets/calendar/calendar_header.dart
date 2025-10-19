@@ -13,10 +13,8 @@ class CalendarHeader extends StatelessWidget {
   const CalendarHeader({
     super.key,
     required this.calendar,
-    required this.calendarList,
     required this.focusedMonth,
     required this.screenMode,
-    required this.onCalendarTapped,
     required this.onHeaderTap,
     required this.onTodayButtonTapped,
     required this.onMenuButtonTapped,
@@ -26,17 +24,11 @@ class CalendarHeader extends StatelessWidget {
   /// 현재 캘린더 정보
   final CalendarInformation calendar;
 
-  /// 캘린더 리스트
-  final List<CalendarInformation> calendarList;
-
   /// 포커스 날짜
   final DateTime focusedMonth;
 
   /// 달력 화면 모드
   final CalendarScreenMode screenMode;
-
-  /// 캘린더 선택
-  final Function(CalendarInformation calendar) onCalendarTapped;
 
   /// 날짜 변경 (헤더 클릭)
   final VoidCallback onHeaderTap;
@@ -93,12 +85,6 @@ class CalendarHeader extends StatelessWidget {
                         : CalendarScreenMode.full,
                   );
                 },
-              ),
-              const SizedBox(width: 12),
-              CalendarListDropdown(
-                currentCalendarID: calendar.id,
-                calendarList: calendarList,
-                onCalendarTapped: onCalendarTapped,
               ),
               const SizedBox(width: 12),
               IconButton(

@@ -114,22 +114,11 @@ mixin class CalendarScreenEvent {
       final currentCalendar = CalendarInformation.fromHiveJson(result);
       ref.read(CalendarScreenState.currentCalendar.notifier).state =
           currentCalendar;
+
+      print('currentCalendar: ${currentCalendar.name}');
     } catch (e) {
       log('현재 선택된 달력 정보 조회 실패: $e');
       SnackBarService.showSnackBar('달력 정보 조회에 실패했습니다. ${e.toString()}');
-    }
-  }
-
-  ///
-  /// 캘린더 리스트 조회
-  ///
-  Future<void> fetchCalendarList(WidgetRef ref) async {
-    try {
-      final calendarList = await _shareCalendarService.fetchCalendarList();
-      ref.read(CalendarScreenState.calendarList.notifier).state = calendarList;
-    } catch (e) {
-      log('캘린더 리스트 조회 실패: $e');
-      SnackBarService.showSnackBar('캘린더 목록 조회에 실패했습니다. ${e.toString()}');
     }
   }
 

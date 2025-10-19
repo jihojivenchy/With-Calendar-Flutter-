@@ -11,19 +11,16 @@ class CalendarItem extends StatelessWidget {
     required this.information,
     required this.isSelected,
     required this.onTapped,
-    required this.onLongPressed,
   });
 
   final CalendarInformation information;
   final bool isSelected;
   final VoidCallback onTapped;
-  final VoidCallback onLongPressed;
 
   @override
   Widget build(BuildContext context) {
     return BounceTapper(
       onTap: onTapped,
-      onLongPress: onLongPressed,
       highlightColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -63,11 +60,21 @@ class CalendarItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Icon(
-              isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
-              key: ValueKey<bool>(isSelected),
-              color: isSelected ? AppColors.primary : AppColors.colord2d5d7,
-              size: 22,
+            Container(
+              width: 20,
+              height: 20,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? AppColors.primary : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : AppColors.colord2d5d7,
+                  width: 1,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, size: 14, color: Colors.white)
+                  : const SizedBox.shrink(),
             ),
           ],
         ),

@@ -19,6 +19,7 @@ import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/calendar_menu_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
@@ -39,6 +40,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       calculateCalendarDay(ref); // 달력 날짜 계산
+      fetchCurrentCalendar(ref); // 현재 선택된 달력 정보 조회
 
       Future.wait([
         subscribeScheduleList(ref), // 일정 리스트 구독
@@ -112,58 +114,51 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     final screenMode = ref.watch(CalendarScreenState.calendarMode);
 
     // 달력 뷰 구성
-    return FocusDetector(
-      onFocusGained: () {
-        // 캘린더 리스트 조회 및 현재 선택된 달력 정보 조회
-        fetchCalendarList(ref);
-        fetchCurrentCalendar(ref);
-      },
-      child: CustomScrollView(
-        physics: const ClampingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: context.surface,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 캘린더 헤더
-                        _buildCalendarHeader(
-                          ref,
-                          focusedDate: focusedDate,
-                          screenMode: screenMode,
-                        ),
-                        const SizedBox(height: 15),
+    return CustomScrollView(
+      physics: const ClampingScrollPhysics(),
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: context.surface,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 캘린더 헤더
+                      _buildCalendarHeader(
+                        ref,
+                        focusedDate: focusedDate,
+                        screenMode: screenMode,
+                      ),
+                      const SizedBox(height: 15),
 
-                        // 캘린더 뷰
-                        _buildCalendarView(
-                          ref,
-                          pageController: pageController,
-                          calendarMap: calendarMap,
-                          weekList: weekList,
-                          screenMode: screenMode,
-                        ),
-                      ],
-                    ),
+                      // 캘린더 뷰
+                      _buildCalendarView(
+                        ref,
+                        pageController: pageController,
+                        calendarMap: calendarMap,
+                        weekList: weekList,
+                        screenMode: screenMode,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          if (screenMode == CalendarScreenMode.half) ...[
-            _buildDateTitleView(ref, focusedDate: focusedDate),
-            _buildScheduleListView(ref),
-            _buildScheduleCreateButton(ref, focusedDate: focusedDate),
-          ],
+        ),
+        if (screenMode == CalendarScreenMode.half) ...[
+          _buildDateTitleView(ref, focusedDate: focusedDate),
+          _buildScheduleListView(ref),
+          _buildScheduleCreateButton(ref, focusedDate: focusedDate),
         ],
-      ),
+      ],
     );
   }
 
@@ -176,14 +171,14 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     required CalendarScreenMode screenMode,
   }) {
     final calendar = ref.watch(CalendarScreenState.currentCalendar);
-    final calendarList = ref.watch(CalendarScreenState.calendarList);
+
+    print('calendar: ${calendar.name}');
 
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 16, right: 10),
       child: CalendarHeader(
         calendar: calendar,
         focusedMonth: focusedDate,
-        calendarList: calendarList, // 캘린더 리스트
         screenMode: screenMode,
         // 날짜 이동 bottom sheet 표시
         onHeaderTap: () {
@@ -196,11 +191,8 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
         },
         // 캘린더 메뉴 버튼 클릭 (공유 캘린더 이동)
         onMenuButtonTapped: () {
-          ShareCalendarListRoute().push(ref.context);
-        },
-        // 캘린더 스위칭
-        onCalendarTapped: (calendar) {
-          updateSelectedCalendar(ref, calendar: calendar);
+          // ShareCalendarListRoute().push(ref.context);
+          showCalendarMenu(context: ref.context);
         },
         // 달력 화면 모드 변경
         onScreenModeButtonTapped: (mode) {

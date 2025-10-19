@@ -28,7 +28,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/share/create/wid
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/calendar_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/calendar_item.dart';
 
 class CreateShareCalendarScreen extends BaseScreen
     with CreateShareCalendarEvent {

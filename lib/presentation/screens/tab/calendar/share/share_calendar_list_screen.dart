@@ -17,7 +17,7 @@ import 'package:with_calendar/presentation/design_system/foundation/app_theme.da
 import 'package:with_calendar/presentation/router/router.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/share_calendar_list_screen_state.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/share/widgets/calendar_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/side_menu/widgets/calendar_item.dart';
 
 class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
   ShareCalendarListScreen({super.key});
@@ -165,7 +165,6 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
               HapticFeedback.selectionClick();
               updateSelectedCalendar(ref, calendar: calendar);
             },
-            onLongPressed: () {},
           );
         },
       ),
@@ -197,10 +196,6 @@ class ShareCalendarListScreen extends BaseScreen with ShareCalendarListEvent {
             onTapped: () {
               HapticFeedback.selectionClick();
               updateSelectedCalendar(ref, calendar: calendar);
-            },
-            onLongPressed: () {
-              HapticFeedback.selectionClick();
-              UpdateShareCalendarRoute(calendarID: calendar.id).push(context);
             },
           );
         },

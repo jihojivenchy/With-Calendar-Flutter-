@@ -44,7 +44,7 @@ abstract class CalendarScreenState {
   // ---------------------------- 캘린더 리스트 관련 -------------------------------
 
   /// 현재 선택된 달력 정보
-  static final currentCalendar = StateProvider.autoDispose<CalendarInformation>(
+  static final currentCalendar = StateProvider<CalendarInformation>(
     (ref) {
       return CalendarInformation(
         id: '',
@@ -54,12 +54,6 @@ abstract class CalendarScreenState {
       );
     },
   );
-
-  /// 캘린더 리스트
-  static final calendarList =
-      StateProvider.autoDispose<List<CalendarInformation>>((ref) {
-        return [];
-      });
 
   // ---------------------------------- 일정 관련 --------------------------------
   /// 일정 리스트
