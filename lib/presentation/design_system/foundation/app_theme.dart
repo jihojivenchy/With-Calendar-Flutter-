@@ -20,6 +20,7 @@ abstract final class AppTheme {
         surface2: Color(0xFFF7F7F7),
         surface3: Color(0xFFFFFFFF),
         surface4: Color(0xFFF7F7F7),
+        gray200And600: Color(0xFFDFE3ED),
       ),
     ],
 
@@ -60,6 +61,7 @@ abstract final class AppTheme {
         surface2: Color(0xFF2C2C2E),
         surface3: Color(0xFF2C2C2E),
         surface4: Color(0xFF3C3C3E),
+        gray200And600: Color(0xFF565E6B),
       ),
     ],
 
@@ -102,6 +104,8 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
   final Color surface3; // 화이트 And 블랙 레이어 2
   final Color surface4; // 화이트 레이어 2 And 블랙 레이어 3
 
+  final Color gray200And600;
+
   const ThemeColors({
     required this.backgroundColor,
     required this.textColor,
@@ -113,6 +117,7 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
     required this.surface2,
     required this.surface3,
     required this.surface4,
+    required this.gray200And600,
   });
 
   @override
@@ -127,6 +132,7 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
     Color? surface2,
     Color? surface3,
     Color? surface4,
+    Color? gray200And600,
   }) {
     return ThemeColors(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -140,6 +146,7 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
       surface2: surface2 ?? this.surface2,
       surface3: surface3 ?? this.surface3,
       surface4: surface4 ?? this.surface4,
+      gray200And600: gray200And600 ?? this.gray200And600,
     );
   }
 
@@ -167,6 +174,7 @@ class ThemeColors extends ThemeExtension<ThemeColors> {
       surface2: Color.lerp(surface2, other.surface2, t)!,
       surface3: Color.lerp(surface3, other.surface3, t)!,
       surface4: Color.lerp(surface4, other.surface4, t)!,
+      gray200And600: Color.lerp(gray200And600, other.gray200And600, t)!,
     );
   }
 }
@@ -187,6 +195,7 @@ extension ThemeColorsExtension on BuildContext {
   Color get surface2 => appColors.surface2;
   Color get surface3 => appColors.surface3;
   Color get surface4 => appColors.surface4;
+  Color get gray200And600 => appColors.gray200And600;
 
   /// 다크모드 여부
   bool get isDarkMode => Theme.of(this).brightness == Brightness.dark;

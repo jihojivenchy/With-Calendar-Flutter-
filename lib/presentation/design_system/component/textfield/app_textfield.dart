@@ -16,6 +16,7 @@ class AppTextField extends StatelessWidget {
   final Color focusedBorderColor;
   final int? maxLines;
   final int? maxLength;
+  final double? cursorHeight;
   final bool isEnabled;
   final TextEditingController? controller;
   final bool autoFocus; // 시작할 때, 포커싱을 할 지 여부
@@ -48,6 +49,7 @@ class AppTextField extends StatelessWidget {
     this.borderColor,
     this.focusedBorderColor = AppColors.primary,
     this.cursorColor = AppColors.primary,
+    this.cursorHeight = 17,
     this.maxLines = 1,
     this.maxLength,
     this.keyboardType,
@@ -135,7 +137,7 @@ class AppTextField extends StatelessWidget {
           ),
         ),
         cursorColor: cursorColor,
-        cursorHeight: 15,
+        cursorHeight: cursorHeight,
         style: TextStyle(
           color: context.textColor,
           fontSize: 16,

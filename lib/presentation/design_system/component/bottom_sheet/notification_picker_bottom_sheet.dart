@@ -158,10 +158,21 @@ class _NotificationPickerBottomSheetState
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
-            Icon(
-              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-              color: color,
-              size: 24,
+            Container(
+              width: 20,
+              height: 20,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: isSelected ? color : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? color : AppColors.colord2d5d7,
+                  width: 0.5,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, size: 18, color: Colors.white)
+                  : const SizedBox.shrink(),
             ),
             const SizedBox(width: 16),
             AppText(text: title, fontSize: 14, fontWeight: FontWeight.w500),

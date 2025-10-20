@@ -13,7 +13,7 @@ import 'package:with_calendar/presentation/design_system/component/app_bar/app_b
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/color_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/notification_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/set_notification_bottom_sheet.dart';
-import 'package:with_calendar/presentation/design_system/component/bottom_sheet/set_todo_bottom_sheet.dart';
+import 'package:with_calendar/presentation/design_system/component/bottom_sheet/todo/set_todo_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button_group.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
@@ -99,29 +99,29 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
                 children: [
                   const SizedBox(height: 10),
                   // 제목 입력
-                  _buildTitleTextField(ref),
+                  _buildTitleTextField(),
 
                   // 하루 종일 모드인지 or 시간 모드인지 설정
                   const SizedBox(height: 20),
-                  _buildScheduleTypeButton(ref),
+                  _buildScheduleTypeButton(),
 
                   // 시작일 선택
-                  _buildStartDatePickerView(ref),
+                  _buildStartDatePickerView(),
 
                   // 종료일 선택
-                  _buildEndDatePickerView(ref),
+                  _buildEndDatePickerView(),
 
                   // 알림 선택
-                  _buildNotificationPickerView(ref),
+                  _buildNotificationPickerView(),
 
                   // 컬러 선택
-                  _buildColorPickerButton(ref),
+                  _buildColorPickerButton(),
 
                   // 할 일 목록 버튼
-                  _buildTodoListButton(ref),
+                  _buildTodoListButton(),
 
                   // 메모 입력
-                  _buildMemoTextField(ref, scrollController),
+                  _buildMemoTextField(scrollController),
 
                   const SizedBox(height: 30),
                 ],
@@ -137,7 +137,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 제목 텍스트 필드
   ///
-  Widget _buildTitleTextField(WidgetRef ref) {
+  Widget _buildTitleTextField() {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
@@ -154,7 +154,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 하루 종일 모드인지 or 시간 모드인지
   ///
-  Widget _buildScheduleTypeButton(WidgetRef ref) {
+  Widget _buildScheduleTypeButton() {
     // 선택된 일정 유형
     final selectedType = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.type),
@@ -190,7 +190,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 시작일 선택
   ///
-  Widget _buildStartDatePickerView(WidgetRef ref) {
+  Widget _buildStartDatePickerView() {
     // 일정 데이터
     final schedule = ref.watch(CreateScheduleState.scheduleProvider);
 
@@ -208,7 +208,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 종료일 선택
   ///
-  Widget _buildEndDatePickerView(WidgetRef ref) {
+  Widget _buildEndDatePickerView() {
     // 일정 데이터
     final schedule = ref.watch(CreateScheduleState.scheduleProvider);
 
@@ -227,7 +227,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 알림 선택
   ///
-  Widget _buildNotificationPickerView(WidgetRef ref) {
+  Widget _buildNotificationPickerView() {
     // 일정 데이터
     final schedule = ref.watch(CreateScheduleState.scheduleProvider);
 
@@ -235,15 +235,14 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
       scheduleType: schedule.type,
       notificationTime: schedule.notificationTime,
       lineColor: schedule.color,
-      onTapped: () =>
-          _showNotificationPickerBottomSheet(ref, schedule: schedule),
+      onTapped: () => _showNotificationPickerBottomSheet(schedule: schedule),
     );
   }
 
   ///
   /// 컬러 선택 버튼
   ///
-  Widget _buildColorPickerButton(WidgetRef ref) {
+  Widget _buildColorPickerButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
@@ -252,7 +251,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
     return ScheduleColorButton(
       selectedColor: selectedColor,
       onColorSelected: () {
-        _showColorPickerBottomSheet(ref, selectedColor);
+        _showColorPickerBottomSheet(selectedColor);
       },
     );
   }
@@ -260,7 +259,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 메모 입력
   ///
-  Widget _buildMemoTextField(WidgetRef ref, ScrollController scrollController) {
+  Widget _buildMemoTextField(ScrollController scrollController) {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
@@ -292,7 +291,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 할 일 목록 버튼
   ///
-  Widget _buildTodoListButton(WidgetRef ref) {
+  Widget _buildTodoListButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
       CreateScheduleState.scheduleProvider.select((value) => value.color),
@@ -308,7 +307,6 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
       selectedColor: selectedColor,
       onTodoListBtnTapped: () {
         _showTodoListBottomSheet(
-          ref,
           todoList: todoList,
           selectedColor: selectedColor,
         );
@@ -342,14 +340,13 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 알림 피커 바텀시트
   ///
-  void _showNotificationPickerBottomSheet(
-    WidgetRef ref, {
+  void _showNotificationPickerBottomSheet({
     required CreateScheduleRequest schedule,
   }) {
-    FocusScope.of(ref.context).unfocus();
+    FocusScope.of(context).unfocus();
 
     showModalBottomSheet(
-      context: ref.context,
+      context: context,
       useSafeArea: true,
       isDismissible: true,
       backgroundColor: Colors.transparent,
@@ -358,22 +355,22 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
         return NotificationPickerBottomSheet(
           schedule: schedule,
           onAllDaySelected: (allDayType) {
-            ref.context.pop();
+            context.pop();
 
             // 직접 설정인 경우
             if (allDayType == AllDayNotificationType.custom) {
-              _showSetNotificationBottomSheet(ref);
+              _showSetNotificationBottomSheet();
               return;
             }
 
             updateAllDayNotificationType(ref, allDayType);
           },
           onTimeSelected: (timeType) {
-            ref.context.pop();
+            context.pop();
 
             // 직접 설정인 경우
             if (timeType == TimeNotificationType.custom) {
-              _showSetNotificationBottomSheet(ref);
+              _showSetNotificationBottomSheet();
               return;
             }
 
@@ -387,11 +384,11 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 알림 설정 바텀시트
   ///
-  void _showSetNotificationBottomSheet(WidgetRef ref) {
-    FocusScope.of(ref.context).unfocus();
+  void _showSetNotificationBottomSheet() {
+    FocusScope.of(context).unfocus();
 
     showModalBottomSheet(
-      context: ref.context,
+      context: context,
       useSafeArea: true,
       isDismissible: true,
       backgroundColor: Colors.transparent,
@@ -399,7 +396,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
       builder: (context) {
         return SetNotificationTimeBottomSheet(
           onChangeDate: (dateTime) {
-            ref.context.pop();
+            context.pop();
             updateNotificationTime(
               ref,
               dateTime.toStringFormat('yyyy-MM-dd HH:mm:ss'),
@@ -413,11 +410,11 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 컬러 피커 바텀시트
   ///
-  void _showColorPickerBottomSheet(WidgetRef ref, Color pinColor) {
-    FocusScope.of(ref.context).unfocus();
+  void _showColorPickerBottomSheet(Color pinColor) {
+    FocusScope.of(context).unfocus();
 
     showModalBottomSheet(
-      context: ref.context,
+      context: context,
       useSafeArea: true,
       isDismissible: true,
       backgroundColor: Colors.transparent,
@@ -426,7 +423,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
         return ColorPickerBottomSheet(
           selectedColor: pinColor,
           onColorSelected: (color) {
-            ref.context.pop();
+            context.pop();
             updateColor(ref, color);
           },
         );
@@ -437,15 +434,14 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 할 일 목록 바텀시트
   ///
-  void _showTodoListBottomSheet(
-    WidgetRef ref, {
+  void _showTodoListBottomSheet({
     required List<Todo> todoList,
     required Color selectedColor,
   }) {
-    FocusScope.of(ref.context).unfocus();
+    FocusScope.of(context).unfocus();
 
     showModalBottomSheet(
-      context: ref.context,
+      context: context,
       useSafeArea: true,
       isDismissible: true,
       backgroundColor: Colors.transparent,
@@ -455,7 +451,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
           selectedColor: selectedColor,
           todoList: todoList,
           onCompletedBtnTapped: (todoList) {
-            ref.context.pop();
+            context.pop();
             updateTodoList(ref, todoList);
           },
         );
