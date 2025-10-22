@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/todo/set_todo_item.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
@@ -277,7 +278,7 @@ class TodoInput {
   }
 
   static TodoInput get empty => TodoInput(
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
+    id: Uuid().v4(),
     controller: TextEditingController(),
     focusNode: FocusNode(),
     isDone: false,

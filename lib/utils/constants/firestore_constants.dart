@@ -9,14 +9,7 @@ abstract class FirestoreCollection {
   static const String shareCalendarInfo = 'SHARE_CALENDAR_INFORMATION';
   static const String feedback = 'FEEDBACK';
   static const String holiday = 'HOLIDAY';
+  static const String todo = 'TODO';
 
   // 도큐먼트 아이디들
-}
-
-/// HOLIDAY 컬렉션에서 사용하는 필드 키
-abstract class FirestoreHolidayField {
-  static const String year = 'year';
-  static const String dates = 'dates';
-  static const String title = 'title';
-  static const String date = 'date';
 }

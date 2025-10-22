@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-import 'package:with_calendar/utils/constants/firestore_constants.dart';
 
 class Holiday {
   final String title;
@@ -14,17 +12,6 @@ class Holiday {
       title: json['title'] ?? '',
       date: DateTime.utc(date.year, date.month, date.day),
     );
-  }
-
-  ///
-  /// Firestore에 저장할 수 있도록 Holiday 데이터를 Map으로 변환합니다.
-  ///
-  Map<String, dynamic> toFirestoreMap() {
-    final dateFormat = DateFormat('yyyy-MM-dd');
-    return {
-      FirestoreHolidayField.title: title,
-      FirestoreHolidayField.date: dateFormat.format(date),
-    };
   }
 
   ///

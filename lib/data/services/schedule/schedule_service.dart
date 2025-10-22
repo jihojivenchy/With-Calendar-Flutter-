@@ -234,18 +234,39 @@ class ScheduleService with BaseFirestoreMixin {
       'notificationTime': schedule.notificationTime,
       'memo': schedule.memo,
       'color': schedule.color.toARGB32(), // 32비트 색상 값으로 변환
+      'isTodoExist': schedule.todoList.isNotEmpty, // 할 일 목록 존재 여부
     };
 
     final collectionName = calendar.type == CalendarType.private
         ? FirestoreCollection.calendar
         : FirestoreCollection.shareCalendar;
 
-    await firestore
+    // 배치 생성으로 일정 생성과 할 일 목록 생성을 한 번에 처리
+    final batch = firestore.batch();
+
+    // 1. 일정 문서 생성
+    final scheduleRef = firestore
         .collection(collectionName)
         .doc(calendar.id)
         .collection(collectionName)
-        .doc(scheduleID)
-        .set(scheduleData);
+        .doc(scheduleID);
+    batch.set(scheduleRef, scheduleData);
+
+    // 2. 할 일 목록 문서 생성 (할 일이 있는 경우)
+    if (schedule.todoList.isNotEmpty) {
+      final todoCollectionRef = scheduleRef.collection(
+        FirestoreCollection.todo,
+      );
+
+      // 할 일 목록 문서 생성
+      for (final todo in schedule.todoList) {
+        final todoRef = todoCollectionRef.doc(todo.id);
+        batch.set(todoRef, todo.toJson(scheduleID: scheduleID));
+      }
+    }
+
+    // 배치 실행
+    await batch.commit();
 
     return scheduleID;
   }

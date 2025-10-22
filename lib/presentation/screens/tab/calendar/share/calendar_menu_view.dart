@@ -6,6 +6,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
+import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
@@ -31,9 +32,6 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
     with SingleTickerProviderStateMixin, CalendarMenuEvent {
   late final AnimationController _animationController;
   late final Animation<Offset> _slideAnimation;
-
-  // 메뉴가 열려있는지 상태를 추적
-  bool _isOpen = false;
 
   ///
   /// 초기화
@@ -90,26 +88,85 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
 
   /// 메뉴 열기 - 슬라이드 애니메이션 시작
   Future<void> _open() async {
-    // 이미 열려있으면 무시
-    if (_isOpen) return;
-
-    // 애니메이션 시작
-    _isOpen = true;
     await _animationController.forward();
   }
 
   /// 메뉴 닫기 - 슬라이드 애니메이션 역재생
   Future<void> _close() async {
-    // 이미 닫혀있으면 무시
-    if (!_isOpen) return;
-
-    // 애니메이션 역재생
     await _animationController.reverse();
-    _isOpen = false;
 
     // 메뉴 닫기
     if (mounted) {
       Navigator.of(context).pop();
+    }
+  }
+
+  ///
+  /// 가로 드래그 시작
+  ///
+  void _handleHorizontalDragStart(DragStartDetails details) {
+    _animationController.stop();
+  }
+
+  ///
+  /// 가로 드래그 업데이트
+  ///
+  void _handleHorizontalDragUpdate(DragUpdateDetails details) {
+    final delta = details.primaryDelta;
+    if (delta == null || delta == 0) {
+      return;
+    }
+
+    // 메뉴 너비
+    final menuWidth = AppSize.deviceWidth * 0.8;
+
+    // 진행도
+    final progress = (_animationController.value - delta / menuWidth).clamp(
+      0.0,
+      1.0,
+    );
+    _animationController.value = progress;
+  }
+
+  ///
+  /// 가로 드래그 종료
+  ///
+  void _handleHorizontalDragEnd(DragEndDetails details) {
+    _settleDrag(velocityX: details.velocity.pixelsPerSecond.dx);
+  }
+
+  ///
+  /// 가로 드래그 취소
+  ///
+  void _handleHorizontalDragCancel() {
+    _settleDrag();
+  }
+
+  ///
+  /// 드래그 정리
+  ///
+  void _settleDrag({double velocityX = 0}) {
+    // 속도 임계값
+    const velocityThreshold = 400.0;
+
+    // 빠른 드래그일 경우 (일정 속도 이상)
+    if (velocityX.abs() > velocityThreshold) {
+      // 오른쪽 방향으로 드래그했을 경우 => 닫아주기
+      if (velocityX > 0) {
+        _close();
+      } else {
+        // 왼쪽 방향으로 드래그했을 경우 => 열기
+        _animationController.forward();
+      }
+      return;
+    }
+
+    // 진햌도가 0.5보다 작으면 닫기
+    if (_animationController.value < 0.5) {
+      _close();
+    } else {
+      // 열기
+      _animationController.forward();
     }
   }
 
@@ -149,12 +206,19 @@ class _CalendarMenuViewState extends ConsumerState<CalendarMenuView>
                   child: FractionallySizedBox(
                     widthFactor: 0.8,
                     heightFactor: 1,
-                    child: SlideTransition(
-                      position: _slideAnimation, // 슬라이드 애니메이션 적용
-                      child: Scaffold(
-                        backgroundColor: context.backgroundColor,
-                        appBar: _buildAppBar(),
-                        body: _buildCalendarList(),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onHorizontalDragStart: _handleHorizontalDragStart,
+                      onHorizontalDragUpdate: _handleHorizontalDragUpdate,
+                      onHorizontalDragEnd: _handleHorizontalDragEnd,
+                      onHorizontalDragCancel: _handleHorizontalDragCancel,
+                      child: SlideTransition(
+                        position: _slideAnimation, // 슬라이드 애니메이션 적용
+                        child: Scaffold(
+                          backgroundColor: context.backgroundColor,
+                          appBar: _buildAppBar(),
+                          body: _buildCalendarList(),
+                        ),
                       ),
                     ),
                   ),
