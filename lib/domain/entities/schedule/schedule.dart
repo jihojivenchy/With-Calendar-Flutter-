@@ -11,6 +11,7 @@ class Schedule {
   final String notificationTime;
   final String memo;
   final Color color;
+  final bool isTodoExist;
   final ScheduleDuration duration;
 
   /// 주별 상태
@@ -28,6 +29,7 @@ class Schedule {
     required this.notificationTime,
     required this.memo,
     required this.color,
+    required this.isTodoExist,
     required this.duration,
     this.weekSegmentState = WeekCellState.start,
     this.weekStartVisibleDayCount = 1,
@@ -50,6 +52,7 @@ class Schedule {
       duration: duration,
       weekSegmentState: WeekCellState.start,
       weekStartVisibleDayCount: 1,
+      isTodoExist: json['isTodoExist'] ?? false,
     );
   }
 
@@ -65,6 +68,7 @@ class Schedule {
     ScheduleDuration? duration,
     WeekCellState? weekSegmentState,
     int? weekStartVisibleDayCount,
+    bool? isTodoExist,
   }) {
     return Schedule(
       id: id ?? this.id,
@@ -79,6 +83,7 @@ class Schedule {
       weekSegmentState: weekSegmentState ?? this.weekSegmentState,
       weekStartVisibleDayCount:
           weekStartVisibleDayCount ?? this.weekStartVisibleDayCount,
+      isTodoExist: isTodoExist ?? this.isTodoExist,
     );
   }
 

@@ -1,8 +1,6 @@
 import 'package:bounce_tapper/bounce_tapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/todo/set_todo_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
