@@ -21,11 +21,9 @@ class ScheduleService with BaseFirestoreMixin {
   ///
   /// 일정 조회
   ///
-  Stream<ScheduleMap> fetchScheduleList() {
-    // 현재 선택된 캘린더 정보 가져오기
-    final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
-    final calendar = CalendarInformation.fromHiveJson(result);
-
+  Stream<ScheduleMap> fetchScheduleList({
+    required CalendarInformation calendar,
+  }) {
     // 캘린더 컬렉션 이름
     final collectionName = calendar.type == CalendarType.private
         ? FirestoreCollection.calendar
@@ -324,6 +322,4 @@ class ScheduleService with BaseFirestoreMixin {
         .doc(schedule.id)
         .update(updateData);
   }
-
-  
 }

@@ -27,7 +27,7 @@ class TodoItem extends StatelessWidget {
         onDoneTapped();
       },
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildCheckbox(context),
           const SizedBox(width: 14),
@@ -52,14 +52,14 @@ class TodoItem extends StatelessWidget {
   Widget _buildCheckbox(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: 25,
-      height: 25,
+      width: 22,
+      height: 22,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         color: todo.isDone ? selectedColor : Colors.transparent,
         border: Border.all(
           color: todo.isDone ? selectedColor : AppColors.gray200,
-          width: 0.5,
+          width: 0.7,
         ),
       ),
       child: AnimatedSwitcher(
@@ -69,7 +69,7 @@ class TodoItem extends StatelessWidget {
                 Icons.check,
                 key: ValueKey('checked'),
                 color: Colors.white,
-                size: 20,
+                size: 19,
               )
             : const SizedBox.shrink(),
       ),

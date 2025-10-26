@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +14,7 @@ import 'package:with_calendar/presentation/common/services/dialog/dialog_service
 import 'package:with_calendar/presentation/design_system/component/bottom_sheet/month_picker_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
+import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
 import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
@@ -42,21 +45,8 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       calculateCalendarDay(ref); // 달력 날짜 계산
       fetchCurrentCalendar(ref); // 현재 선택된 달력 정보 조회
-
-      Future.wait([
-        subscribeScheduleList(ref), // 일정 리스트 구독
-        fetchHolidayList(ref, DateTime.now().year), // 공휴일 리스트 조회
-      ]);
+      fetchHolidayList(ref, DateTime.now().year); // 공휴일 리스트 조회
     });
-  }
-
-  ///
-  /// Dispose
-  ///
-  @override
-  void onDispose(WidgetRef ref) {
-    super.onDispose(ref);
-    disposeSubscription(ref); // 일정 리스트 구독 해제
   }
 
   ///
@@ -211,43 +201,62 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     required CalendarScreenMode screenMode,
   }) {
     final lunarDate = ref.watch(CalendarScreenState.lunarDate);
-    final scheduleMap = ref.watch(CalendarScreenState.scheduleListProvider);
     final holidayMap = ref.watch(CalendarScreenState.holidayMap);
+    final calendar = ref.watch(CalendarScreenState.currentCalendar);
 
-    return CalendarAnimationBuilder(
-      screenMode: screenMode,
-      onScreenModeChanged: (mode) {
-        updateCalendarMode(ref, mode);
+    final scheduleMapAsync = ref.watch(
+      CalendarScreenState.scheduleListStreamProvider(calendar),
+    );
+
+    return scheduleMapAsync.when(
+      data: (scheduleMap) {
+        return CalendarAnimationBuilder(
+          screenMode: screenMode,
+          onScreenModeChanged: (mode) {
+            updateCalendarMode(ref, mode);
+          },
+          child: PageView.builder(
+            controller: pageController,
+            itemCount: calendarMap.length,
+            itemBuilder: (context, index) {
+              final targetDate = calculateDateFromIndex(index);
+              final dayList = calendarMap[targetDate] ?? [];
+
+              return MonthPageView(
+                dayList: dayList,
+                weekList: weekList,
+                lunarDate: lunarDate,
+                scheduleMap: scheduleMap,
+                screenMode: screenMode,
+                holidayMap: holidayMap,
+                onTapped: (day, isDoubleTap) {
+                  if (isDoubleTap) {
+                    _showCreateBottomSheet(ref, day);
+                  }
+                  fetchLunarDate(ref, day);
+                },
+                onLongPressed: (day) {
+                  // ref.context.push(CreateScheduleRoute().location, extra: day);
+                },
+              );
+            },
+            onPageChanged: (index) {
+              updatePage(ref, index);
+            },
+          ),
+        );
       },
-      child: PageView.builder(
-        controller: pageController,
-        itemCount: calendarMap.length,
-        itemBuilder: (context, index) {
-          final targetDate = calculateDateFromIndex(index);
-          final dayList = calendarMap[targetDate] ?? [];
-
-          return MonthPageView(
-            dayList: dayList,
-            weekList: weekList,
-            lunarDate: lunarDate,
-            scheduleMap: scheduleMap,
-            screenMode: screenMode,
-            holidayMap: holidayMap,
-            onTapped: (day, isDoubleTap) {
-              if (isDoubleTap) {
-                _showCreateBottomSheet(ref, day);
-              }
-              fetchLunarDate(ref, day);
-            },
-            onLongPressed: (day) {
-              // ref.context.push(CreateScheduleRoute().location, extra: day);
-            },
-          );
-        },
-        onPageChanged: (index) {
-          updatePage(ref, index);
-        },
+      loading: () => SizedBox(
+        height: AppSize.calendarHeight,
+        child: const LoadingView(title: '달력을 불러오는 중입니다.'),
       ),
+      error: (error, _) {
+        log('달력 조회 실패: ${error.toString()}');
+        return SizedBox(
+          height: AppSize.calendarHeight,
+          child: ErrorView(title: '달력 표시에 실패했습니다.', onRetryBtnTapped: () {}),
+        );
+      },
     );
   }
 
@@ -269,36 +278,43 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   /// 선택된 날짜 일정 리스트
   ///
   Widget _buildScheduleListView(WidgetRef ref) {
-    final scheduleList = ref.watch(CalendarScreenState.focusedScheduleList);
+    final scheduleListAsync = ref.watch(
+      CalendarScreenState.focusedScheduleList,
+    );
 
-    if (scheduleList.isEmpty) {
-      return const SliverToBoxAdapter();
-    }
+    return scheduleListAsync.when(
+      data: (scheduleList) {
+        if (scheduleList.isEmpty) {
+          return const SliverToBoxAdapter();
+        }
 
-    // 일정이 있는 경우
-    return SliverPadding(
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-      sliver: SliverList.separated(
-        itemCount: scheduleList.length,
-        itemBuilder: (context, index) {
-          final schedule = scheduleList[index];
-          return ScheduleItem(
-            schedule: schedule,
-            onTapped: () {
-              _showUpdateBottomSheet(ref, schedule);
+        return SliverPadding(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+          sliver: SliverList.separated(
+            itemCount: scheduleList.length,
+            itemBuilder: (context, index) {
+              final schedule = scheduleList[index];
+              return ScheduleItem(
+                schedule: schedule,
+                onTapped: () {
+                  _showUpdateBottomSheet(ref, schedule);
+                },
+                onLongPressed: () {
+                  _showDeleteDialog(ref, schedule.id);
+                },
+                onTodoListBtnTapped: () {
+                  _showTodoListBottomSheet(ref, schedule);
+                },
+              );
             },
-            onLongPressed: () {
-              _showDeleteDialog(ref, schedule.id);
+            separatorBuilder: (context, index) {
+              return const SizedBox(height: 12);
             },
-            onTodoListBtnTapped: () {
-              _showTodoListBottomSheet(ref, schedule);
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(height: 12);
-        },
-      ),
+          ),
+        );
+      },
+      loading: () => const SliverToBoxAdapter(),
+      error: (error, _) => const SliverToBoxAdapter(),
     );
   }
 
@@ -401,6 +417,8 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
   /// 할 일 목록 바텀시트
   ///
   void _showTodoListBottomSheet(WidgetRef ref, Schedule schedule) {
+    final calendar = ref.watch(CalendarScreenState.currentCalendar);
+
     showModalBottomSheet(
       context: ref.context,
       useSafeArea: true,
@@ -408,7 +426,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
-        return TodoBottomSheet(schedule: schedule);
+        return TodoBottomSheet(calendar: calendar, schedule: schedule);
       },
     );
   }

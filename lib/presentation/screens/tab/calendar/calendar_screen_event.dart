@@ -18,12 +18,10 @@ import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_s
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
-part 'calendar_screen_schedule_event.dart';
 part 'calendar_screen_holiday_event.dart';
 
 mixin class CalendarScreenEvent {
   final CalendarService _calendarService = CalendarService();
-  final ShareCalendarService _shareCalendarService = ShareCalendarService();
   final ScheduleService _scheduleService = ScheduleService();
   final HolidayService _holidayService = HolidayService();
 
@@ -114,8 +112,6 @@ mixin class CalendarScreenEvent {
       final currentCalendar = CalendarInformation.fromHiveJson(result);
       ref.read(CalendarScreenState.currentCalendar.notifier).state =
           currentCalendar;
-
-      print('currentCalendar: ${currentCalendar.name}');
     } catch (e) {
       log('현재 선택된 달력 정보 조회 실패: $e');
       SnackBarService.showSnackBar('달력 정보 조회에 실패했습니다. ${e.toString()}');
@@ -137,8 +133,18 @@ mixin class CalendarScreenEvent {
 
     // 현재 선택된 캘린더 ID 설정
     ref.read(CalendarScreenState.currentCalendar.notifier).state = calendar;
+  }
 
-    // 일정 구독 재시작
-    retry(ref);
+  // -------------------------------일정 관련 ----------------------------------
+  ///
+  /// 일정 삭제
+  ///
+  Future<void> deleteSchedule(WidgetRef ref, String scheduleID) async {
+    final calendar = ref.read(CalendarScreenState.currentCalendar);
+
+    await _scheduleService.deleteSchedule(
+      calendar: calendar,
+      scheduleID: scheduleID,
+    );
   }
 }

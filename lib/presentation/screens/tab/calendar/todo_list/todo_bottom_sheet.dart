@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
 import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
@@ -17,9 +18,14 @@ import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/widget
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class TodoBottomSheet extends ConsumerStatefulWidget {
+  final CalendarInformation calendar;
   final Schedule schedule;
 
-  const TodoBottomSheet({super.key, required this.schedule});
+  const TodoBottomSheet({
+    super.key,
+    required this.calendar,
+    required this.schedule,
+  });
 
   @override
   ConsumerState<TodoBottomSheet> createState() => _TodoBottomSheetState();
@@ -114,6 +120,7 @@ class _TodoBottomSheetState extends ConsumerState<TodoBottomSheet>
             selectedColor: widget.schedule.color,
             onDoneTapped: () {
               updateTodo(
+                calendar: widget.calendar,
                 scheduleID: widget.schedule.id,
                 todoID: todo.id,
                 isDone: !todo.isDone,

@@ -51,14 +51,11 @@ class TodoService with BaseFirestoreMixin {
   /// 할 일 수정
   ///
   Future<void> updateTodo({
+    required CalendarInformation calendar,
     required String scheduleID,
     required String todoID,
     required bool isDone,
   }) async {
-    // 현재 선택된 캘린더 정보 가져오기
-    final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
-    final calendar = CalendarInformation.fromHiveJson(result);
-
     // 캘린더 컬렉션 이름
     final collectionName = calendar.type == CalendarType.private
         ? FirestoreCollection.calendar
@@ -72,31 +69,5 @@ class TodoService with BaseFirestoreMixin {
         .collection(FirestoreCollection.todo)
         .doc(todoID)
         .update({'isDone': isDone});
-  }
-
-  ///
-  /// 할 일 삭제
-  ///
-  Future<void> deleteTodo({
-    required String scheduleID,
-    required String todoID,
-  }) async {
-    // 현재 선택된 캘린더 정보 가져오기
-    final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
-    final calendar = CalendarInformation.fromHiveJson(result);
-
-    // 캘린더 컬렉션 이름
-    final collectionName = calendar.type == CalendarType.private
-        ? FirestoreCollection.calendar
-        : FirestoreCollection.shareCalendar;
-
-    await firestore
-        .collection(collectionName)
-        .doc(calendar.id)
-        .collection(collectionName)
-        .doc(scheduleID)
-        .collection(FirestoreCollection.todo)
-        .doc(todoID)
-        .delete();
   }
 }

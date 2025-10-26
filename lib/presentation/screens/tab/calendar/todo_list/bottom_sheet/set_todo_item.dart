@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bounce_tapper/bounce_tapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +45,7 @@ class SetTodoItem extends StatelessWidget {
                   color: todoInput.isDone
                       ? selectedColor
                       : AppColors.colord2d5d7,
-                  width: 0.5,
+                  width: 0.7,
                 ),
               ),
               child: todoInput.isDone
@@ -52,14 +54,19 @@ class SetTodoItem extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: KeyboardListener(
-              focusNode: FocusNode(skipTraversal: true),
-              onKeyEvent: (KeyEvent event) {
+            child: Focus(
+              onKeyEvent: (FocusNode node, KeyEvent event) {
+                log('event: $event');
+                // 백스페이스 키가 눌리고, 키다운 이벤트일 때
                 if (event is KeyDownEvent &&
-                    event.logicalKey == LogicalKeyboardKey.backspace &&
-                    todoInput.controller.text.isEmpty) {
-                  onRemoveTapped();
+                    event.logicalKey == LogicalKeyboardKey.backspace) {
+                  
+                  if (todoInput.controller.text.isEmpty) {
+                    onRemoveTapped();
+                    return KeyEventResult.handled;
+                  }
                 }
+                return KeyEventResult.ignored;
               },
               child: AppTextField(
                 controller: todoInput.controller,
