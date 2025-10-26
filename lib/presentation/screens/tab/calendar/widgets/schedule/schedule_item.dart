@@ -6,6 +6,7 @@ import 'package:with_calendar/domain/entities/schedule/create_schedule_request.d
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/schedule_time_list_view.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class ScheduleItem extends StatelessWidget {
@@ -14,11 +15,13 @@ class ScheduleItem extends StatelessWidget {
     required this.schedule,
     required this.onTapped,
     required this.onLongPressed,
+    required this.onTodoListBtnTapped,
   });
 
   final Schedule schedule;
   final VoidCallback onTapped;
   final VoidCallback onLongPressed;
+  final VoidCallback onTodoListBtnTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +67,12 @@ class ScheduleItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                // 일정 상세 표시
-                _buildDetailWidgets(context),
+
+                // 일정 시간 표시
+                ScheduleTimeListView(schedule: schedule),
+
+                // 할 일 버튼
+                _buildTodoButton(context),
               ],
             ),
 
@@ -76,75 +83,6 @@ class ScheduleItem extends StatelessWidget {
             ],
           ],
         ),
-      ),
-    );
-  }
-
-  ///
-  /// 일정 상세 표시
-  ///
-  Widget _buildDetailWidgets(BuildContext context) {
-    final List<String> detailTexts = [];
-
-    // 장기 일정
-    if (schedule.duration == ScheduleDuration.long) {
-      detailTexts.add(schedule.periodText);
-
-      // 장기 일정 진행 표시
-      final String progressText = _buildLongScheduleProgressText();
-      if (progressText.isNotEmpty) {
-        detailTexts.add(progressText);
-      }
-
-      // 시간 일정
-    } else if (schedule.type == ScheduleType.time) {
-      final String timeRange =
-          '${schedule.startDate.toKoreanMeridiemTime()} ~ ${schedule.endDate.toKoreanMeridiemTime()}';
-      detailTexts.add(timeRange);
-      detailTexts.add(_buildShortScheduleProgressText());
-
-      // 하루종일 일정
-    } else {
-      final String dateText = schedule.startDate.toKoreanSimpleDateFormat();
-      detailTexts.add(dateText);
-      detailTexts.add(_buildShortScheduleProgressText());
-    }
-
-    // 상세 텍스트가 없으면 빈 위젯
-    if (detailTexts.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final textColor = context.dynamicColor(schedule.color);
-
-    return SizedBox(
-      height: 30,
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final text = detailTexts[index];
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: schedule.color.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: AppText(
-              text: text,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              textColor: textColor,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(width: 8);
-        },
-        itemCount: detailTexts.length,
       ),
     );
   }
@@ -172,54 +110,27 @@ class ScheduleItem extends StatelessWidget {
   }
 
   ///
-  /// 장기 일정 진행 표시
+  /// 할 일이 존재하면 아이콘 버튼 추가
   ///
-  String _buildLongScheduleProgressText() {
-    final DateTime today = DateTime.now();
-    final DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
-    final DateTime startDateOnly = DateTime(
-      schedule.startDate.year,
-      schedule.startDate.month,
-      schedule.startDate.day,
+  Widget _buildTodoButton(BuildContext context) {
+    if (!schedule.isTodoExist) return const SizedBox.shrink();
+
+    final iconColor = context.dynamicColor(schedule.color);
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTodoListBtnTapped();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        margin: const EdgeInsets.only(left: 8),
+        decoration: BoxDecoration(
+          color: schedule.color.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Icon(Icons.checklist, color: iconColor, size: 20),
+      ),
     );
-    final DateTime endDateOnly = DateTime(
-      schedule.endDate.year,
-      schedule.endDate.month,
-      schedule.endDate.day,
-    );
-
-    if (todayDateOnly.isBefore(startDateOnly)) {
-      final int daysUntil = startDateOnly.difference(todayDateOnly).inDays;
-      return 'D - $daysUntil';
-    }
-
-    if (todayDateOnly.isAfter(endDateOnly)) {
-      final int totalDays = endDateOnly.difference(startDateOnly).inDays + 1;
-      return '$totalDays일 일정';
-    }
-
-    final int progressDays = todayDateOnly.difference(startDateOnly).inDays + 1;
-    return '$progressDays일차';
-  }
-
-  ///
-  /// 단기 일정 진행 표시
-  ///
-  String _buildShortScheduleProgressText() {
-    final DateTime today = DateTime.now();
-    final DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
-    final DateTime startDateOnly = DateTime(
-      schedule.startDate.year,
-      schedule.startDate.month,
-      schedule.startDate.day,
-    );
-
-    // D-Day
-    if (todayDateOnly.isBefore(startDateOnly)) {
-      final int daysUntil = startDateOnly.difference(todayDateOnly).inDays;
-      return 'D - $daysUntil';
-    }
-
-    return schedule.type == ScheduleType.allDay ? '하루' : '시간';
   }
 }

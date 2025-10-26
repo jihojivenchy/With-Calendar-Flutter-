@@ -324,4 +324,6 @@ class ScheduleService with BaseFirestoreMixin {
         .doc(schedule.id)
         .update(updateData);
   }
+
+  
 }

@@ -75,7 +75,7 @@ class SplashRoute extends GoRouteData with _$SplashRoute {
           child: child,
         );
       },
-      child: const SplashScreen(),
+      child: SplashScreen(),
     );
   }
 }

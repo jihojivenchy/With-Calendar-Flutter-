@@ -1,7 +1,7 @@
 import 'package:bounce_tapper/bounce_tapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:with_calendar/presentation/design_system/component/bottom_sheet/todo/set_todo_bottom_sheet.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/bottom_sheet/set_todo_bottom_sheet.dart';
 import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
@@ -37,7 +37,7 @@ class SetTodoItem extends StatelessWidget {
               height: 20,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(6),
                 color: todoInput.isDone ? selectedColor : Colors.transparent,
                 border: Border.all(
                   color: todoInput.isDone

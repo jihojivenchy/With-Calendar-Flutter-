@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
-import 'package:with_calendar/presentation/design_system/component/bottom_sheet/todo/set_todo_item.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/bottom_sheet/set_todo_item.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
@@ -37,7 +37,7 @@ class _SetTodoBottomSheetState extends State<SetTodoBottomSheet> {
     );
 
     // 바텀시트가 다 올라오는 시간을 감안한 후에 키보드 올라오도록 딜레이 처리
-    Future.delayed(const Duration(milliseconds: 400), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       if (_todoInputList.isEmpty) {
         _add(0);
       }

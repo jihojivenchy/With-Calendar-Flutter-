@@ -20,6 +20,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_
 import 'package:with_calendar/presentation/screens/tab/calendar/calendar_screen_state.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/calendar_menu_view.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/todo_bottom_sheet.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
@@ -289,6 +290,9 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             onLongPressed: () {
               _showDeleteDialog(ref, schedule.id);
             },
+            onTodoListBtnTapped: () {
+              _showTodoListBottomSheet(ref, schedule);
+            },
           );
         },
         separatorBuilder: (context, index) {
@@ -389,6 +393,22 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             todoList: [],
           ),
         );
+      },
+    );
+  }
+
+  ///
+  /// 할 일 목록 바텀시트
+  ///
+  void _showTodoListBottomSheet(WidgetRef ref, Schedule schedule) {
+    showModalBottomSheet(
+      context: ref.context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return TodoBottomSheet(schedule: schedule);
       },
     );
   }
