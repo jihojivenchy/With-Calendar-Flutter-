@@ -154,19 +154,3 @@ class _TodoBottomSheetState extends ConsumerState<TodoBottomSheet>
     );
   }
 }
-
-class _TodoListLoadingView extends StatelessWidget {
-  const _TodoListLoadingView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      key: ValueKey('todo_loading_state'),
-      child: SizedBox(
-        width: 32,
-        height: 32,
-        child: CircularProgressIndicator(strokeWidth: 3),
-      ),
-    );
-  }
-}

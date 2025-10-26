@@ -23,26 +23,6 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
   MemoListScreen({super.key});
 
   ///
-  /// Init
-  ///
-  @override
-  void onInit(WidgetRef ref) {
-    super.onInit(ref);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      subscribeMemoList(ref); // 메모 리스트 구독
-    });
-  }
-
-  ///
-  /// Dispose
-  ///
-  @override
-  void onDispose(WidgetRef ref) {
-    super.onDispose(ref);
-    disposeSubscription(ref); // 메모 리스트 구독 해제
-  }
-
-  ///
   /// 앱 바 구성
   ///
   @override
@@ -91,7 +71,7 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
   /// 메모 리스트
   ///
   Widget _buildMemoList(WidgetRef ref) {
-    final memoListAsync = ref.watch(MemoListScreenState.memoListProvider);
+    final memoListAsync = ref.watch(MemoListScreenState.memoListStreamProvider);
 
     return memoListAsync.when(
       data: (memoList) {
@@ -132,10 +112,7 @@ class MemoListScreen extends BaseScreen with MemoListScreenEvent {
 
         return SizedBox(
           height: double.infinity,
-          child: ErrorView(
-            title: '조회 중 오류가 발생했습니다.',
-            onRetryBtnTapped: () => retry(ref), // 재시도
-          ),
+          child: ErrorView(title: '조회 중 오류가 발생했습니다.'),
         );
       },
     );
