@@ -73,14 +73,16 @@ class _TodoBottomSheetState extends ConsumerState<TodoBottomSheet>
 
     return todoListAsync.when(
       data: (todoList) {
-        log('todoList: ${todoList.length}');
-
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TodoHeader(schedule: widget.schedule, todoList: todoList),
             const SizedBox(height: 30),
-            _buildTodoListView(todoList),
+            if (todoList.isNotEmpty) ...[
+              _buildTodoListView(todoList),
+            ] else ...[
+              _buildEmptyView(context),
+            ],
           ],
         );
       },
@@ -99,43 +101,27 @@ class _TodoBottomSheetState extends ConsumerState<TodoBottomSheet>
   ///
   Widget _buildTodoListView(List<Todo> todoList) {
     return Flexible(
-      child: Container(
-        // decoration: BoxDecoration(
-        //   border: Border.all(
-        //     color: widget.schedule.color.withValues(alpha: 0.2),
-        //     width: 1,
-        //   ),
-        //   borderRadius: BorderRadius.circular(14),
-        //   boxShadow: [
-        //     BoxShadow(
-        //       color: Colors.black.withValues(alpha: 0.05),
-        //       blurRadius: 10,
-        //       offset: const Offset(0, 4),
-        //     ),
-        //   ],
-        // ),
-        // padding: const EdgeInsets.all(14),
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: todoList.length,
-          itemBuilder: (context, index) {
-            final todo = todoList[index];
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        itemCount: todoList.length,
+        itemBuilder: (context, index) {
+          final todo = todoList[index];
 
-            return TodoItem(
-              todo: todo,
-              selectedColor: widget.schedule.color,
-              onDoneTapped: () {
-                updateTodo(
-                  scheduleID: widget.schedule.id,
-                  todoID: todo.id,
-                  isDone: !todo.isDone,
-                );
-              },
-            );
-          },
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-        ),
+          return TodoItem(
+            todo: todo,
+            selectedColor: widget.schedule.color,
+            onDoneTapped: () {
+              updateTodo(
+                scheduleID: widget.schedule.id,
+                todoID: todo.id,
+                isDone: !todo.isDone,
+              );
+            },
+          );
+        },
+        separatorBuilder: (context, index) => const SizedBox(height: 16),
       ),
     );
   }
@@ -144,15 +130,12 @@ class _TodoBottomSheetState extends ConsumerState<TodoBottomSheet>
   /// 빈 뷰
   ///
   Widget _buildEmptyView(BuildContext context) {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.checklist_rtl,
-            size: 42,
-            color: context.textColor.withValues(alpha: 0.25),
-          ),
+          Icon(Icons.checklist_rtl, size: 30, color: context.textColor),
           const SizedBox(height: 12),
           AppText(
             text: '아직 등록된 할 일이 없어요',
@@ -167,19 +150,6 @@ class _TodoBottomSheetState extends ConsumerState<TodoBottomSheet>
             textColor: context.textColor.withValues(alpha: 0.6),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildErrorState(BuildContext context) {
-    return Center(
-      key: const ValueKey('todo_error_state'),
-      child: AppText(
-        text: '할 일 목록을 불러오는 중 문제가 발생했습니다.',
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        textColor: context.textColor.withOpacity(0.6),
-        textAlign: TextAlign.center,
       ),
     );
   }
