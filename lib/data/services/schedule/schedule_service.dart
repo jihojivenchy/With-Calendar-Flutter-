@@ -12,7 +12,9 @@ import 'package:with_calendar/domain/entities/memo/memo.dart';
 import 'package:with_calendar/domain/entities/memo/memo_creation.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/update_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/utils/constants/firestore_constants.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 import 'package:with_calendar/utils/services/random/random_generator.dart';
@@ -212,7 +214,7 @@ class ScheduleService with BaseFirestoreMixin {
   ///
   /// 일정 생성
   ///
-  Future<String> create(CreateScheduleRequest schedule) async {
+  Future<String> create(CreateScheduleRequest request) async {
     // 현재 선택된 캘린더 정보 가져오기
     final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
     final calendar = CalendarInformation.fromHiveJson(result);
@@ -222,17 +224,17 @@ class ScheduleService with BaseFirestoreMixin {
 
     final Map<String, dynamic> scheduleData = {
       'id': scheduleID,
-      'title': schedule.title,
-      'isLong': schedule.isLongSchedule,
-      'durationPriority': schedule.durationPriority,
-      'type': schedule.type.queryValue,
-      'startDate': schedule.startDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
-      'endDate': schedule.endDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
-      'timestamp': Timestamp.fromDate(schedule.startDate),
-      'notificationTime': schedule.notificationTime,
-      'memo': schedule.memo,
-      'color': schedule.color.toARGB32(), // 32비트 색상 값으로 변환
-      'isTodoExist': schedule.todoList.isNotEmpty, // 할 일 목록 존재 여부
+      'title': request.title,
+      'isLong': request.isLongSchedule,
+      'durationPriority': request.durationPriority,
+      'type': request.type.queryValue,
+      'startDate': request.startDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+      'endDate': request.endDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+      'timestamp': Timestamp.fromDate(request.startDate),
+      'notificationTime': request.notificationTime,
+      'memo': request.memo,
+      'color': request.color.toARGB32(), // 32비트 색상 값으로 변환
+      'isTodoExist': request.todoList.isNotEmpty, // 할 일 목록 존재 여부
     };
 
     final collectionName = calendar.type == CalendarType.private
@@ -251,13 +253,13 @@ class ScheduleService with BaseFirestoreMixin {
     batch.set(scheduleRef, scheduleData);
 
     // 2. 할 일 목록 문서 생성 (할 일이 있는 경우)
-    if (schedule.todoList.isNotEmpty) {
+    if (request.todoList.isNotEmpty) {
       final todoCollectionRef = scheduleRef.collection(
         FirestoreCollection.todo,
       );
 
       // 할 일 목록 문서 생성
-      for (final todo in schedule.todoList) {
+      for (final todo in request.todoList) {
         final todoRef = todoCollectionRef.doc(todo.id);
         batch.set(todoRef, todo.toJson(scheduleID: scheduleID));
       }
@@ -293,33 +295,89 @@ class ScheduleService with BaseFirestoreMixin {
   ///
   /// 일정 수정
   ///
-  Future<void> updateSchedule(CreateScheduleRequest schedule) async {
+  Future<void> updateSchedule(UpdateScheduleRequest request) async {
     // 현재 선택된 캘린더 정보 가져오기
     final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
     final calendar = CalendarInformation.fromHiveJson(result);
 
+    final hasTodo = request.newTodoList.isNotEmpty;
+
     final Map<String, dynamic> updateData = {
-      'title': schedule.title,
-      'isLong': schedule.isLongSchedule,
-      'durationPriority': schedule.durationPriority,
-      'type': schedule.type.queryValue,
-      'startDate': schedule.startDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
-      'endDate': schedule.endDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
-      'timestamp': Timestamp.fromDate(schedule.startDate),
-      'notificationTime': schedule.notificationTime,
-      'memo': schedule.memo,
-      'color': schedule.color.toARGB32(), // 32비트 색상 값으로 변환
+      'title': request.title,
+      'isLong': request.isLongSchedule,
+      'durationPriority': request.durationPriority,
+      'type': request.type.queryValue,
+      'startDate': request.startDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+      'endDate': request.endDate.toStringFormat('yyyy-MM-dd HH:mm:ss'),
+      'timestamp': Timestamp.fromDate(request.startDate),
+      'notificationTime': request.notificationTime,
+      'memo': request.memo,
+      'color': request.color.toARGB32(), // 32비트 색상 값으로 변환
+      'isTodoExist': hasTodo, // 할 일 목록 존재 여부
     };
+
+    // 배치 생성으로 일정 생성과 할 일 목록 생성을 한 번에 처리
+    final batch = firestore.batch();
 
     final collectionName = calendar.type == CalendarType.private
         ? FirestoreCollection.calendar
         : FirestoreCollection.shareCalendar;
 
-    await firestore
+    // 1. 일정 수정
+    final scheduleRef = firestore
         .collection(collectionName)
         .doc(calendar.id)
         .collection(collectionName)
-        .doc(schedule.id)
-        .update(updateData);
+        .doc(request.id);
+    batch.update(scheduleRef, updateData);
+
+    // 2. 할 일 목록 수정
+    final todoCollectionRef = scheduleRef.collection(FirestoreCollection.todo);
+
+    // 기존 할 일 목록 => 맵으로 변환
+    final existingTodoMap = {
+      for (final todo in request.existTodoList) todo.id: todo,
+    };
+
+    // 새 할 일 목록 => 맵으로 변환
+    final newTodoMap = {
+      for (final todo in request.newTodoList) todo.id: todo,
+    };
+
+    // 기존 할 일 목록에서 삭제 대상을 찾음
+    for (final entry in existingTodoMap.entries) {
+      if (newTodoMap.containsKey(entry.key)) continue;
+      final todoRef = todoCollectionRef.doc(entry.key);
+      batch.delete(todoRef);
+    }
+
+    // 새 할 일 목록에서 추가 대상을 찾음
+    for (final entry in newTodoMap.entries) {
+      if (existingTodoMap.containsKey(entry.key)) continue;
+      final todoRef = todoCollectionRef.doc(entry.key);
+      batch.set(todoRef, entry.value.toJson(scheduleID: request.id));
+    }
+
+    // 새 할 일 목록에서 수정 대상을 찾음
+    for (final entry in newTodoMap.entries) {
+      final existing = existingTodoMap[entry.key];
+      if (existing == null) continue;
+      if (!_isTodoModified(existing, entry.value)) continue;
+
+      final todoRef = todoCollectionRef.doc(entry.key);
+      batch.update(todoRef, entry.value.toJson(scheduleID: request.id));
+    }
+
+    // 배치 실행
+    await batch.commit();
+  }
+
+  ///
+  /// 할 일이 수정되었는지 확인
+  ///
+  bool _isTodoModified(Todo previous, Todo current) {
+    return previous.title != current.title ||
+        previous.isDone != current.isDone ||
+        previous.position != current.position;
   }
 }

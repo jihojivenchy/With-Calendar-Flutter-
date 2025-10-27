@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:with_calendar/domain/entities/calendar/calendar_information.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';

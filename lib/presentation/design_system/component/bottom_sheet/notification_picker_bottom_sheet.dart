@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_type.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
@@ -14,13 +16,13 @@ import 'package:with_calendar/utils/constants/image_paths.dart';
 class NotificationPickerBottomSheet extends StatefulWidget {
   const NotificationPickerBottomSheet({
     super.key,
-    required this.schedule,
+    required this.request,
     required this.onAllDaySelected,
     required this.onTimeSelected,
   });
 
   /// 일정
-  final CreateScheduleRequest schedule;
+  final ScheduleRequest request;
 
   /// 하루 종일 알림 선택 콜백
   final Function(AllDayNotificationType allDayType) onAllDaySelected;
@@ -64,7 +66,7 @@ class _NotificationPickerBottomSheetState
           const SizedBox(height: 24),
 
           // 각 일정 모드에 따른 알림 리스트
-          widget.schedule.type == ScheduleType.allDay
+          widget.request.type == ScheduleType.allDay
               ? _buildAllDayMenuList()
               : _buildTimeMenuList(),
           const SizedBox(height: 32),
@@ -74,9 +76,9 @@ class _NotificationPickerBottomSheetState
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: AppButton(
               text: '완료',
-              backgroundColor: widget.schedule.color,
+              backgroundColor: widget.request.color,
               onTapped: () {
-                switch (widget.schedule.type) {
+                switch (widget.request.type) {
                   case ScheduleType.allDay:
                     widget.onAllDaySelected(_selectedAllDayType);
                     break;
@@ -145,7 +147,7 @@ class _NotificationPickerBottomSheetState
     required bool isSelected,
     required VoidCallback onTapped,
   }) {
-    final color = widget.schedule.color;
+    final color = widget.request.color;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

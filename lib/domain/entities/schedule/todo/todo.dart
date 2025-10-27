@@ -3,11 +3,22 @@ class Todo {
   final String id;
   final String title;
   final bool isDone;
+  final double position;
 
-  const Todo({required this.id, required this.title, required this.isDone});
+  const Todo({
+    required this.id,
+    required this.title,
+    required this.isDone,
+    required this.position,
+  });
 
   factory Todo.fromJson(Map<String, dynamic> json) {
-    return Todo(id: json['id'], title: json['title'], isDone: json['isDone']);
+    return Todo(
+      id: json['id'],
+      title: json['title'],
+      isDone: json['isDone'],
+      position: json['position'],
+    );
   }
 
   Map<String, dynamic> toJson({required String scheduleID}) {
@@ -16,6 +27,7 @@ class Todo {
       'scheduleID': scheduleID,
       'title': title,
       'isDone': isDone,
+      'position': position,
     };
   }
 }

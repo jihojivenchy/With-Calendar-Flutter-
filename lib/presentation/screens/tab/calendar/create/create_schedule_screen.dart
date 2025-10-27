@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_type.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
@@ -140,7 +142,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   Widget _buildTitleTextField() {
     // 선택된 색상
     final selectedColor = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.color),
+      CreateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return ScheduleTitleTextField(
@@ -157,11 +159,11 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   Widget _buildScheduleTypeButton() {
     // 선택된 일정 유형
     final selectedType = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.type),
+      CreateScheduleState.requestProvider.select((value) => value.type),
     );
     // 선택된 색상
     final selectedColor = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.color),
+      CreateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return Container(
@@ -192,7 +194,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   Widget _buildStartDatePickerView() {
     // 일정 데이터
-    final schedule = ref.watch(CreateScheduleState.scheduleProvider);
+    final schedule = ref.watch(CreateScheduleState.requestProvider);
 
     return ScheduleDatePickerView(
       title: '시작',
@@ -210,7 +212,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   Widget _buildEndDatePickerView() {
     // 일정 데이터
-    final schedule = ref.watch(CreateScheduleState.scheduleProvider);
+    final schedule = ref.watch(CreateScheduleState.requestProvider);
 
     return ScheduleDatePickerView(
       title: '종료',
@@ -229,13 +231,13 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   Widget _buildNotificationPickerView() {
     // 일정 데이터
-    final schedule = ref.watch(CreateScheduleState.scheduleProvider);
+    final request = ref.watch(CreateScheduleState.requestProvider);
 
     return ScheduleNotificationView(
-      scheduleType: schedule.type,
-      notificationTime: schedule.notificationTime,
-      lineColor: schedule.color,
-      onTapped: () => _showNotificationPickerBottomSheet(schedule: schedule),
+      scheduleType: request.type,
+      notificationTime: request.notificationTime,
+      lineColor: request.color,
+      onTapped: () => _showNotificationPickerBottomSheet(request: request),
     );
   }
 
@@ -245,7 +247,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   Widget _buildColorPickerButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.color),
+      CreateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return ScheduleColorButton(
@@ -262,12 +264,12 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   Widget _buildMemoTextField(ScrollController scrollController) {
     // 선택된 색상
     final selectedColor = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.color),
+      CreateScheduleState.requestProvider.select((value) => value.color),
     );
 
     // 선택된 색상
     final memo = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.memo),
+      CreateScheduleState.requestProvider.select((value) => value.memo),
     );
 
     return ScheduleMemoView(
@@ -294,12 +296,12 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   Widget _buildTodoListButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.color),
+      CreateScheduleState.requestProvider.select((value) => value.color),
     );
 
     // 할 일 목록
     final todoList = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.todoList),
+      CreateScheduleState.requestProvider.select((value) => value.todoList),
     );
 
     return ScheduleTodoListButton(
@@ -320,7 +322,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   Widget _buildCompletionButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
-      CreateScheduleState.scheduleProvider.select((value) => value.color),
+      CreateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return Padding(
@@ -340,9 +342,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
   ///
   /// 알림 피커 바텀시트
   ///
-  void _showNotificationPickerBottomSheet({
-    required CreateScheduleRequest schedule,
-  }) {
+  void _showNotificationPickerBottomSheet({required ScheduleRequest request}) {
     FocusScope.of(context).unfocus();
 
     showModalBottomSheet(
@@ -353,7 +353,7 @@ class _CreateScheduleScreenState extends ConsumerState<CreateScheduleScreen>
       isScrollControlled: true,
       builder: (context) {
         return NotificationPickerBottomSheet(
-          schedule: schedule,
+          request: request,
           onAllDaySelected: (allDayType) {
             context.pop();
 

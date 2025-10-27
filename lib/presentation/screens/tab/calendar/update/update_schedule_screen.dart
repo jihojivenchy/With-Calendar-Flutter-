@@ -4,7 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/all_day_type.dart';
 import 'package:with_calendar/domain/entities/schedule/notification/time_type.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_type.dart';
+import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
+import 'package:with_calendar/domain/entities/schedule/request/update_schedule_request.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/design_system/component/app_bar/app_bar.dart';
@@ -23,14 +27,16 @@ import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/s
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_memo_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_notification_view.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_title_text_field.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/create/widgets/schedule_todo_list_button.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/bottom_sheet/set_todo_bottom_sheet.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen_event.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen_state.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class UpdateScheduleScreen extends ConsumerStatefulWidget {
-  const UpdateScheduleScreen({super.key, required this.schedule});
+  const UpdateScheduleScreen({super.key, required this.request});
 
-  final CreateScheduleRequest schedule;
+  final UpdateScheduleRequest request;
 
   @override
   ConsumerState<UpdateScheduleScreen> createState() =>
@@ -47,7 +53,12 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
 
     // 일정 초기화
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initialize(ref, widget.schedule);
+      initialize(ref, widget.request);
+
+      // 할 일 조회 (일정에 할 일이 있는 경우)
+      if (widget.request.isTodoExist) {
+        fetchTodoList(ref, widget.request.id);
+      }
     });
   }
 
@@ -114,6 +125,9 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
                   // 컬러 선택
                   _buildColorPickerView(ref),
 
+                  // 할 일 목록 버튼
+                  _buildTodoListButton(),
+
                   // 메모 입력
                   _buildMemoTextField(ref, scrollController),
                   const SizedBox(height: 30),
@@ -133,11 +147,11 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   Widget _buildTitleTextField(WidgetRef ref) {
     // 선택된 색상
     final selectedColor = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.color),
+      UpdateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return ScheduleTitleTextField(
-      initialValue: widget.schedule.title,
+      initialValue: widget.request.title,
       autoFocus: false,
       lineColor: selectedColor,
       onTitleChanged: (title) {
@@ -152,11 +166,11 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   Widget _buildScheduleTypeButton(WidgetRef ref) {
     // 선택된 일정 유형
     final selectedType = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.type),
+      UpdateScheduleState.requestProvider.select((value) => value.type),
     );
     // 선택된 색상
     final selectedColor = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.color),
+      UpdateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return Container(
@@ -187,7 +201,7 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   ///
   Widget _buildStartDatePickerView(WidgetRef ref) {
     // 일정 데이터
-    final schedule = ref.watch(UpdateScheduleState.scheduleProvider);
+    final schedule = ref.watch(UpdateScheduleState.requestProvider);
 
     return ScheduleDatePickerView(
       title: '시작',
@@ -205,7 +219,7 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   ///
   Widget _buildEndDatePickerView(WidgetRef ref) {
     // 일정 데이터
-    final schedule = ref.watch(UpdateScheduleState.scheduleProvider);
+    final schedule = ref.watch(UpdateScheduleState.requestProvider);
 
     return ScheduleDatePickerView(
       title: '종료',
@@ -224,14 +238,13 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   ///
   Widget _buildNotificationPickerView(WidgetRef ref) {
     // 일정 데이터
-    final schedule = ref.watch(UpdateScheduleState.scheduleProvider);
+    final request = ref.watch(UpdateScheduleState.requestProvider);
 
     return ScheduleNotificationView(
-      scheduleType: schedule.type,
-      notificationTime: schedule.notificationTime,
-      lineColor: schedule.color,
-      onTapped: () =>
-          _showNotificationPickerBottomSheet(ref, schedule: schedule),
+      scheduleType: request.type,
+      notificationTime: request.notificationTime,
+      lineColor: request.color,
+      onTapped: () => _showNotificationPickerBottomSheet(ref, request: request),
     );
   }
 
@@ -241,7 +254,7 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   Widget _buildColorPickerView(WidgetRef ref) {
     // 선택된 색상
     final selectedColor = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.color),
+      UpdateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return ScheduleColorButton(
@@ -258,12 +271,12 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   Widget _buildMemoTextField(WidgetRef ref, ScrollController scrollController) {
     // 선택된 색상
     final selectedColor = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.color),
+      UpdateScheduleState.requestProvider.select((value) => value.color),
     );
 
     // 메모
     final memo = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.memo),
+      UpdateScheduleState.requestProvider.select((value) => value.memo),
     );
 
     return ScheduleMemoView(
@@ -285,12 +298,38 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   }
 
   ///
+  /// 할 일 목록 버튼
+  ///
+  Widget _buildTodoListButton() {
+    // 선택된 색상
+    final selectedColor = ref.watch(
+      UpdateScheduleState.requestProvider.select((value) => value.color),
+    );
+
+    // 할 일 목록
+    final todoList = ref.watch(
+      UpdateScheduleState.requestProvider.select((value) => value.newTodoList),
+    );
+
+    return ScheduleTodoListButton(
+      checkList: todoList,
+      selectedColor: selectedColor,
+      onTodoListBtnTapped: () {
+        _showTodoListBottomSheet(
+          todoList: todoList,
+          selectedColor: selectedColor,
+        );
+      },
+    );
+  }
+
+  ///
   /// 수정 버튼
   ///
   Widget _buildCompletionButton() {
     // 선택된 색상
     final selectedColor = ref.watch(
-      UpdateScheduleState.scheduleProvider.select((value) => value.color),
+      UpdateScheduleState.requestProvider.select((value) => value.color),
     );
 
     return Padding(
@@ -312,7 +351,7 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
   ///
   void _showNotificationPickerBottomSheet(
     WidgetRef ref, {
-    required CreateScheduleRequest schedule,
+    required ScheduleRequest request,
   }) {
     FocusScope.of(ref.context).unfocus();
 
@@ -324,7 +363,7 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
       isScrollControlled: true,
       builder: (context) {
         return NotificationPickerBottomSheet(
-          schedule: schedule,
+          request: request,
           onAllDaySelected: (allDayType) {
             ref.context.pop();
 
@@ -396,6 +435,34 @@ class _UpdateScheduleScreenState extends ConsumerState<UpdateScheduleScreen>
           onColorSelected: (color) {
             ref.context.pop();
             updateColor(ref, color);
+          },
+        );
+      },
+    );
+  }
+
+  ///
+  /// 할 일 목록 바텀시트
+  ///
+  void _showTodoListBottomSheet({
+    required List<Todo> todoList,
+    required Color selectedColor,
+  }) {
+    FocusScope.of(context).unfocus();
+
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return SetTodoBottomSheet(
+          selectedColor: selectedColor,
+          todoList: todoList,
+          onCompletedBtnTapped: (todoList) {
+            context.pop();
+            updateTodoList(ref, todoList);
           },
         );
       },

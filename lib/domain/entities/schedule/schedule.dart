@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_type.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class Schedule {

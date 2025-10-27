@@ -12,7 +12,7 @@ import 'package:with_calendar/domain/entities/memo/memo.dart';
 import 'package:with_calendar/domain/entities/memo/memo_creation.dart';
 import 'package:with_calendar/domain/entities/profile/profile.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
 import 'package:with_calendar/utils/constants/firestore_constants.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
@@ -20,9 +20,9 @@ import 'package:with_calendar/utils/services/random/random_generator.dart';
 
 class TodoService with BaseFirestoreMixin {
   ///
-  /// 일정 조회
+  /// 일정 조회 (스트림)
   ///
-  Stream<List<Todo>> fetchTodoList(String scheduleID) {
+  Stream<List<Todo>> fetchTodoStreamList(String scheduleID) {
     // 현재 선택된 캘린더 정보 가져오기
     final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
     final calendar = CalendarInformation.fromHiveJson(result);
@@ -38,6 +38,7 @@ class TodoService with BaseFirestoreMixin {
         .collection(collectionName)
         .doc(scheduleID)
         .collection(FirestoreCollection.todo)
+        .orderBy('position', descending: false)
         .snapshots()
         .map((snapshot) {
           final todoList = snapshot.docs
@@ -45,6 +46,35 @@ class TodoService with BaseFirestoreMixin {
               .toList();
           return todoList;
         });
+  }
+
+  ///
+  /// 일정 조회
+  ///
+  Future<List<Todo>> fetchTodoList(String scheduleID) async {
+    // 현재 선택된 캘린더 정보 가져오기
+    final result = HiveService.instance.get(HiveBoxPath.currentCalendar);
+    final calendar = CalendarInformation.fromHiveJson(result);
+
+    // 캘린더 컬렉션 이름
+    final collectionName = calendar.type == CalendarType.private
+        ? FirestoreCollection.calendar
+        : FirestoreCollection.shareCalendar;
+
+    final snapshot = await firestore
+        .collection(collectionName)
+        .doc(calendar.id)
+        .collection(collectionName)
+        .doc(scheduleID)
+        .collection(FirestoreCollection.todo)
+        .orderBy('position', descending: false)
+        .get();
+
+    final todoList = (snapshot.docs as List? ?? [])
+        .map((doc) => Todo.fromJson(doc.data()))
+        .toList();
+
+    return todoList;
   }
 
   ///

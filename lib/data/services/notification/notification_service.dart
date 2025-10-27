@@ -7,7 +7,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:with_calendar/domain/entities/notification/schedule_notification.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_type.dart';
 import 'package:with_calendar/presentation/common/services/snack_bar/snack_bar_service.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
@@ -214,7 +215,7 @@ class NotificationService {
   /// `notificationTime`(yyyy-MM-dd HH:mm:ss)이 비어있지 않은 경우에만 예약한다.
   ///
   /// [scheduleID]: 일정 고유 ID (UUID)
-  /// [schedule]: 일정 정보를 담은 CreateScheduleRequest 객체
+  /// [schedule]: 일정 정보를 담은 ScheduleRequest 객체
   ///
   /// 처리 흐름:
   /// 1. 일정 ID를 알림 ID로 변환
@@ -225,19 +226,19 @@ class NotificationService {
   ///
   Future<void> create({
     required String scheduleID,
-    required CreateScheduleRequest schedule,
+    required ScheduleRequest request,
   }) async {
     // 일정 ID를 알림 ID(int)로 변환
     final notificationID = _convertToNotificationID(scheduleID);
 
     // 알림 시간이 비어있으면 기존 예약 알림도 제거하고 종료
-    if (schedule.notificationTime.isEmpty) {
+    if (request.notificationTime.isEmpty) {
       await delete(notificationID);
       return;
     }
 
     // 알림 시간을 DateTime으로 파싱
-    DateTime notificationTime = DateTime.parse(schedule.notificationTime);
+    DateTime notificationTime = DateTime.parse(request.notificationTime);
 
     // 과거 시간에 대한 알림은 예약하지 않음
     if (notificationTime.isBefore(DateTime.now())) return;
@@ -278,17 +279,17 @@ class NotificationService {
       // 새 알림 예약
       await _plugin.zonedSchedule(
         notificationID,
-        schedule.title,
-        _createNotificationBody(schedule),
+        request.title,
+        _createNotificationBody(request),
         tzDate,
         notificationDetails,
         androidScheduleMode: androidScheduleMode,
         payload: jsonEncode({
           'scheduleID': scheduleID,
-          'scheduledDate': schedule.startDate.toStringFormat(
+          'scheduledDate': request.startDate.toStringFormat(
             'yyyy-MM-dd HH:mm:ss',
           ),
-          'notificationTime': schedule.notificationTime,
+          'notificationTime': request.notificationTime,
         }),
       );
     } catch (e) {
@@ -307,13 +308,13 @@ class NotificationService {
   ///
   /// Returns: 알림에 표시될 본문 텍스트
   ///
-  String _createNotificationBody(CreateScheduleRequest schedule) {
-    final DateTime startDate = schedule.startDate;
-    final DateTime endDate = schedule.endDate;
-    final notificationDate = DateTime.parse(schedule.notificationTime);
+  String _createNotificationBody(ScheduleRequest request) {
+    final DateTime startDate = request.startDate;
+    final DateTime endDate = request.endDate;
+    final notificationDate = DateTime.parse(request.notificationTime);
 
     // 일정 타입에 따라 다른 형식의 본문 생성
-    switch (schedule.type) {
+    switch (request.type) {
       case ScheduleType.allDay:
         return _buildAllDayBody(
           startDate: startDate,
@@ -331,7 +332,7 @@ class NotificationService {
             startDate: startDate,
             notificationDate: notificationDate,
           ),
-          isLongSchedule: schedule.isLongSchedule,
+          isLongSchedule: request.isLongSchedule,
         );
     }
   }

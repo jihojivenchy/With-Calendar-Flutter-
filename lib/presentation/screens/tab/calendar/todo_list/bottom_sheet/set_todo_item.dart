@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:bounce_tapper/bounce_tapper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/bottom_sheet/set_todo_bottom_sheet.dart';
-import 'package:with_calendar/presentation/design_system/component/textfield/app_textfield.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
+import 'package:with_calendar/presentation/design_system/component/textfield/backspace_aware_text_field.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/bottom_sheet/set_todo_bottom_sheet.dart';
 
 class SetTodoItem extends StatelessWidget {
   const SetTodoItem({
@@ -54,36 +51,43 @@ class SetTodoItem extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Focus(
-              onKeyEvent: (FocusNode node, KeyEvent event) {
-                log('event: $event');
-                // 백스페이스 키가 눌리고, 키다운 이벤트일 때
-                if (event is KeyDownEvent &&
-                    event.logicalKey == LogicalKeyboardKey.backspace) {
-                  
-                  if (todoInput.controller.text.isEmpty) {
-                    onRemoveTapped();
-                    return KeyEventResult.handled;
-                  }
-                }
-                return KeyEventResult.ignored;
+            child: BackspaceAwareTextField(
+              controller: todoInput.controller,
+              focusNode: todoInput.focusNode,
+              onSubmitted: (text) {
+                FocusScope.of(context).requestFocus(todoInput.focusNode);
+                onSubmitted(text.trim());
               },
-              child: AppTextField(
-                controller: todoInput.controller,
-                focusNode: todoInput.focusNode,
-                placeholderText: '할 일을 입력해주세요',
-                cursorColor: context.textColor,
-                backgroundColor: Colors.transparent,
-                borderColor: Colors.transparent,
-                focusedBorderColor: Colors.transparent,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (text) {
-                  FocusScope.of(context).requestFocus(todoInput.focusNode);
-                  onSubmitted(text.trim());
-                },
-              ),
+              onBackspaceWhenEmpty: onRemoveTapped,
             ),
           ),
+
+          // Expanded(
+          //   child: KeyboardListener(
+          //     focusNode: FocusNode(skipTraversal: true),
+          //     onKeyEvent: (KeyEvent event) {
+          //       if (event is KeyDownEvent &&
+          //           event.logicalKey == LogicalKeyboardKey.backspace &&
+          //           todoInput.controller.text.isEmpty) {
+          //         onRemoveTapped();
+          //       }
+          //     },
+          //     child: AppTextField(
+          //       controller: todoInput.controller,
+          //       focusNode: todoInput.focusNode,
+          //       placeholderText: '할 일을 입력해주세요',
+          //       cursorColor: context.textColor,
+          //       backgroundColor: Colors.transparent,
+          //       borderColor: Colors.transparent,
+          //       focusedBorderColor: Colors.transparent,
+          //       textInputAction: TextInputAction.next,
+          //       onSubmitted: (text) {
+          //         FocusScope.of(context).requestFocus(todoInput.focusNode);
+          //         onSubmitted(text.trim());
+          //       },
+          //     ),
+          //   ),
+          // ),
           const SizedBox(width: 12),
           GestureDetector(
             onTap: onRemoveTapped,

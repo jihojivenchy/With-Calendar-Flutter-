@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
+import 'package:with_calendar/domain/entities/schedule/request/schedule_type.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';

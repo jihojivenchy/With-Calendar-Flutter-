@@ -7,7 +7,8 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:with_calendar/domain/entities/calendar/day.dart';
 import 'package:with_calendar/domain/entities/schedule/schedule.dart';
-import 'package:with_calendar/domain/entities/schedule/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/create_schedule_request.dart';
+import 'package:with_calendar/domain/entities/schedule/request/update_schedule_request.dart';
 import 'package:with_calendar/presentation/common/base/base_screen.dart';
 import 'package:with_calendar/presentation/common/services/app_size/app_size.dart';
 import 'package:with_calendar/presentation/common/services/dialog/dialog_service.dart';
@@ -397,7 +398,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
       isScrollControlled: true,
       builder: (context) {
         return UpdateScheduleScreen(
-          schedule: CreateScheduleRequest(
+          request: UpdateScheduleRequest(
             id: schedule.id,
             title: schedule.title,
             type: schedule.type,
@@ -406,7 +407,9 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
             notificationTime: schedule.notificationTime,
             memo: schedule.memo,
             color: schedule.color,
-            todoList: [],
+            isTodoExist: schedule.isTodoExist,
+            existTodoList: [],
+            newTodoList: [],
           ),
         );
       },

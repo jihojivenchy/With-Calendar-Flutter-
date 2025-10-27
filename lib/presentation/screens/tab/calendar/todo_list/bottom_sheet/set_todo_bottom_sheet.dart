@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:with_calendar/domain/entities/schedule/todo/todo.dart';
+import 'package:with_calendar/presentation/design_system/component/textfield/backspace_aware_text_field.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/bottom_sheet/set_todo_item.dart';
 import 'package:with_calendar/presentation/design_system/component/button/app_button.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
@@ -234,7 +235,7 @@ class _SetTodoBottomSheetState extends State<SetTodoBottomSheet> {
   /// 할 일 삭제
   ///
   void _removeTodoAt(int index) {
-    if (index < 1 || index >= _todoInputList.length) {
+    if (index >= _todoInputList.length) {
       return;
     }
 
@@ -332,13 +333,19 @@ class _SetTodoBottomSheetState extends State<SetTodoBottomSheet> {
   ///
   void _onCompleteTapped() {
     final List<Todo> result = _todoInputList
-        .map(
-          (item) => Todo(
-            id: item.id,
-            title: item.controller.text.trim(),
-            isDone: item.isDone,
-          ),
-        )
+        .asMap()
+        .entries
+        .map((entry) {
+          final index = entry.key;
+          final todoInput = entry.value;
+
+          return Todo(
+            id: todoInput.id,
+            title: backspaceAwareControllerText(todoInput.controller).trim(),
+            isDone: todoInput.isDone,
+            position: index.toDouble(),
+          );
+        })
         .where((todo) => todo.title.isNotEmpty)
         .toList();
 

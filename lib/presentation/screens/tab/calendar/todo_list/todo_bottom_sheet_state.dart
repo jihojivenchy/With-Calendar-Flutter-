@@ -7,6 +7,6 @@ abstract class TodoState {
   static final todoListProvider =
       StreamProvider.autoDispose.family<List<Todo>, String>((ref, scheduleID) {
     final TodoService todoService = TodoService();
-    return todoService.fetchTodoList(scheduleID);
+    return todoService.fetchTodoStreamList(scheduleID);
   });
 }
