@@ -304,21 +304,24 @@ class _SetTodoBottomSheetState extends State<SetTodoBottomSheet> {
               todoInput: todoInput,
               selectedColor: widget.selectedColor,
               onSubmitted: (text) {
-                if (isRemovedItem) {
-                  return;
-                }
+                // 삭제된 할 일인 경우 추가하지 않음
+                if (isRemovedItem) return;
+
+                // 다음 할 일 추가
                 _add(index, isFirst: false);
               },
               onDoneTapped: () {
-                if (isRemovedItem) {
-                  return;
-                }
+                // 삭제된 할 일인 경우 작업하지 않음
+                if (isRemovedItem) return;
+
+                // 할 일 완료 토글
                 _toggleTodo(index, todoInput);
               },
               onRemoveTapped: () {
-                if (isRemovedItem) {
-                  return;
-                }
+                // 삭제된 할 일인 경우 삭제하지 않음
+                if (isRemovedItem) return;
+
+                // 할 일 삭제
                 _removeTodoAt(index);
               },
             ),
@@ -339,9 +342,14 @@ class _SetTodoBottomSheetState extends State<SetTodoBottomSheet> {
           final index = entry.key;
           final todoInput = entry.value;
 
+          // sentinel을 제거한 실제 텍스트
+          final title = BackspaceAwareHelper.sanitizeBackspaceAwareText(
+            todoInput.controller.text,
+          ).trim();
+
           return Todo(
             id: todoInput.id,
-            title: backspaceAwareControllerText(todoInput.controller).trim(),
+            title: title,
             isDone: todoInput.isDone,
             position: index.toDouble(),
           );

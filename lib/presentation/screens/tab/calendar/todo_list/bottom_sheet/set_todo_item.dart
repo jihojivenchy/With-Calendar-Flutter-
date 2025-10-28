@@ -61,33 +61,6 @@ class SetTodoItem extends StatelessWidget {
               onBackspaceWhenEmpty: onRemoveTapped,
             ),
           ),
-
-          // Expanded(
-          //   child: KeyboardListener(
-          //     focusNode: FocusNode(skipTraversal: true),
-          //     onKeyEvent: (KeyEvent event) {
-          //       if (event is KeyDownEvent &&
-          //           event.logicalKey == LogicalKeyboardKey.backspace &&
-          //           todoInput.controller.text.isEmpty) {
-          //         onRemoveTapped();
-          //       }
-          //     },
-          //     child: AppTextField(
-          //       controller: todoInput.controller,
-          //       focusNode: todoInput.focusNode,
-          //       placeholderText: '할 일을 입력해주세요',
-          //       cursorColor: context.textColor,
-          //       backgroundColor: Colors.transparent,
-          //       borderColor: Colors.transparent,
-          //       focusedBorderColor: Colors.transparent,
-          //       textInputAction: TextInputAction.next,
-          //       onSubmitted: (text) {
-          //         FocusScope.of(context).requestFocus(todoInput.focusNode);
-          //         onSubmitted(text.trim());
-          //       },
-          //     ),
-          //   ),
-          // ),
           const SizedBox(width: 12),
           GestureDetector(
             onTap: onRemoveTapped,
