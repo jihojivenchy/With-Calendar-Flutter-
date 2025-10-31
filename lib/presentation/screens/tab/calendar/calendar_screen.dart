@@ -16,7 +16,6 @@ import 'package:with_calendar/presentation/design_system/component/bottom_sheet/
 import 'package:with_calendar/presentation/design_system/component/dialog/app_dialog.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/component/view/error_view.dart';
-import 'package:with_calendar/presentation/design_system/component/view/loading_view.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
 import 'package:with_calendar/presentation/router/router.dart';
@@ -28,6 +27,7 @@ import 'package:with_calendar/presentation/screens/tab/calendar/todo_list/todo_b
 import 'package:with_calendar/presentation/screens/tab/calendar/update/update_schedule_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_animation_builder.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_header.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/calendar_loading_skeleton.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/calendar/month_page.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/create_schedule_button.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/schedule_item.dart';
@@ -62,8 +62,13 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
     final calendarMap = ref.watch(CalendarScreenState.calendarMap);
     final weekList = ref.watch(CalendarScreenState.weekList);
 
+    // 달력 정보 계산 대기
     if (calendarMap.isEmpty || weekList.isEmpty) {
-      return const LoadingView(title: '달력 데이터를 불러오는 중입니다');
+      return const SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: CalendarLoadingSkeleton(),
+      );
     }
 
     // 포커스 날짜
@@ -234,7 +239,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
                   // 화면 모드가 전체 모드인 경우 일정 리스트 화면으로 이동
                   if (screenMode == CalendarScreenMode.full) {
                     ScheduleListRoute(selectedDate: day.date).push(context);
-                  } 
+                  }
 
                   fetchLunarDate(ref, day);
                 },
@@ -248,7 +253,7 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
       },
       loading: () => SizedBox(
         height: AppSize.calendarHeight,
-        child: const LoadingView(title: '달력을 불러오는 중입니다.'),
+        child: const CalendarLoadingSkeleton(isShowHeader: false),
       ),
       error: (error, _) {
         log('달력 조회 실패: ${error.toString()}');
