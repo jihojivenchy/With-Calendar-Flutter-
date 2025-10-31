@@ -21,7 +21,6 @@ class MonthPageView extends StatelessWidget {
     required this.holidayMap,
     this.lunarDate,
     required this.onTapped,
-    required this.onLongPressed,
   });
 
   final List<Day> dayList;
@@ -31,8 +30,7 @@ class MonthPageView extends StatelessWidget {
   final CalendarScreenMode screenMode;
   final HolidayMap holidayMap;
 
-  final Function(Day day, bool isDoubleTap) onTapped;
-  final Function(Day) onLongPressed;
+  final Function(Day day) onTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +94,6 @@ class MonthPageView extends StatelessWidget {
                     screenMode: screenMode,
                     maxWidth: constraints.maxWidth,
                     onTapped: onTapped,
-                    onLongPressed: onLongPressed,
                   );
                 },
                 crossAxisCount: weekList.length,

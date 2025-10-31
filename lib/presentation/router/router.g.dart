@@ -148,6 +148,12 @@ RouteBase get $tabRoute => GoRouteData.$route(
       factory: _$SearchUserRoute._fromState,
     ),
     GoRouteData.$route(
+      path: 'calendar/schedule-list',
+      name: 'schedule list',
+
+      factory: _$ScheduleListRoute._fromState,
+    ),
+    GoRouteData.$route(
       path: 'memo/update',
       name: 'update memo',
 
@@ -289,6 +295,33 @@ mixin _$SearchUserRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/calendar/search-user/${Uri.encodeComponent(_self.mode)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$ScheduleListRoute on GoRouteData {
+  static ScheduleListRoute _fromState(GoRouterState state) => ScheduleListRoute(
+    selectedDate: DateTime.parse(state.uri.queryParameters['selected-date']!)!,
+  );
+
+  ScheduleListRoute get _self => this as ScheduleListRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/calendar/schedule-list',
+    queryParams: {'selected-date': _self.selectedDate.toString()},
   );
 
   @override

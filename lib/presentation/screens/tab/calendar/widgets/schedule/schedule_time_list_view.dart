@@ -7,9 +7,19 @@ import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 /// 일정의 시간 등을 표시해주는 리스트 뷰
 class ScheduleTimeListView extends StatelessWidget {
-  const ScheduleTimeListView({super.key, required this.schedule});
+  const ScheduleTimeListView({
+    super.key,
+    required this.schedule,
+    this.listHeight = 30,
+    this.fontSize = 12,
+    this.paddingVertical = 6,
+  });
 
   final Schedule schedule;
+
+  final double listHeight;
+  final double fontSize;
+  final double paddingVertical;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +57,7 @@ class ScheduleTimeListView extends StatelessWidget {
     final textColor = context.dynamicColor(schedule.color);
 
     return SizedBox(
-      height: 30,
+      height: listHeight,
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -55,18 +65,23 @@ class ScheduleTimeListView extends StatelessWidget {
         itemBuilder: (context, index) {
           final text = detailTexts[index];
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: paddingVertical,
+            ),
             decoration: BoxDecoration(
               color: schedule.color.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(25),
             ),
-            child: AppText(
-              text: text,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              textColor: textColor,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Center(
+              child: AppText(
+                text: text,
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+                textColor: textColor,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           );
         },

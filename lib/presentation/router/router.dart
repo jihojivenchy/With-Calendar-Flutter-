@@ -9,6 +9,7 @@ import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
 import 'package:with_calendar/presentation/screens/auth/sign_in/sign_in_screen.dart';
 import 'package:with_calendar/presentation/screens/splash/splash_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/create/create_schedule_screen.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/date_pop_up/date_pop_up_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/create/create_share_calendar_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/search/search_user_screen.dart';
 import 'package:with_calendar/presentation/screens/tab/calendar/share/update/update_share_calendar_screen.dart';
@@ -165,6 +166,10 @@ class FindPasswordRoute extends GoRouteData with _$FindPasswordRoute {
       path: SearchUserRoute.path,
       name: SearchUserRoute.name,
     ),
+    TypedGoRoute<ScheduleListRoute>(
+      path: ScheduleListRoute.path,
+      name: ScheduleListRoute.name,
+    ),
 
     // ------------------------------ 메모 라우트 ------------------------------
     TypedGoRoute<UpdateMemoRoute>(
@@ -319,6 +324,38 @@ class UpdateShareCalendarRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return UpdateShareCalendarScreen(calendarID: calendarID);
+  }
+}
+
+///
+/// 일정 리스트 라우트
+///
+class ScheduleListRoute extends GoRouteData with _$ScheduleListRoute {
+  static const String path = 'calendar/schedule-list';
+  static const String name = 'schedule list';
+
+  final DateTime selectedDate;
+  ScheduleListRoute({required this.selectedDate});
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      opaque: false,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      child: DatePopupScreen(selectedDate: selectedDate),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curve = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+        return FadeTransition(
+          opacity: curve,
+          child: ScaleTransition(
+            scale: Tween(begin: 0.92, end: 1.0).animate(curve),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:with_calendar/domain/entities/holiday/holiday.dart';
 import 'package:with_calendar/presentation/design_system/component/text/app_text.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_color.dart';
 import 'package:with_calendar/presentation/design_system/foundation/app_theme.dart';
+import 'package:with_calendar/presentation/screens/tab/calendar/widgets/schedule/holiday_list_view.dart';
 import 'package:with_calendar/utils/extensions/date_extension.dart';
 
 class ScheduleTitleView extends StatelessWidget {
@@ -33,7 +34,7 @@ class ScheduleTitleView extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 textColor: _getDateTextColor(focusedDate, context),
               ),
-              _buildHolidayListView(),
+              HolidayListView(holidayList: holidayList),
             ],
           ),
         ),
@@ -66,7 +67,7 @@ class ScheduleTitleView extends StatelessWidget {
                   textColor: AppColors.gray400,
                 ),
                 const SizedBox(width: 12),
-                _buildHolidayListView(),
+                HolidayListView(holidayList: holidayList),
               ],
             ),
           ],
@@ -96,44 +97,5 @@ class ScheduleTitleView extends StatelessWidget {
 
     // 4. 나머지는 모두 텍스트 컬러
     return context.textColor;
-  }
-
-  ///
-  /// 공휴일 리스트 뷰
-  ///
-  Widget _buildHolidayListView() {
-    if (holidayList.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return SizedBox(
-      height: 19,
-      child: Center(
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          itemCount: holidayList.length,
-          itemBuilder: (context, index) {
-            final holiday = holidayList[index];
-
-            return AppText(
-              text: holiday.title,
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              textColor: const Color(0xFFCC3636),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return AppText(
-              text: ',  ',
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              textColor: const Color(0xFFCC3636),
-            );
-          },
-        ),
-      ),
-    );
   }
 }

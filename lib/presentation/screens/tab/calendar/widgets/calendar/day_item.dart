@@ -24,15 +24,13 @@ class DayItem extends StatelessWidget {
     required this.screenMode,
     required this.maxWidth,
     required this.onTapped,
-    required this.onLongPressed,
   });
 
   final Day day;
   final LunarDate? lunarDate;
   final List<Schedule> scheduleList;
   final List<Holiday> holidayList;
-  final Function(Day day, bool isDoubleTap) onTapped;
-  final Function(Day) onLongPressed;
+  final Function(Day day) onTapped;
 
   final double maxWidth;
   final double itemWidth; // 아이템 너비
@@ -51,11 +49,7 @@ class DayItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () {
         HapticFeedback.lightImpact();
-        onTapped(day, isSelected);
-      },
-      onLongPress: () {
-        HapticFeedback.lightImpact();
-        onLongPressed(day);
+        onTapped(day);
       },
       child: Opacity(
         opacity: day.isOutside ? 0.4 : 1,

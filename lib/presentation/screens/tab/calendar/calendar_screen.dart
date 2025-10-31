@@ -230,14 +230,13 @@ class CalendarScreen extends BaseScreen with CalendarScreenEvent {
                 scheduleMap: scheduleMap,
                 screenMode: screenMode,
                 holidayMap: holidayMap,
-                onTapped: (day, isDoubleTap) {
-                  if (isDoubleTap) {
-                    _showCreateBottomSheet(ref, day);
-                  }
+                onTapped: (day) {
+                  // 화면 모드가 전체 모드인 경우 일정 리스트 화면으로 이동
+                  if (screenMode == CalendarScreenMode.full) {
+                    ScheduleListRoute(selectedDate: day.date).push(context);
+                  } 
+
                   fetchLunarDate(ref, day);
-                },
-                onLongPressed: (day) {
-                  // ref.context.push(CreateScheduleRoute().location, extra: day);
                 },
               );
             },
